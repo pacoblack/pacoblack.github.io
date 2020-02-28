@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="flutter,原理分析,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="flutter UI 渲染原理">
+<meta name="keywords" content="flutter,原理分析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="flutter渲染原理分析">
+<meta property="og:url" content="https://pacoblack.github.io/2019/12/04/flutter渲染原理分析/index.html">
+<meta property="og:site_name" content="我爱学习">
+<meta property="og:description" content="flutter UI 渲染原理">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/16327616-940826fdfb956056?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/16327616-d75ff50bb1f286dd?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/16327616-fbe8c021342ea448?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/16327616-31e69abd95ec9efb?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/16327616-fb0d37e3a5f34b12?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-12-05T03:28:57.527Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="flutter渲染原理分析">
+<meta name="twitter:description" content="flutter UI 渲染原理">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/16327616-940826fdfb956056?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://pacoblack.github.io/2019/12/04/flutter渲染原理分析/">
+
+
+
+
+
+  <title>flutter渲染原理分析 | 我爱学习</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">我爱学习</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">这只是一场演习</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-主页"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-标签"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-分类"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-归档"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-关于"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://pacoblack.github.io/2019/12/04/flutter渲染原理分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pacoblack">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar1.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="我爱学习">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">flutter渲染原理分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-04T19:00:41+08:00">
+                2019-12-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/flutter/" itemprop="url" rel="index">
+                    <span itemprop="name">flutter</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/flutter/原理分析/" itemprop="url" rel="index">
+                    <span itemprop="name">原理分析</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>flutter UI 渲染原理</p>
+<a id="more"></a>
+
+<h1 id="控件库（Widgets）"><a href="#控件库（Widgets）" class="headerlink" title="控件库（Widgets）"></a>控件库（Widgets）</h1><p>Flutter的控件库提供了非常丰富的控件，包括最基本的文本、图片、容器、输入框和动画等等。在Flutter中“一切皆是控件”，通过组合、嵌套不同类型的控件，就可以构建出任意功能、任意复杂度的界面。它包含的最主要的几个类有：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// WidgetsFlutterBinding 是Flutter的控件框架和Flutter引擎的胶水层, 基于Flutter控件系统开发的程序都需要使用</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">WidgetsFlutterBinding</span> <span class="keyword">extends</span> <span class="title">BindingBase</span> <span class="keyword">with</span> <span class="title">GestureBinding</span>, <span class="title">ServicesBinding</span>, <span class="title">SchedulerBinding</span>,</span></span><br><span class="line"><span class="class">            <span class="title">PaintingBinding</span>, <span class="title">RendererBinding</span>, <span class="title">WidgetsBinding</span> </span>&#123; ... &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Widget就是所有控件的基类，它本身所有的属性都是只读的。</span></span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Widget</span> <span class="keyword">extends</span> <span class="title">DiagnosticableTree</span> </span>&#123; ... &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// StatelessWidget和StatefulWidget并不会直接影响RenderObject的创建，它们只负责创建对应的RenderObjectWidget</span></span><br><span class="line"><span class="comment">// StatelessElement和StatefulElement也是类似的功能。</span></span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">StatelessWidget</span> <span class="keyword">extends</span> <span class="title">Widget</span> </span>&#123; ... &#125;</span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">StatefulWidget</span> <span class="keyword">extends</span> <span class="title">Widget</span> </span>&#123; ... &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// RenderObjectWidget所有的实现类则负责提供配置信息并创建具体的RenderObjectElement。</span></span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">RenderObjectWidget</span> <span class="keyword">extends</span> <span class="title">Widget</span> </span>&#123; ... &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Element是Flutter用来分离控件树和真正的渲染对象的中间层，控件用来描述对应的element属性，控件重建后可能会复用同一个element。</span></span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Element</span> <span class="keyword">extends</span> <span class="title">DiagnosticableTree</span> <span class="title">implements</span> <span class="title">BuildContext</span> </span>&#123; ... &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">StatelessElement</span> <span class="keyword">extends</span> <span class="title">ComponentElement</span> </span>&#123; ... &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">StatefulElement</span> <span class="keyword">extends</span> <span class="title">ComponentElement</span> </span>&#123; ... &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// RenderObjectElement持有真正负责布局、绘制和碰撞测试（hit test）的RenderObject对象。</span></span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">RenderObjectElement</span> <span class="keyword">extends</span> <span class="title">Element</span> </span>&#123; ... &#125;</span><br></pre></td></tr></table></figure>
+
+<p>它们之间的关系如下图：<br><img src="https://upload-images.jianshu.io/upload_images/16327616-940826fdfb956056?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image"></p>
+<ul>
+<li>如果控件的<strong>属性</strong>发生了变化（因为控件的属性是只读的，所以变化也就意味着重新创建了新的控件树），但是其树上每个节点的类型没有变化时，element树和render树可以完全重用原来的对象（因为element和render object的属性都是可变的）</li>
+<li>如果控件树中的某个节点的<strong>类型</strong>发生了变化，则 element树和 render树中对应的节点也需要重新创建</li>
+</ul>
+<h1 id="渲染-Render"><a href="#渲染-Render" class="headerlink" title="渲染(Render)"></a>渲染(Render)</h1><p>render树创建完成后就会进入渲染阶段，在Flutter界面渲染过程分为三个阶段：布局、绘制、合成，<strong>布局和绘制</strong> 在Flutter框架中完成，<strong>合成则交由引擎负责</strong>。<br><img src="https://upload-images.jianshu.io/upload_images/16327616-d75ff50bb1f286dd?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="渲染过程"></p>
+<p>控件树中的每个控件通过实现<code>RenderObjectWidget.createRenderObject(BuildContext context)</code> → <code>RenderObject</code>方法来创建对应的不同类型的<code>RenderObject</code>对象，组成渲染对象树。因为Flutter极大地简化了布局的逻辑，所以整个布局过程中只需要 <strong>深度遍历</strong> 一次：<br><img src="https://upload-images.jianshu.io/upload_images/16327616-fbe8c021342ea448?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image"><br>render树中的每个对象都会在布局过程中 <strong>接受父对象的Constraints参数，决定自己的大小</strong>，然后父对象就可以按照自己的逻辑决定各个子对象的位置，完成布局过程。<br><strong>子对象不存储自己在容器中的位置</strong>，所以在它的位置发生改变时并不需要重新布局或者绘制。子对象的位置信息存储在它<strong>自己的parentData字段中</strong>，但是该字段<strong>由它的父对象负责维护</strong>，自身并不关心该字段的内容。同时也因为这种简单的布局逻辑，Flutter可以在某些节点设置布局边界（Relayout boundary），即当边界内的任何对象发生重新布局时，不会影响边界外的对象，反之亦然.</p>
+<p>布局完成后，渲染对象树中的每个节点都有了明确的尺寸和位置，Flutter会把所有对象绘制到 <strong>不同的图层</strong> 上：<br><img src="https://upload-images.jianshu.io/upload_images/16327616-31e69abd95ec9efb?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image"><br>因为绘制节点时也是 <strong>深度遍历</strong> ，可以看到第二个节点在绘制它的背景和前景不得不绘制在不同的图层上，因为第四个节点切换了图层（因为“4”节点是一个需要独占一个图层的内容，比如视频），而第六个节点也一起绘制到了红色图层。这样会导致第二个节点的前景（也就是“5”）部分需要重绘时，和它在逻辑上毫不相干但是处于同一图层的第六个节点也必须重绘。为了避免这种情况，Flutter提供了另外一个“重绘边界”的概念：在进入和走出重绘边界时，Flutter会强制 <strong>切换新的图层</strong>，这样就可以避免边界内外的互相影响。典型的应用场景就是ScrollView，当滚动内容重绘时，一般情况下其他内容是不需要重绘的。虽然重绘边界可以在任何节点手动设置，但是一般不需要我们来实现，Flutter提供的控件默认会在需要设置的地方自动设置。</p>
+<h1 id="Framework"><a href="#Framework" class="headerlink" title="Framework"></a>Framework</h1><p><img src="https://upload-images.jianshu.io/upload_images/16327616-fb0d37e3a5f34b12?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="framework"><br>Framework底层是Flutter引擎，引擎主要负责图形绘制（Skia）、文字排版（libtxt）和提供Dart运行时，引擎全部使用C++实现，Framework层使我们可以用Dart语言调用引擎的强大能力。</p>
+<ul>
+<li>Framework的最底层叫做Foundation，其中定义的大都是非常基础的、提供给其他所有层使用的工具类和方法。</li>
+<li>绘制库（Painting）封装了Flutter Engine提供的绘制接口，主要是为了在绘制控件等固定样式的图形时提供更直观、更方便的接口，比如绘制缩放后的位图、绘制文本、插值生成阴影以及在盒子周围绘制边框等等。</li>
+<li>Animation是动画相关的类，提供了类似Android系统的ValueAnimator的功能，并且提供了丰富的内置插值器。</li>
+<li>Gesture提供了手势识别相关的功能，包括触摸事件类定义和多种内置的手势识别器。GestureBinding类是Flutter中处理手势的抽象服务类，继承自BindingBase类。Binding系列的类在Flutter中充当着类似于Android中的SystemService系列（ActivityManager、PackageManager）功能，每个Binding类都提供一个服务的单例对象，App最顶层的Binding会包含所有相关的Bingding抽象类。如果使用Flutter提供的控件进行开发，则需要使用WidgetsFlutterBinding，如果不使用Flutter提供的任何控件，而直接调用Render层，则需要使用RenderingFlutterBinding。</li>
+<li>渲染库（Rendering）<br>  Flutter的控件树在实际显示时会转换成对应的渲染对象（RenderObject）树来实现布局和绘制操作。渲染库主要提供的功能类有：<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// RendererBinding 渲染树和Flutter引擎的胶水层，负责管理帧重绘、窗口尺寸和渲染相关参数变化的监听。</span></span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">RendererBinding</span> <span class="keyword">extends</span> <span class="title">BindingBase</span> <span class="keyword">with</span> <span class="title">ServicesBinding</span>, <span class="title">SchedulerBinding</span>, <span class="title">HitTestable</span> </span>&#123; ... &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// RenderObject 渲染树中所有节点的基类，定义了布局、绘制和合成相关的接口。</span></span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">RenderObject</span> <span class="keyword">extends</span> <span class="title">AbstractNode</span> <span class="keyword">with</span> <span class="title">DiagnosticableTreeMixin</span> <span class="title">implements</span> <span class="title">HitTestTarget</span> </span>&#123; ... &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// RenderBox和其三个常用的子类RenderParagraph、RenderImage、RenderFlex则是具体布局和绘制逻辑的实现类。</span></span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">RenderBox</span> <span class="keyword">extends</span> <span class="title">RenderObject</span> </span>&#123; ... &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RenderParagraph</span> <span class="keyword">extends</span> <span class="title">RenderBox</span> </span>&#123; ... &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RenderImage</span> <span class="keyword">extends</span> <span class="title">RenderBox</span> </span>&#123; ... &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RenderFlex</span> <span class="keyword">extends</span> <span class="title">RenderBox</span> <span class="keyword">with</span> <span class="title">ContainerRenderObjectMixin&lt;RenderBox</span>, <span class="title">FlexParentData&gt;</span>,</span></span><br><span class="line"><span class="class">                                        <span class="title">RenderBoxContainerDefaultsMixin&lt;RenderBox</span>, <span class="title">FlexParentData&gt;</span>,</span></span><br><span class="line"><span class="class">                                        <span class="title">DebugOverflowIndicatorMixin</span> </span>&#123; ... &#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/flutter/" rel="tag"># flutter</a>
+          
+            <a href="/tags/原理分析/" rel="tag"># 原理分析</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/19/Java注解学习/" rel="next" title="Java注解学习">
+                <i class="fa fa-chevron-left"></i> Java注解学习
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/12/04/flutter框架总览/" rel="prev" title="flutter框架总览">
+                flutter框架总览 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar1.jpeg" alt="pacoblack">
+            
+              <p class="site-author-name" itemprop="name">pacoblack</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/yourname" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="skype:yourname?call|chat" target="_blank" title="Skype">
+                      
+                        <i class="fa fa-fw fa-skype"></i>Skype</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#控件库（Widgets）"><span class="nav-number">1.</span> <span class="nav-text">控件库（Widgets）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#渲染-Render"><span class="nav-number">2.</span> <span class="nav-text">渲染(Render)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Framework"><span class="nav-number">3.</span> <span class="nav-text">Framework</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pacoblack</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="[object Object]"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+  <link rel="stylesheet" href="/assets/css/APlayer.min.css" class="aplayer-style-marker">
+  <script src="/assets/js/APlayer.min.js" class="aplayer-script-marker"></script>
+  <script src="/assets/js/Meting.min.js" class="meting-script-marker"></script>
+  <div id="aplayer-AXqIDvNX" class="aplayer aplayer-tag-marker meting-tag-marker aplayer-fixed" data-id="71075946" data-server="netease" data-type="playlist" data-mode="circulation" data-autoplay="false" data-mutex="true" data-listmaxheight="340px" data-preload="auto" data-fixed="true" data-lrctype="0" data-theme="#555"></div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/Epsilon2.1.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
