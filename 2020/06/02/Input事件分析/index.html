@@ -93,7 +93,7 @@
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/16327616-bba049140b690101?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/16327616-f00876a0a8171f40?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/16327616-740fdbafdfa48224?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2020-06-02T09:44:36.831Z">
+<meta property="og:updated_time" content="2020-06-02T09:48:53.768Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Input事件分析">
 <meta name="twitter:description" content="前面我们已经介绍了Epoll机制，并且在Handler中也是利用的Epoll机制，现在介绍下 InputService，同样利用了Epoll">
@@ -372,7 +372,7 @@
       
         <p>前面我们已经介绍了Epoll机制，并且在Handler中也是利用的Epoll机制，现在介绍下 InputService，同样利用了Epoll</p>
 <a id="more"></a>
-<h1 id="1，创建"><a href="#1，创建" class="headerlink" title="1，创建"></a>1，创建</h1><h2 id="类图结构"><a href="#类图结构" class="headerlink" title="类图结构"></a>类图结构</h2><p><img src="/.io//InputManagerService.jpg" alt="InputManagerService"></p>
+<h1 id="1，创建"><a href="#1，创建" class="headerlink" title="1，创建"></a>1，创建</h1><h2 id="整体结构"><a href="#整体结构" class="headerlink" title="整体结构"></a>整体结构</h2><p><img src="/.io//InputManagerService.jpg" alt="InputManagerService"></p>
 <h2 id="InputManagerService-的创建"><a href="#InputManagerService-的创建" class="headerlink" title="InputManagerService 的创建"></a>InputManagerService 的创建</h2><p>  Android Framework 层的 service，大部分都是在 SystemServer 进程中创建，InputManagerService 即是如此，<br>  创建完 进程中创建，InputManagerService 后，便把它加入到 ServiceManager 中，并同时设置了 InputMonitor，如下</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SystemServer.startOtherServices</span></span><br><span class="line">inputManager = <span class="keyword">new</span> InputManagerService(context);</span><br><span class="line">WindowManagerService wm = WindowManagerService.main(context, inputManager,</span><br><span class="line">                    mFactoryTestMode != FactoryTest.FACTORY_TEST_LOW_LEVEL,</span><br><span class="line">                    !mFirstBoot, mOnlyCore, <span class="keyword">new</span> PhoneWindowManager());</span><br><span class="line">ServiceManager.addService(Context.WINDOW_SERVICE, wm, <span class="comment">/* allowIsolated= */</span> <span class="keyword">false</span>,</span><br><span class="line">                    DUMP_FLAG_PRIORITY_CRITICAL | DUMP_FLAG_PROTO);</span><br><span class="line">ServiceManager.addService(Context.INPUT_SERVICE, inputManager,</span><br><span class="line">                    <span class="comment">/* allowIsolated= */</span> <span class="keyword">false</span>, DUMP_FLAG_PRIORITY_CRITICAL);</span><br><span class="line">mActivityManagerService.setWindowManager(wm);</span><br><span class="line">inputManager.setWindowManagerCallbacks(wm.getInputMonitor());</span><br><span class="line">inputManager.start();</span><br></pre></td></tr></table></figure>
 
@@ -609,7 +609,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-count">18</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -681,7 +681,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1，创建"><span class="nav-number">1.</span> <span class="nav-text">1，创建</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#类图结构"><span class="nav-number">1.1.</span> <span class="nav-text">类图结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InputManagerService-的创建"><span class="nav-number">1.2.</span> <span class="nav-text">InputManagerService 的创建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InputManagerservice-的构造"><span class="nav-number">1.3.</span> <span class="nav-text">InputManagerservice 的构造</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nativeInit-的实现"><span class="nav-number">1.4.</span> <span class="nav-text">nativeInit 的实现</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1，创建"><span class="nav-number">1.</span> <span class="nav-text">1，创建</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#整体结构"><span class="nav-number">1.1.</span> <span class="nav-text">整体结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InputManagerService-的创建"><span class="nav-number">1.2.</span> <span class="nav-text">InputManagerService 的创建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InputManagerservice-的构造"><span class="nav-number">1.3.</span> <span class="nav-text">InputManagerservice 的构造</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nativeInit-的实现"><span class="nav-number">1.4.</span> <span class="nav-text">nativeInit 的实现</span></a></li></ol></li></ol></div>
             
 
           </div>
