@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="我爱学习">
 <meta property="og:description" content="通信过程我们知道，Flutter定义了三种不同类型的Channel，它们分别是  BasicMessageChannel：用于传递字符串和半结构化的信息。 MethodChannel：用于传递方法调用（method invocation）。 EventChannel: 用于数据流（event streams）的通信。  三种Channel之间互相独立，各有用途，但它们在设计上却非常相近。每种Cha">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://pacoblack.github.io/2019/12/05/Flutter与原生通信之Flutter-Java/flutter1.jpg">
+<meta property="og:image" content="https://pacoblack.github.io/.io//flutter1.jpg">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/16327616-acd76bda9eb173ad?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/16327616-26910abb6a266c60?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/16327616-db7434d1d99c2b42?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
@@ -95,7 +95,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Flutter与原生通信之Flutter-&gt;Java">
 <meta name="twitter:description" content="通信过程我们知道，Flutter定义了三种不同类型的Channel，它们分别是  BasicMessageChannel：用于传递字符串和半结构化的信息。 MethodChannel：用于传递方法调用（method invocation）。 EventChannel: 用于数据流（event streams）的通信。  三种Channel之间互相独立，各有用途，但它们在设计上却非常相近。每种Cha">
-<meta name="twitter:image" content="https://pacoblack.github.io/2019/12/05/Flutter与原生通信之Flutter-Java/flutter1.jpg">
+<meta name="twitter:image" content="https://pacoblack.github.io/.io//flutter1.jpg">
 
 
 
@@ -386,7 +386,7 @@
 <p>Binarymessenger在Android端是一个接口，其具体实现为FlutterNativeView。而其在iOS端是一个协议，名称为FlutterBinaryMessenger。</p>
 <p>Binarymessenger并不知道Channel的存在，它只和BinaryMessageHandler打交道。由于Channel从BinaryMessageHandler接收到的消息是二进制格式数据，无法直接使用，故Channel会将该二进制消息通过Codec（消息编解码器）解码为能识别的消息并传递给Handler进行处理。</p>
 <p>当Handler处理完消息之后，会通过回调函数返回result，并将result通过编解码器编码为二进制格式数据，通过BinaryMessenger发送回Flutter端。</p>
-<h1 id="消息解码器-Codec"><a href="#消息解码器-Codec" class="headerlink" title="消息解码器 Codec"></a>消息解码器 Codec</h1><p><img src="//pacoblack.github.io/2019/12/05/Flutter与原生通信之Flutter-Java/flutter1.jpg" alt="codec"></p>
+<h1 id="消息解码器-Codec"><a href="#消息解码器-Codec" class="headerlink" title="消息解码器 Codec"></a>消息解码器 Codec</h1><p><img src="/.io//flutter1.jpg" alt="codec"></p>
 <p>消息编解码器Codec主要用于将二进制格式的数据转化为Handler能够识别的数据，Flutter定义了两种Codec：<code>MessageCodec</code> 和 <code>MethodCodec</code>。</p>
 <p>​Android中，MessageCodec是一个接口，定义了两个方法:</p>
 <ul>
