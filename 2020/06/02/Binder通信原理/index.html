@@ -87,16 +87,17 @@
 <meta property="og:site_name" content="我爱学习">
 <meta property="og:description" content="介绍跨进程通信是需要内核空间做支持的。传统的 IPC 机制如管道、Socket 都是内核的一部分，因此通过内核支持来实现进程间通信自然是没问题的。 但是 Binder 并不是 Linux 系统内核的一部分，通过 Linux 的动态内核可加载模块（Loadable Kernel Module，LKM）的机制。 模块是具有独立功能的程序，它可以被单独编译，但是不能独立运行。它在运行时被链接到内核作为内">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pacoblack.github.io/2020/06/02/Binder通信原理/ipc.jpeg">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/16327616-b105ae3d79bf354e.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/16327616-4d66060a149d9c40.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/16327616-b116e9d830fc8cf8.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/16327616-b89d54b3561bbb4b.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/16327616-e9b40c2dbe980b74?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2020-06-02T09:50:48.577Z">
+<meta property="og:updated_time" content="2020-06-03T09:46:25.236Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Binder通信原理">
 <meta name="twitter:description" content="介绍跨进程通信是需要内核空间做支持的。传统的 IPC 机制如管道、Socket 都是内核的一部分，因此通过内核支持来实现进程间通信自然是没问题的。 但是 Binder 并不是 Linux 系统内核的一部分，通过 Linux 的动态内核可加载模块（Loadable Kernel Module，LKM）的机制。 模块是具有独立功能的程序，它可以被单独编译，但是不能独立运行。它在运行时被链接到内核作为内">
-<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/16327616-b105ae3d79bf354e.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta name="twitter:image" content="https://pacoblack.github.io/2020/06/02/Binder通信原理/ipc.jpeg">
 
 
 
@@ -387,7 +388,8 @@
 </ul>
 <h1 id="C-S端"><a href="#C-S端" class="headerlink" title="C/S端"></a>C/S端</h1><h2 id="Java-framework"><a href="#Java-framework" class="headerlink" title="Java framework"></a>Java framework</h2><p>作为Server端继承(或间接继承)于Binder类，Client端继承(或间接继承)于 BinderProxy类。例如 ActivityManagerService(用于控制Activity、Service、进程等) 这个服务作为Server端，间接继承Binder类，而相应的ActivityManager作为Client端，间接继承于BinderProxy类。</p>
 <h2 id="Native-Framework层"><a href="#Native-Framework层" class="headerlink" title="Native Framework层"></a>Native Framework层</h2><p>这是C++层，作为Server端继承(或间接继承)于BBinder类，Client端继承(或间接继承)于BpBinder。例如MediaPlayService(用于多媒体相关)作为Server端，继承于BBinder类，而相应的MediaPlay作为Client端，间接继承于BpBinder类.</p>
-<h1 id="通信"><a href="#通信" class="headerlink" title="通信"></a>通信</h1><p>进程中的用户区域是不能直接和物理设备打交道的，如果想要把磁盘上的数据读取到进程的用户区域，需要两次拷贝（磁盘–&gt;内核空间–&gt;用户空间）；通常在这种场景下 mmap() 就能发挥作用，通过在物理介质和用户空间之间建立映射，减少数据的拷贝次数，用内存读写取代I/O读写，提高文件读取效率。</p>
+<h1 id="Linux-下的传统-IPC-通信原理"><a href="#Linux-下的传统-IPC-通信原理" class="headerlink" title="Linux 下的传统 IPC 通信原理"></a>Linux 下的传统 IPC 通信原理</h1><p>通常的做法是消息发送方将要发送的数据存放在内存缓存区中，通过系统调用进入内核态。然后内核程序在内核空间分配内存，开辟一块内核缓存区，调用 copyfromuser() 函数将数据从用户空间的内存缓存区拷贝到内核空间的内核缓存区中。同样的，接收方进程在接收数据时在自己的用户空间开辟一块内存缓存区，然后内核程序调用 copytouser() 函数将数据从内核缓存区拷贝到接收进程的内存缓存区。这样数据发送方进程和数据接收方进程就完成了一次数据传输，我们称完成了一次进程间通信。如下图：<br><img src="/2020/06/02/Binder通信原理/ipc.jpeg" alt="传统IPC"></p>
+<h1 id="Binder通信"><a href="#Binder通信" class="headerlink" title="Binder通信"></a>Binder通信</h1><p>进程中的用户区域是不能直接和物理设备打交道的，如果想要把磁盘上的数据读取到进程的用户区域，需要两次拷贝（磁盘–&gt;内核空间–&gt;用户空间）；通常在这种场景下 mmap() 就能发挥作用，通过在物理介质和用户空间之间建立映射，减少数据的拷贝次数，用内存读写取代I/O读写，提高文件读取效率。</p>
 <p>一次完整的 Binder IPC 通信过程通常如下：<br>1, 首先 Binder 驱动在内核空间创建一个数据接收缓存区；<br>2, 接着在内核空间开辟一块内核缓存区，建立<strong>内核缓存区</strong>和<strong>数据接收缓存区</strong>之间的映射关系，以及数据接收缓存区和接收进程用户空间地址的映射关系；<br>3, 发送方进程通过系统调用 copyfromuser() 将数据 copy 到内核中的内核缓存区，由于内核缓存区和接收进程的用户空间存在内存映射，因此也就相当于把数据发送到了接收进程的用户空间，这样便完成了一次进程间的通信。<br><img src="http://upload-images.jianshu.io/upload_images/16327616-b105ae3d79bf354e.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="通信过程"></p>
 <h1 id="通信模型"><a href="#通信模型" class="headerlink" title="通信模型"></a>通信模型</h1><p>Binder 是基于 C/S 架构的，由Client、Server、ServiceManager、BinderDriver 四部分组成。其中 Client、Server、ServiceManager 运行在用户空间，BinderDriver 运行在内核空间。其中 ServiceManager 和 BinderDriver 由系统提供，而 Client、Server 由应用程序来实现。Client、Server 和 ServiceManager 均是通过系统调用 open、mmap 和 ioctl 来访问设备文件 /dev/binder，从而实现与 BinderDriver 的交互来间接的实现跨进程通信。<br><img src="http://upload-images.jianshu.io/upload_images/16327616-4d66060a149d9c40.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="通信结构模型"></p>
 <blockquote>
@@ -612,7 +614,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优势"><span class="nav-number">2.</span> <span class="nav-text">优势</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#C-S端"><span class="nav-number">3.</span> <span class="nav-text">C/S端</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Java-framework"><span class="nav-number">3.1.</span> <span class="nav-text">Java framework</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Native-Framework层"><span class="nav-number">3.2.</span> <span class="nav-text">Native Framework层</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#通信"><span class="nav-number">4.</span> <span class="nav-text">通信</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#通信模型"><span class="nav-number">5.</span> <span class="nav-text">通信模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Android-对-Binder-的支持"><span class="nav-number">6.</span> <span class="nav-text">Android 对 Binder 的支持</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优势"><span class="nav-number">2.</span> <span class="nav-text">优势</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#C-S端"><span class="nav-number">3.</span> <span class="nav-text">C/S端</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Java-framework"><span class="nav-number">3.1.</span> <span class="nav-text">Java framework</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Native-Framework层"><span class="nav-number">3.2.</span> <span class="nav-text">Native Framework层</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux-下的传统-IPC-通信原理"><span class="nav-number">4.</span> <span class="nav-text">Linux 下的传统 IPC 通信原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Binder通信"><span class="nav-number">5.</span> <span class="nav-text">Binder通信</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#通信模型"><span class="nav-number">6.</span> <span class="nav-text">通信模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Android-对-Binder-的支持"><span class="nav-number">7.</span> <span class="nav-text">Android 对 Binder 的支持</span></a></li></ol></div>
             
 
           </div>
