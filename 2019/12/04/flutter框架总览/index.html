@@ -97,7 +97,7 @@
 <meta property="og:image" content="https://pacoblack.github.io/2019/12/04/flutter框架总览/flutter8.jpg">
 <meta property="og:image" content="https://pacoblack.github.io/2019/12/04/flutter框架总览/flutter9.jpg">
 <meta property="og:image" content="https://pacoblack.github.io/2019/12/04/flutter框架总览/flutter10.jpg">
-<meta property="og:updated_time" content="2019-12-31T04:08:31.778Z">
+<meta property="og:updated_time" content="2020-07-01T03:13:32.215Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="flutter框架总览">
 <meta name="twitter:description" content="先来看看Flutter的大体构造">
@@ -417,7 +417,7 @@
 <p>接着会到 <strong>GPU 线程</strong> 调用 Skia 做渲染</p>
 <h1 id="原生通信"><a href="#原生通信" class="headerlink" title="原生通信"></a>原生通信</h1><p><img src="/2019/12/04/flutter框架总览/flutter10.jpg" alt="Channel"></p>
 <p>橙色部分代码，写相应平台安卓或者 iOS 定制代码，中间有一套封装好的机制，通过 Dart 代码直接可以调到安卓或者 iOS 代码，且这个过程是异步的。</p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>Flutter 是会根据ios和安卓编译生成不同的执行文件，android是生成一个flutter.jar。<br>以安卓为例，flutter的启动也是依赖原生的application来启动，并同时生成四个线程，四个线程的通信与Android原生的Handler通信类似，也是发送消息，不过在底层就有两个队列的区别，另外线程见与原生不同，不能直接通信，需要一个共享内存，这个共享内存位于flutter 引擎，记录不同线程的 sendPort 和 receivePort，每个port对应一个 MessageHandler，发送的消息会封装成一个MessageTask 发送到另一个Handler，接收端的Handler 把MessageTask 交给 自己的isolate中的 worker 处理。<br>创建完线程需要对UI渲染，GPU发送渲染信号，在UI线程中 从 WidgetTree 到 ElementTree 生成 RenderObject，接着布局、绘制，最终生成 LayerTree，接着给 GPU线程发送消息，进行Skia渲染</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>Flutter 是会根据ios和安卓编译生成不同的执行文件，android是生成一个flutter.jar。<br>以安卓为例，flutter的启动也是依赖原生的application来启动，并同时生成四个线程，四个线程的通信与Android原生的Handler通信类似，也是发送消息，区别在于另外三个线程公用两个队列，另外进程间通信与原生不同，不能直接通信，需要一个共享内存，这个共享内存位于flutter 引擎，记录不同线程的 sendPort 和 receivePort，每个port对应一个 MessageHandler，发送的消息会封装成一个MessageTask 发送到另一个Handler，接收端的Handler 把MessageTask 交给 自己的isolate中的 worker 处理。<br>创建完线程需要对UI渲染，GPU发送渲染信号，在UI线程中 从 WidgetTree 将变化更新到Element中去生成 ElementTree 生成 RenderObject，接着布局、绘制，最终生成 LayerTree，接着给 GPU线程发送消息，进行Skia渲染<br>不同的平台可以通过MethodChannel实现不同平台的原生与flutter通信</p>
 
       
     </div>
