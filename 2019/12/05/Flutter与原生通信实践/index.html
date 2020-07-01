@@ -87,12 +87,12 @@
 <meta property="og:site_name" content="我爱学习">
 <meta property="og:description" content="具体用法">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/4511172-e39a4d2cc43de609.png?imageMogr2/auto-orient/">
-<meta property="og:updated_time" content="2019-12-05T03:48:16.061Z">
+<meta property="og:image" content="https://resource.shangmayuan.com/droxy-blog/2019/11/06/3ba6c6e4f1fe4e0b8e0aabb89a966e53-1.jpg">
+<meta property="og:updated_time" content="2020-07-01T08:38:47.679Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Flutter与原生通信实践">
 <meta name="twitter:description" content="具体用法">
-<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/4511172-e39a4d2cc43de609.png?imageMogr2/auto-orient/">
+<meta name="twitter:image" content="https://resource.shangmayuan.com/droxy-blog/2019/11/06/3ba6c6e4f1fe4e0b8e0aabb89a966e53-1.jpg">
 
 
 
@@ -374,7 +374,7 @@
 <li>应用的Flutter部分通过平台通道（platform channel）将消息发送到其应用程序的所在的宿主（iOS或Android）应用（原生应用）。</li>
 <li>宿主监听平台通道，并接收该消息。然后它会调用该平台的API，并将响应发送回客户端，即应用程序的Flutter部分。</li>
 </ul>
-<p><img src="https://upload-images.jianshu.io/upload_images/4511172-e39a4d2cc43de609.png?imageMogr2/auto-orient/" alt="Flutter通信"></p>
+<p><img src="https://resource.shangmayuan.com/droxy-blog/2019/11/06/3ba6c6e4f1fe4e0b8e0aabb89a966e53-1.jpg" alt="Flutter通信"></p>
 <p>当在Flutter中调用原生方法时，调用信息通过<strong>平台通道</strong>传递到原生，原生收到调用信息后方可执行指定的操作，如需返回数据，则原生会将数据再通过<strong>平台通道</strong>传递给Flutter。值得注意的是<strong>消息传递是异步的</strong>，这确保了用户界面在消息传递时不会被挂起。</p>
 <p>在客户端，<a href="https://docs.flutter.io/flutter/services/MethodChannel-class.html" target="_blank" rel="noopener">MethodChannel API</a> 可以发送与方法调用相对应的消息。 在宿主平台上，<code>MethodChannel</code> 在<a href="https://docs.flutter.io/javadoc/io/flutter/plugin/common/MethodChannel.html" target="_blank" rel="noopener">Android API</a> 和 <a href="https://docs.flutter.io/objcdoc/Classes/FlutterMethodChannel.html" target="_blank" rel="noopener">FlutterMethodChannel iOS API</a>可以接收方法调用并返回结果。这些类可以帮助我们用很少的代码就能开发平台插件。</p>
 <p>#创建实例</p>
