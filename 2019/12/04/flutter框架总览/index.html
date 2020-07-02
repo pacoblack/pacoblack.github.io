@@ -94,11 +94,12 @@
 <meta property="og:image" content="https://pacoblack.github.io/2019/12/04/flutter框架总览/flutter5.jpg">
 <meta property="og:image" content="https://pacoblack.github.io/2019/12/04/flutter框架总览/flutter6.jpg">
 <meta property="og:image" content="https://pacoblack.github.io/2019/12/04/flutter框架总览/isolate.jpg">
+<meta property="og:image" content="https://pacoblack.github.io/2019/12/04/flutter框架总览/sendMsg.jpg">
 <meta property="og:image" content="https://pacoblack.github.io/2019/12/04/flutter框架总览/flutter7.jpg">
 <meta property="og:image" content="https://pacoblack.github.io/2019/12/04/flutter框架总览/flutter8.jpg">
 <meta property="og:image" content="https://pacoblack.github.io/2019/12/04/flutter框架总览/flutter9.jpg">
 <meta property="og:image" content="https://pacoblack.github.io/2019/12/04/flutter框架总览/flutter10.jpg">
-<meta property="og:updated_time" content="2020-07-02T08:35:20.931Z">
+<meta property="og:updated_time" content="2020-07-02T08:49:36.266Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="flutter框架总览">
 <meta name="twitter:description" content="先来看看Flutter的大体构造">
@@ -414,6 +415,13 @@
 <h1 id="Dart虚拟机"><a href="#Dart虚拟机" class="headerlink" title="Dart虚拟机"></a>Dart虚拟机</h1><p><img src="/2019/12/04/flutter框架总览/flutter6.jpg" alt="Dart虚拟机"></p>
 <p>同一个进程里可以有很多 Isolate，两个 Isolate 的堆是不能共享的，但它们也可以交互。在 Dart 虚拟机里面也有一个特殊 Isolate，是运行在 UI 线程中，和 Root Isolate 是运行在一个线程的。当两个 Isolate 要通信，会找一个共同的可访问的内存。</p>
 <p><img src="/2019/12/04/flutter框架总览/isolate.jpg" alt="isolate"></p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//在父Isolate中调用</span></span><br><span class="line">Isolate isolate;</span><br><span class="line">start() <span class="keyword">async</span> &#123;</span><br><span class="line">  ReceivePort receivePort = ReceivePort();</span><br><span class="line">  <span class="comment">//创建子Isolate对象</span></span><br><span class="line">  isolate = <span class="keyword">await</span> Isolate.spawn(getMsg, receivePort.sendPort);</span><br><span class="line">  <span class="comment">//监听子Isolate的返回数据</span></span><br><span class="line">  receivePort.listen((data) &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">'data：<span class="subst">$data</span>'</span>);</span><br><span class="line">    receivePort.close();</span><br><span class="line">    <span class="comment">//关闭Isolate对象</span></span><br><span class="line">    isolate?.kill(priority: Isolate.immediate);</span><br><span class="line">    isolate = <span class="keyword">null</span>;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//子Isolate对象的入口函数，可以在该函数中做耗时操作</span></span><br><span class="line">getMsg(sendPort) =&gt; sendPort.send(<span class="string">"hello"</span>);</span><br></pre></td></tr></table></figure>
+
+<p>创建Isolate时会将其中的MessageHandler对象添加到一个全局的map，（在Dart VM初始化的时候创建，每个元素都是一个Entry对象，在Entry中，有一个MessageHandler对象，一个端口号及该端口的状态。），接着创建 ReceivePort 对象，ReceivePort对应着Dart SDK中的_RawReceivePortImpl对象，SendPort对应着Dart SDK中的_SendPortImpl对象。当ReceivePort创建成功后，就可以通过调用_SendPortImpl的send函数来发送消息。send 发送消息时，将消息加入到了目标Isolate的MessageHandler中，在PostMessage中主要是做了以下操作</p>
+<ol>
+<li>根据消息级别将消息加入到不同的队列中。主要有OOB消息及普通消息两个级别，OOB消息在队列oob_queue_中，普通消息在队列queue_中。OOB消息级别高于普通消息，会立即处理。</li>
+<li>将一个消息处理任务MessageHandlerTask加入到线程中。<br><img src="/2019/12/04/flutter框架总览/sendMsg.jpg" alt="过程图"><br><a href="https://juejin.im/post/5e149a7df265da5d3b32e167#heading-6" target="_blank" rel="noopener">原文</a></li>
+</ol>
 <p>Isolate1 和 Isolate2 通信是在 Isolate2 里创一个 ReceivePort，在 Isolate1 中调用其对应的 SendPort 的 send 方法，在引擎 PortMap 里面有映射表，每一个 port 端口对应一个相应 Isolate 的 MessageHandler，该 Handler 里面有两个队列，一个是普通的消息队列，一个是 OOB 高优先级消息，根据优先级把它放到相应消息队列。再把这个 <strong>事件封装成一个 MessageTask，抛到另外一个 Isolate 里去</strong>，我们一般创建一个 Isolate，它里面是一个 worker 线程，worker 线程放入一个新的 Task，它就会最终去执行这个 Task</p>
 <h1 id="Widget-结构"><a href="#Widget-结构" class="headerlink" title="Widget 结构"></a>Widget 结构</h1><p><img src="/2019/12/04/flutter框架总览/flutter7.jpg" alt="Widget"></p>
 <p>Widget 可以是一行文本、一张图片、一个颜色，所有都是 Widget。最大有两类，一个是无状态的 Widget，一个是有状态的。无状态顾名思义是一类 StatelessWidget，一旦创建状态是不可改变的；第二类 StatefulWidget 是状态可以改变的<br><img src="/2019/12/04/flutter框架总览/flutter8.jpg" alt="Widget渲染"></p>
