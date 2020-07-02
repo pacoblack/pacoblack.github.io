@@ -97,7 +97,7 @@
 <meta property="og:image" content="https://pacoblack.github.io/2019/12/04/flutter框架总览/flutter8.jpg">
 <meta property="og:image" content="https://pacoblack.github.io/2019/12/04/flutter框架总览/flutter9.jpg">
 <meta property="og:image" content="https://pacoblack.github.io/2019/12/04/flutter框架总览/flutter10.jpg">
-<meta property="og:updated_time" content="2020-07-01T03:13:32.215Z">
+<meta property="og:updated_time" content="2020-07-02T08:15:23.982Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="flutter框架总览">
 <meta name="twitter:description" content="先来看看Flutter的大体构造">
@@ -380,6 +380,9 @@
 <p>安卓原生框架 APP 调到大家熟悉的安卓 Framework，Framework 再调到 Skia，Skia 再最终渲染调到 GPU。对于 Flutter 中间调的是一个 Dart Framework，再调到 Skia，用 Flutter 平台和原生很接近</p>
 <p><img src="/2019/12/04/flutter框架总览/flutter2.jpg" alt="Engine"></p>
 <p>上面是用 Dart 写的 APP，下面有 DartFramework，Framework 里有安卓和 iOS 的主体，里面有很多动画等等。再往下会调到引擎，引擎里有消息、PlatformChannel、Dart VM 等，引擎层再到平台。</p>
+<blockquote>
+<p>一个FlutterView对应一个FlutterEngine实例；<br>一个FlutterEngine实例对应一个Dart Isolate实例；<br>同一个进程只有且仅有一个Dart VM虚拟机；<br>一个Dart VM上会存在多个Dart Isolate实例，Isolate是dart代码的执行环境；</p>
+</blockquote>
 <h1 id="进程框架"><a href="#进程框架" class="headerlink" title="进程框架"></a>进程框架</h1><p><img src="/2019/12/04/flutter框架总览/flutter3.jpg" alt="启动框架"></p>
 <p>Flutter 有 Flutter 的 Application 和 Flutter 的 Activity。在 Flutter Application 中就会把 Dart 写的代码生成一个产物，把它加载起来，我们的 Flutter Activity 过程中会拉起我们的引擎。</p>
 <p>引擎中，Flutter 四个核心线程：平台线程、UI 线程、GPU 线程、IO 线程，它们各有分工：</p>
