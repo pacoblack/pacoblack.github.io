@@ -87,10 +87,12 @@
 <meta property="og:site_name" content="我爱学习">
 <meta property="og:description" content="AQS 全称是 AbstractQueuedSynchronizer，顾名思义，是一个用来构建锁和同步器的框架，它底层用了 CAS 技术来保证操作的原子性，同时利用 FIFO 队列实现线程间的锁竞争，将基础的同步相关抽象细节放在 AQS，这也是 ReentrantLock、CountDownLatch 等同步工具实现同步的底层实现机制。它能够成为实现大部分同步需求的基础，也是 J.U.C 并发包同">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-09-29T09:15:17.170Z">
+<meta property="og:image" content="https://pacoblack.github.io/2020/09/29/AQS源码分析/aqs.jpg">
+<meta property="og:updated_time" content="2020-09-29T09:19:10.422Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="AQS源码分析">
 <meta name="twitter:description" content="AQS 全称是 AbstractQueuedSynchronizer，顾名思义，是一个用来构建锁和同步器的框架，它底层用了 CAS 技术来保证操作的原子性，同时利用 FIFO 队列实现线程间的锁竞争，将基础的同步相关抽象细节放在 AQS，这也是 ReentrantLock、CountDownLatch 等同步工具实现同步的底层实现机制。它能够成为实现大部分同步需求的基础，也是 J.U.C 并发包同">
+<meta name="twitter:image" content="https://pacoblack.github.io/2020/09/29/AQS源码分析/aqs.jpg">
 
 
 
@@ -435,7 +437,7 @@
 <h3 id="挂起当前节点"><a href="#挂起当前节点" class="headerlink" title="挂起当前节点"></a>挂起当前节点</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">parkAndCheckInterrupt</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  LockSupport.park(<span class="keyword">this</span>);</span><br><span class="line">  <span class="keyword">return</span> Thread.interrupted();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>LockSupport 是用来创建锁和其他同步类的基本线程阻塞原语。LockSupport 提供 park() 和 unpark() 方法实现阻塞线程和解除线程阻塞。release 释放锁方法逻辑会调用 LockSupport.unPark 方法来唤醒后继节点。</p>
-<p>获取独占锁流程图：<br>[!aqs.jpg]</p>
+<p>获取独占锁流程图：<br><img src="/2020/09/29/AQS源码分析/aqs.jpg" alt="独占锁"></p>
 
       
     </div>
