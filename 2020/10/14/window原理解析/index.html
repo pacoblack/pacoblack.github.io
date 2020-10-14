@@ -79,23 +79,23 @@
 
 
 
-<meta name="description" content="Touch简介 我们已知touch 事件起始是 Activity -&amp;gt; PhoneWindow -&amp;gt; DecorView -&amp;gt; (TitleView + ContentView) 传递的，但是这个touch事件的源头是哪里呢，是从Window中获取的 这里我们只关注Window相关。 Window介绍 WindowManagerAndroid中基本上所有的View都是通过Win">
+<meta name="description" content="分析下window原理">
 <meta name="keywords" content="android">
 <meta property="og:type" content="article">
 <meta property="og:title" content="window原理解析">
 <meta property="og:url" content="https://pacoblack.github.io/2020/10/14/window原理解析/index.html">
 <meta property="og:site_name" content="我爱学习">
-<meta property="og:description" content="Touch简介 我们已知touch 事件起始是 Activity -&amp;gt; PhoneWindow -&amp;gt; DecorView -&amp;gt; (TitleView + ContentView) 传递的，但是这个touch事件的源头是哪里呢，是从Window中获取的 这里我们只关注Window相关。 Window介绍 WindowManagerAndroid中基本上所有的View都是通过Win">
+<meta property="og:description" content="分析下window原理">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/16327616-bd8c6d51bfb58c44.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/16327616-edfd4d18bd926208?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/16327616-4067cf7cda3d468a?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/16327616-090dcf85dea2d9bd?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/944365-6ec2e864af7ffd37.png">
-<meta property="og:updated_time" content="2020-10-14T10:16:33.949Z">
+<meta property="og:updated_time" content="2020-10-14T10:31:17.113Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="window原理解析">
-<meta name="twitter:description" content="Touch简介 我们已知touch 事件起始是 Activity -&amp;gt; PhoneWindow -&amp;gt; DecorView -&amp;gt; (TitleView + ContentView) 传递的，但是这个touch事件的源头是哪里呢，是从Window中获取的 这里我们只关注Window相关。 Window介绍 WindowManagerAndroid中基本上所有的View都是通过Win">
+<meta name="twitter:description" content="分析下window原理">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/16327616-bd8c6d51bfb58c44.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
@@ -358,7 +358,8 @@
       
 
       
-        <a id="more"></a>
+        <p>分析下window原理</p>
+<a id="more"></a>
 <h1 id="Touch简介"><a href="#Touch简介" class="headerlink" title="Touch简介"></a>Touch简介</h1><p><img src="https://upload-images.jianshu.io/upload_images/16327616-bd8c6d51bfb58c44.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Activity与Window.jpg"></p>
 <p>我们已知<a href="https://www.jianshu.com/p/1c127769c9ea" target="_blank" rel="noopener">touch 事件起始</a>是 Activity -&gt; PhoneWindow -&gt; DecorView -&gt; (TitleView + ContentView) 传递的，但是这个touch事件的源头是哪里呢，是从Window中获取的</p>
 <p>这里我们只关注Window相关。</p>
