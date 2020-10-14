@@ -92,7 +92,8 @@
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/16327616-4067cf7cda3d468a?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/16327616-090dcf85dea2d9bd?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/944365-6ec2e864af7ffd37.png">
-<meta property="og:updated_time" content="2020-10-14T10:31:17.113Z">
+<meta property="og:image" content="http://gityuan.com/images/touch/touch1.jpg">
+<meta property="og:updated_time" content="2020-10-14T11:25:22.155Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="window原理解析">
 <meta name="twitter:description" content="分析下window原理">
@@ -470,7 +471,7 @@
 
 <h1 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h1><p>任何 View 都是附属在一个 Window 上面的，Window 表示一个窗口的概念，也是一个抽象的概念，Window 并不是实际存在的，它是以 View 的形式存在的。WindowManager 是外界也就是我们访问 Window 的入口，Window 的具体实现位于 WindowManagerService 中，WindowManagerService 和 WindowManager 的交互是一个 IPC 过程。</p>
 <h1 id="其他问题"><a href="#其他问题" class="headerlink" title="其他问题"></a>其他问题</h1><p>这里顺便解决一个疑惑，为什么在 onCreate 中创建的子线程更新UI不会崩溃？<br>答：我们知道android重绘有两个重要的ViewRootImpl方法，一是 requestLayout，一个是invalidate，（requestLayout 只会调用 onMeasure、onLayout，而 invalidate 会调用 onDraw），在 ViewRootImpl.requestLayout 中首先执行的就是 checkThread 方法，也就是用来抛出 CalledFromWrongThreadException 异常的，根据上面的总结我们知道，ViewRootImpl 是在 onResume 的时候创建的，在 onCreate 的时候还没有创建，也就没有办法调用 checkThread</p>
-<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><p><img src="https://upload-images.jianshu.io/upload_images/944365-6ec2e864af7ffd37.png" alt="touch事件传递处理"></p>
+<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><p><img src="https://upload-images.jianshu.io/upload_images/944365-6ec2e864af7ffd37.png" alt="touch事件传递处理"><br><img src="http://gityuan.com/images/touch/touch1.jpg" alt="touch"></p>
 
       
     </div>
