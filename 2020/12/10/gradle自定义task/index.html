@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Flutter,笔记,">
+  <meta name="keywords" content="android,">
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="引入Flutter过程">
-<meta name="keywords" content="Flutter,笔记">
+<meta name="description" content="我们已经了解了插件和gradle执行流程，现在我们学习下自定义task">
+<meta name="keywords" content="android">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Flutter引入笔记">
-<meta property="og:url" content="https://pacoblack.github.io/2019/12/17/Flutter引入笔记/index.html">
+<meta property="og:title" content="gradle自定义task">
+<meta property="og:url" content="https://pacoblack.github.io/2020/12/10/gradle自定义task/index.html">
 <meta property="og:site_name" content="我爱学习">
-<meta property="og:description" content="引入Flutter过程">
+<meta property="og:description" content="我们已经了解了插件和gradle执行流程，现在我们学习下自定义task">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-12-17T09:13:40.153Z">
+<meta property="og:updated_time" content="2020-12-10T12:36:55.632Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Flutter引入笔记">
-<meta name="twitter:description" content="引入Flutter过程">
+<meta name="twitter:title" content="gradle自定义task">
+<meta name="twitter:description" content="我们已经了解了插件和gradle执行流程，现在我们学习下自定义task">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="https://pacoblack.github.io/2019/12/17/Flutter引入笔记/">
+  <link rel="canonical" href="https://pacoblack.github.io/2020/12/10/gradle自定义task/">
 
 
 
 
 
-  <title>Flutter引入笔记 | 我爱学习</title>
+  <title>gradle自定义task | 我爱学习</title>
   
 
 
@@ -263,7 +263,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://pacoblack.github.io/2019/12/17/Flutter引入笔记/">
+    <link itemprop="mainEntityOfPage" href="https://pacoblack.github.io/2020/12/10/gradle自定义task/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="pacoblack">
@@ -280,7 +280,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Flutter引入笔记</h1>
+          <h1 class="post-title" itemprop="name headline">gradle自定义task</h1>
         
 
         <div class="post-meta">
@@ -292,8 +292,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-17T16:26:31+08:00">
-                2019-12-17
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-10T20:27:48+08:00">
+                2020-12-10
               </time>
             
 
@@ -315,19 +315,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Flutter/" itemprop="url" rel="index">
-                    <span itemprop="name">Flutter</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Flutter/笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">笔记</span>
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
                   </a>
                 </span>
 
@@ -363,27 +352,30 @@
       
 
       
-        <p>引入Flutter过程</p>
+        <p>我们已经了解了插件和gradle执行流程，现在我们学习下自定义task</p>
 <a id="more"></a>
-
-<h1 id="创建-Flutter-Module"><a href="#创建-Flutter-Module" class="headerlink" title="创建 Flutter Module"></a>创建 Flutter Module</h1><ol>
-<li><p>创建模块</p>
-<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flutter create -t <span class="class"><span class="keyword">module</span> <span class="title">my_flutter</span></span></span><br></pre></td></tr></table></figure>
+<p>以下过程没有验证过，做了解用</p>
+<ol>
+<li><p>创建module，修改build.gradle</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: <span class="string">'java'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">repositories</span> &#123;</span><br><span class="line">	mavenCentral()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">   <span class="keyword">compile</span> gradleApi()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">jar &#123;</span><br><span class="line">	baseName = <span class="string">'testSelfTask'</span></span><br><span class="line">	version =  <span class="string">'1.0'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>引入依赖</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// settings.gradle</span></span><br><span class="line">include <span class="string">':app'</span></span><br><span class="line"><span class="comment">//加入下面配置</span></span><br><span class="line">setBinding(<span class="keyword">new</span> Binding([<span class="string">gradle:</span> <span class="keyword">this</span>]))</span><br><span class="line">evaluate(<span class="keyword">new</span> File(</span><br><span class="line">        settingsDir.parentFile,</span><br><span class="line">        <span class="string">'my_flutter/.android/include_flutter.groovy'</span></span><br><span class="line">))</span><br></pre></td></tr></table></figure>
+<li><p>编写task SayHello.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.gradle.api.DefaultTask;</span><br><span class="line"><span class="keyword">import</span> org.gradle.api.tasks.Optional;</span><br><span class="line"><span class="keyword">import</span> org.gradle.api.tasks.TaskAction;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SayHello</span> <span class="keyword">extends</span> <span class="title">DefaultTask</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Optional</span></span><br><span class="line">	<span class="keyword">private</span> String msg;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@TaskAction</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">say</span><span class="params">()</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"say "</span> + msg);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getMsg</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> msg;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMsg</span><span class="params">(String msg)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.msg = msg;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>生成jar包 <code>gradle build</code></p>
+</li>
+<li><p>引入task，修改build.gradle</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">buildscript</span> &#123;</span><br><span class="line">	<span class="keyword">repositories</span> &#123;</span><br><span class="line">    <span class="comment">// jar包路径</span></span><br><span class="line">		<span class="keyword">flatDir</span>(dir:<span class="string">"自定义任务jar的全路径"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">dependencies</span> &#123;</span><br><span class="line">    <span class="comment">// jar包版本信息</span></span><br><span class="line">		<span class="keyword">classpath</span> <span class="string">':testSelfTask:1.0'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">apply plugin: <span class="string">'java'</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用task</span></span><br><span class="line"><span class="keyword">task</span> say(type: c.SayHello)&#123;</span><br><span class="line">	msg <span class="string">"java !"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 </li>
 </ol>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//build.gradle</span></span><br><span class="line">...</span><br><span class="line">dependencies &#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// 加入下面配置</span></span><br><span class="line">    implementation project(<span class="string">':flutter'</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用task <code>gradle say</code></p>
+<ol start="5">
+<li>在自定义插件中使用<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestPlugin</span> <span class="keyword">implements</span> <span class="title">Plugin</span>&lt;<span class="title">Project</span>&gt; </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">apply</span><span class="params">(Project project)</span> </span>&#123;</span><br><span class="line">        project.getTasks().create(<span class="string">"hello"</span>, MyTest.class, <span class="keyword">new</span> Action&lt;MyTest&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(MyTest myTest)</span> </span>&#123;</span><br><span class="line">                myTest.str = <span class="string">"aaaaaaaaaaaaaaaa"</span>;</span><br><span class="line">                myTest.say();</span><br><span class="line">                myTest.str = <span class="string">"hello"</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h1 id="settings-gradle-设置不识别"><a href="#settings-gradle-设置不识别" class="headerlink" title="settings.gradle 设置不识别"></a>settings.gradle 设置不识别</h1><p>设置完上面后会出现错误<br><code>A problem occurred evaluating settings &#39;xxx&#39;. (~/flutter_module/.android/include_flutter.groovy)</code></p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">setBinding(<span class="keyword">new</span> Binding([<span class="string">gradle:</span> <span class="keyword">this</span>]))</span><br><span class="line">evaluate(<span class="keyword">new</span> File(</span><br><span class="line">        settingsDir,                         </span><br><span class="line">        <span class="string">'flutter_module/.android/include_flutter.groovy'</span></span><br><span class="line">))</span><br></pre></td></tr></table></figure>
-
-<h1 id="appProject为空"><a href="#appProject为空" class="headerlink" title="appProject为空"></a>appProject为空</h1><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">What went wrong:</span><br><span class="line">A problem occurred configuring root <span class="keyword">project</span> <span class="string">'xxxx'</span>.</span><br><span class="line">&gt; A problem occurred configuring <span class="keyword">project</span> <span class="string">':flutter'</span>.</span><br><span class="line">   &gt; Failed to notify <span class="keyword">project</span> evaluation listener.</span><br><span class="line">      &gt; assert appProject != <span class="keyword">null</span></span><br><span class="line">               |          |</span><br><span class="line">               <span class="keyword">null</span>       <span class="keyword">false</span></span><br></pre></td></tr></table></figure>
-
-<p>这个时候要注意，请把你的主module 改名为 app</p>
-<p><strong>大体过程：关闭project，修改目录，删除x.iml 文件，重新打开工程， 即可</strong></p>
+</li>
+</ol>
+<p>运行如下命令使用<code>gradlew hello</code></p>
 
       
     </div>
@@ -401,9 +393,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Flutter/" rel="tag"># Flutter</a>
-          
-            <a href="/tags/笔记/" rel="tag"># 笔记</a>
+            <a href="/tags/android/" rel="tag"># android</a>
           
         </div>
       
@@ -416,8 +406,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/12/13/Flutter与原生通信之Java-Flutter/" rel="next" title="”Flutter与原生通信之Java-Flutter“">
-                <i class="fa fa-chevron-left"></i> ”Flutter与原生通信之Java-Flutter“
+              <a href="/2020/12/10/gradle-流程初览/" rel="next" title="gradle 流程初览">
+                <i class="fa fa-chevron-left"></i> gradle 流程初览
               </a>
             
           </div>
@@ -426,8 +416,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/06/02/epoll原理介绍/" rel="prev" title="epoll原理介绍">
-                epoll原理介绍 <i class="fa fa-chevron-right"></i>
+              <a href="/2020/12/10/gradle的构建生命周期和hook技术/" rel="prev" title="gradle的构建生命周期和hook技术">
+                gradle的构建生命周期和hook技术 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -480,17 +470,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -580,22 +561,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#创建-Flutter-Module"><span class="nav-number">1.</span> <span class="nav-text">创建 Flutter Module</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#settings-gradle-设置不识别"><span class="nav-number">2.</span> <span class="nav-text">settings.gradle 设置不识别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#appProject为空"><span class="nav-number">3.</span> <span class="nav-text">appProject为空</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
