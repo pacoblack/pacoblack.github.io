@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="我爱学习">
 <meta property="og:description" content="参考来源：https://www.cnblogs.com/hello-shf/p/12183263.html上一篇我们介绍了hashmap相关，其中hashmap有个明显的缺点就是不支持并发，在resize时会丢数据（JDK8），而HashTable虽然保证了线程安全性，但是其是通过给每个方法加Synchronized关键字达到的同步目的。但是都知道Synchronized在竞争激烈的多线程并发环">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://img2018.cnblogs.com/i-beta/1635748/202001/1635748-20200112144800523-38023773.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/1635748-20200112144800523-38023773.png">
 <meta property="og:image" content="https://img2018.cnblogs.com/i-beta/1635748/202001/1635748-20200112145618510-591452614.png">
 <meta property="og:image" content="https://img2018.cnblogs.com/i-beta/1635748/202001/1635748-20200113164216447-1278369367.png">
 <meta property="og:image" content="https://img2018.cnblogs.com/i-beta/1635748/202001/1635748-20200113164252551-1234632431.png">
@@ -96,11 +96,11 @@
 <meta property="og:image" content="https://img2018.cnblogs.com/i-beta/1635748/202001/1635748-20200114153332267-1482925142.png">
 <meta property="og:image" content="https://img2018.cnblogs.com/i-beta/1635748/202001/1635748-20200114153435438-1108705553.png">
 <meta property="og:image" content="https://img2018.cnblogs.com/i-beta/1635748/202001/1635748-20200114153512551-1590215923.png">
-<meta property="og:updated_time" content="2021-02-19T11:15:57.055Z">
+<meta property="og:updated_time" content="2021-02-20T03:57:55.310Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ConcurrentHahsMap原理">
 <meta name="twitter:description" content="参考来源：https://www.cnblogs.com/hello-shf/p/12183263.html上一篇我们介绍了hashmap相关，其中hashmap有个明显的缺点就是不支持并发，在resize时会丢数据（JDK8），而HashTable虽然保证了线程安全性，但是其是通过给每个方法加Synchronized关键字达到的同步目的。但是都知道Synchronized在竞争激烈的多线程并发环">
-<meta name="twitter:image" content="https://img2018.cnblogs.com/i-beta/1635748/202001/1635748-20200112144800523-38023773.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/1635748-20200112144800523-38023773.png">
 
 
 
@@ -364,7 +364,7 @@
       
         <p>参考来源：<a href="https://www.cnblogs.com/hello-shf/p/12183263.html" target="_blank" rel="noopener">https://www.cnblogs.com/hello-shf/p/12183263.html</a><br>上一篇我们介绍了hashmap相关，其中hashmap有个明显的缺点就是不支持并发，在resize时会丢数据（JDK8），而HashTable虽然保证了线程安全性，但是其是通过给每个方法加Synchronized关键字达到的同步目的。但是都知道Synchronized在竞争激烈的多线程并发环境中，在性能上的表现是非常不如人意的。如果要并发的话就要用的ConcurrentHashMap</p>
 <a id="more"></a>
-<h1 id="初步认识"><a href="#初步认识" class="headerlink" title="初步认识"></a>初步认识</h1><p>在Jdk8中的数据结构<br><img src="https://img2018.cnblogs.com/i-beta/1635748/202001/1635748-20200112144800523-38023773.png" alt><br>和HashMap的结构是一样的，没错在数据结构层面，ConcurrentHashMap和HashMap是完全一样的。</p>
+<h1 id="初步认识"><a href="#初步认识" class="headerlink" title="初步认识"></a>初步认识</h1><p>在Jdk8中的数据结构<br><img src="https://raw.githubusercontent.com/pacoblack/BlogImages/master/1635748-20200112144800523-38023773.png" alt><br>和HashMap的结构是一样的，没错在数据结构层面，ConcurrentHashMap和HashMap是完全一样的。</p>
 <h1 id="之前的结构"><a href="#之前的结构" class="headerlink" title="之前的结构"></a>之前的结构</h1><p>在JDK8之前HashMap没有引入红黑树，同样的ConcurrentHashMap也没有引入红黑树。而且ConcurrentHashMap采用的是分段数组的底层数据结构。<br>如下图所示<br><img src="https://img2018.cnblogs.com/i-beta/1635748/202001/1635748-20200112145618510-591452614.png" alt><br>JDK7中为了提高并发性能采用了这种分段的设计。所以在JDK7中ConcurrentHashMap采用的是分段锁，也就是在每个Segment上加<code>ReentrantLock</code>(<em>ReetrantLoack是比Synchronized更细粒度的一种锁。使用得当的话其性能要比Synchronized表现要好，但是如果实现不得当容易造成死锁</em>)实现的线程安全线。</p>
 <p>这种基于Segment和ReetrantLock的设计相对HashTable来说大大提高了并发性能。也就是说多个线程可以并发的操作多个Segment，而HashTable是通过给每个方法加Synchronized即将多线程串行而实现的。所以在一定程度上提高了并发性能。但是这种性能的提升表现相对JDK8来说显得不值一提。</p>
 <p>JDK8中ConcurrentHashMap采用的是CAS+Synchronized锁并且锁粒度是每一个桶。简单来说JDK7中锁的粒度是Segment，JDK8锁粒度细化到了桶级别。可想而知锁粒度是大大提到了。</p>
