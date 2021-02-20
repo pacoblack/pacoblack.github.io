@@ -88,9 +88,9 @@
 <meta property="og:description" content="现在我们来看看Activity的启动流程">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://gityuan.com/images/activity/start_activity_process.jpg">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/16327616-5a67121fb3c8b87e.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/activity/activity1.jpg">
 <meta property="og:image" content="https://pacoblack.github.io/2020/06/04/Activity启动流程/startActivity.jpg">
-<meta property="og:updated_time" content="2020-10-14T09:18:46.375Z">
+<meta property="og:updated_time" content="2021-02-20T10:40:45.006Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Activity启动流程">
 <meta name="twitter:description" content="现在我们来看看Activity的启动流程">
@@ -369,7 +369,7 @@
 <li>App进程的binder线程（ApplicationThread）在收到请求后，通过 <strong>handler</strong> 向主线程发送LAUNCH_ACTIVITY消息；</li>
 <li>主线程在收到Message后，通过发射机制创建目标Activity，并回调Activity.onCreate()等方法</li>
 </ol>
-<h1 id="具体流程"><a href="#具体流程" class="headerlink" title="具体流程"></a>具体流程</h1><p><img src="https://upload-images.jianshu.io/upload_images/16327616-5a67121fb3c8b87e.jpg" alt="调用流程图"></p>
+<h1 id="具体流程"><a href="#具体流程" class="headerlink" title="具体流程"></a>具体流程</h1><p><img src="https://raw.githubusercontent.com/pacoblack/BlogImages/master/activity/activity1.jpg" alt="调用流程图"></p>
 <p><img src="//pacoblack.github.io/2020/06/04/Activity启动流程/startActivity.jpg" alt="UML图"></p>
 
       
