@@ -88,7 +88,7 @@
 <meta property="og:description" content="对之前遇到的优化进行一个小结">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/optm/optm1.jpg">
-<meta property="og:updated_time" content="2021-02-23T08:34:54.166Z">
+<meta property="og:updated_time" content="2021-02-23T11:19:32.688Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android优化总结">
 <meta name="twitter:description" content="对之前遇到的优化进行一个小结">
@@ -408,41 +408,8 @@
 <h2 id="优化方案"><a href="#优化方案" class="headerlink" title="优化方案"></a>优化方案</h2><p>懒加载、线程池、hook线程构建、预加载优化（替换ClassLOader，打印加载时间）、webView启动优化、页面数据预加载、启动阶段不启动子进程、闪屏页优化、IO优化、定义task绘制有向无环图</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//hook线程的构造函数</span></span><br><span class="line">DexposedBridge.hookAllConstructors(Thread.class, <span class="keyword">new</span> XC_MethodHook() &#123;</span><br><span class="line">    <span class="meta">@Override</span> <span class="keyword">protected</span> <span class="keyword">void</span> afterHookedMethod（MethodHookParam param）<span class="keyword">throws</span> Throwable &#123;                         </span><br><span class="line">        <span class="keyword">super</span>.afterHookedMethod(param);</span><br><span class="line">        Thread thread = (Thread) param.thisObject;</span><br><span class="line">        LogUtils.i(<span class="string">"stack "</span> + Log.getStackTraceString(<span class="keyword">new</span> Throwable());</span><br><span class="line">    &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
 
-<h1 id="稳定性优化"><a href="#稳定性优化" class="headerlink" title="稳定性优化"></a>稳定性优化</h1><h2 id="native崩溃信号"><a href="#native崩溃信号" class="headerlink" title="native崩溃信号"></a>native崩溃信号</h2><blockquote>
-<p>#define SIGHUP 1  // 终端连接结束时发出(不管正常或非正常)</p>
-</blockquote>
-<p>#define SIGINT 2  // 程序终止(例如Ctrl-C)</p>
-<p>#define SIGQUIT 3 // 程序退出(Ctrl-)</p>
-<p>#define SIGILL 4 // 执行了非法指令，或者试图执行数据段，堆栈溢出</p>
-<p>#define SIGTRAP 5 // 断点时产生，由debugger使用</p>
-<p>#define SIGABRT 6 // 调用abort函数生成的信号，表示程序异常</p>
-<p>#define SIGIOT 6 // 同上，更全，IO异常也会发出</p>
-<p>#define SIGBUS 7 // 非法地址，包括内存地址对齐出错，比如访问一个4字节的整数, 但其地址不是4的倍数</p>
-<p>#define SIGFPE 8 // 计算错误，比如除0、溢出</p>
-<p>#define SIGKILL 9 // 强制结束程序，具有最高优先级，本信号不能被阻塞、处理和忽略</p>
-<p>#define SIGUSR1 10 // 未使用，保留</p>
-<p>#define SIGSEGV 11 // 非法内存操作，与 SIGBUS不同，他是对合法地址的非法访问，    比如访问没有读权限的内存，向没有写权限的地址写数据</p>
-<p>#define SIGUSR2 12 // 未使用，保留</p>
-<p>#define SIGPIPE 13 // 管道破裂，通常在进程间通信产生</p>
-<p>#define SIGALRM 14 // 定时信号,</p>
-<p>#define SIGTERM 15 // 结束程序，类似温和的 SIGKILL，可被阻塞和处理。通常程序如    果终止不了，才会尝试SIGKILL</p>
-<p>#define SIGSTKFLT 16  // 协处理器堆栈错误</p>
-<p>#define SIGCHLD 17 // 子进程结束时, 父进程会收到这个信号。</p>
-<p>#define SIGCONT 18 // 让一个停止的进程继续执行</p>
-<p>#define SIGSTOP 19 // 停止进程,本信号不能被阻塞,处理或忽略</p>
-<p>#define SIGTSTP 20 // 停止进程,但该信号可以被处理和忽略</p>
-<p>#define SIGTTIN 21 // 当后台作业要从用户终端读数据时, 该作业中的所有进程会收到SIGTTIN信号</p>
-<p>#define SIGTTOU 22 // 类似于SIGTTIN, 但在写终端时收到</p>
-<p>#define SIGURG 23 // 有紧急数据或out-of-band数据到达socket时产生</p>
-<p>#define SIGXCPU 24 // 超过CPU时间资源限制时发出</p>
-<p>#define SIGXFSZ 25 // 当进程企图扩大文件以至于超过文件大小资源限制</p>
-<p>#define SIGVTALRM 26 // 虚拟时钟信号. 类似于SIGALRM,     但是计算的是该进程占用的CPU时间.</p>
-<p>#define SIGPROF 27 // 类似于SIGALRM/SIGVTALRM, 但包括该进程用的CPU时间以及系统调用的时间</p>
-<p>#define SIGWINCH 28 // 窗口大小改变时发出</p>
-<p>#define SIGIO 29 // 文件描述符准备就绪, 可以开始进行输入/输出操作</p>
-<p>#define SIGPOLL SIGIO // 同上，别称</p>
-<p>#define SIGPWR 30 // 电源异常</p>
-<p>#define SIGSYS 31 // 非法的系统调用</p>
+<h1 id="稳定性优化"><a href="#稳定性优化" class="headerlink" title="稳定性优化"></a>稳定性优化</h1><h2 id="native崩溃信号"><a href="#native崩溃信号" class="headerlink" title="native崩溃信号"></a>native崩溃信号</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">#define SIGHUP 1  // 终端连接结束时发出(不管正常或非正常)</span><br><span class="line">#define SIGINT 2  // 程序终止(例如Ctrl-C)</span><br><span class="line">#define SIGQUIT 3 // 程序退出(Ctrl-\)</span><br><span class="line">#define SIGILL 4 // 执行了非法指令，或者试图执行数据段，堆栈溢出</span><br><span class="line">#define SIGTRAP 5 // 断点时产生，由debugger使用</span><br><span class="line">#define SIGABRT 6 // 调用abort函数生成的信号，表示程序异常</span><br><span class="line">#define SIGIOT 6 // 同上，更全，IO异常也会发出</span><br><span class="line">#define SIGBUS 7 // 非法地址，包括内存地址对齐出错，比如访问一个4字节的整数, 但其地址不是4的倍数</span><br><span class="line">#define SIGFPE 8 // 计算错误，比如除0、溢出</span><br><span class="line">#define SIGKILL 9 // 强制结束程序，具有最高优先级，本信号不能被阻塞、处理和忽略</span><br><span class="line">#define SIGUSR1 10 // 未使用，保留</span><br><span class="line">#define SIGSEGV 11 // 非法内存操作，与 SIGBUS不同，他是对合法地址的非法访问，    比如访问没有读权限的内存，向没有写权限的地址写数据</span><br><span class="line">#define SIGUSR2 12 // 未使用，保留</span><br><span class="line">#define SIGPIPE 13 // 管道破裂，通常在进程间通信产生</span><br><span class="line">#define SIGALRM 14 // 定时信号,</span><br><span class="line">#define SIGTERM 15 // 结束程序，类似温和的 SIGKILL，可被阻塞和处理。通常程序如    果终止不了，才会尝试SIGKILL</span><br><span class="line">#define SIGSTKFLT 16  // 协处理器堆栈错误</span><br><span class="line">#define SIGCHLD 17 // 子进程结束时, 父进程会收到这个信号。</span><br><span class="line">#define SIGCONT 18 // 让一个停止的进程继续执行</span><br><span class="line">#define SIGSTOP 19 // 停止进程,本信号不能被阻塞,处理或忽略</span><br><span class="line">#define SIGTSTP 20 // 停止进程,但该信号可以被处理和忽略</span><br><span class="line">#define SIGTTIN 21 // 当后台作业要从用户终端读数据时, 该作业中的所有进程会收到SIGTTIN信号</span><br><span class="line">#define SIGTTOU 22 // 类似于SIGTTIN, 但在写终端时收到</span><br><span class="line">#define SIGURG 23 // 有紧急数据或out-of-band数据到达socket时产生</span><br><span class="line">#define SIGXCPU 24 // 超过CPU时间资源限制时发出</span><br><span class="line">#define SIGXFSZ 25 // 当进程企图扩大文件以至于超过文件大小资源限制</span><br><span class="line">#define SIGVTALRM 26 // 虚拟时钟信号. 类似于SIGALRM,     但是计算的是该进程占用的CPU时间.</span><br><span class="line">#define SIGPROF 27 // 类似于SIGALRM/SIGVTALRM, 但包括该进程用的CPU时间以及系统调用的时间</span><br><span class="line">#define SIGWINCH 28 // 窗口大小改变时发出</span><br><span class="line">#define SIGIO 29 // 文件描述符准备就绪, 可以开始进行输入/输出操作</span><br><span class="line">#define SIGPOLL SIGIO // 同上，别称</span><br><span class="line">#define SIGPWR 30 // 电源异常</span><br><span class="line">#define SIGSYS 31 // 非法的系统调用</span><br></pre></td></tr></table></figure>
+
 
       
     </div>
