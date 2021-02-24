@@ -87,17 +87,18 @@
 <meta property="og:site_name" content="我爱学习">
 <meta property="og:description" content="分析下window原理">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/16327616-bd8c6d51bfb58c44.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/16327616-edfd4d18bd926208?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/16327616-4067cf7cda3d468a?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/16327616-090dcf85dea2d9bd?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/944365-6ec2e864af7ffd37.png">
-<meta property="og:image" content="http://gityuan.com/images/touch/touch1.jpg">
-<meta property="og:updated_time" content="2020-10-14T11:25:22.155Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch2.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch5.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch6.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch7.jpg">
+<meta property="og:updated_time" content="2021-02-24T07:16:04.186Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="window原理解析">
 <meta name="twitter:description" content="分析下window原理">
-<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/16327616-bd8c6d51bfb58c44.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch2.jpg">
 
 
 
@@ -361,10 +362,10 @@
       
         <p>分析下window原理</p>
 <a id="more"></a>
-<h1 id="Touch简介"><a href="#Touch简介" class="headerlink" title="Touch简介"></a>Touch简介</h1><p><img src="https://upload-images.jianshu.io/upload_images/16327616-bd8c6d51bfb58c44.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Activity与Window.jpg"></p>
+<h1 id="Touch简介"><a href="#Touch简介" class="headerlink" title="Touch简介"></a>Touch简介</h1><p><img src="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch2.jpg" alt="Activity与Window.jpg"></p>
 <p>我们已知<a href="https://www.jianshu.com/p/1c127769c9ea" target="_blank" rel="noopener">touch 事件起始</a>是 Activity -&gt; PhoneWindow -&gt; DecorView -&gt; (TitleView + ContentView) 传递的，但是这个touch事件的源头是哪里呢，是从Window中获取的</p>
 <p>这里我们只关注Window相关。</p>
-<h1 id="Window介绍"><a href="#Window介绍" class="headerlink" title="Window介绍"></a>Window介绍</h1><p><img src="http://upload-images.jianshu.io/upload_images/16327616-edfd4d18bd926208?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="window关系图"></p>
+<h1 id="Window介绍"><a href="#Window介绍" class="headerlink" title="Window介绍"></a>Window介绍</h1><p><img src="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch3.png" alt="window关系图"></p>
 <h2 id="WindowManager"><a href="#WindowManager" class="headerlink" title="WindowManager"></a>WindowManager</h2><p>Android中基本上<strong>所有的View都是通过Window来呈现的</strong>，不管是Activity、Toast还是Dialog，它们的视图都是附加到Window上的，因此可以将Window理解为View的承载者与直接管理者。而Window需要WindowManager协助完成，这里它的实现类是 WindowManagerImpl . 而 WindowManagerImpl 通过 getSystemService(Context.WINDOW_SERVICE) 来得到。</p>
 <h2 id="WindowManagerService"><a href="#WindowManagerService" class="headerlink" title="WindowManagerService"></a>WindowManagerService</h2><p>WindowManagerService 位于 Framework 层的窗口管理服务，它的职责就是管理系统中的所有窗口，负责协调Window的层级、显示及事件派发等。可以这样理解，<strong>WindowManager 是本地端的管理者，负责与 WindowManagerService 进行交互</strong>，从而使Window能层次分明的显示出来。WindowManager 与 WindowManagerService 的交互是一个IPC过程。<br>WindowManagerService 会在 SystemServer 启动的时候创建，并注册到 ServiceManager 中。</p>
 <h2 id="WindowManagerGlobal"><a href="#WindowManagerGlobal" class="headerlink" title="WindowManagerGlobal"></a>WindowManagerGlobal</h2><p>WindowManagerImpl 是 WindowManager 的实现类，但实际上它的工作基本委托给了 WindowManagerGlobal 类来完成。 WindowManagerGlobal 实现了 WindowManagerImpl 的功能，并对 View、ViewRootImpl 以及LayoutParams 进行管理</p>
@@ -414,7 +415,7 @@
 </tr>
 </tbody></table>
 <ol start="3">
-<li>通过 ViewRootImpl 来更新界面并完成 Window 的添加过程<br>ViewRootImpl 不是View，实际上是顶级View的管理者。每一个 ViewRootImpl 都对应着一个ViewTree ，通过它来完成 View 的绘制及显示过程。下图展示了它与WM、WMS之间的关系:<br><img src="http://upload-images.jianshu.io/upload_images/16327616-4067cf7cda3d468a?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="ViewRootImpl 关系图"></li>
+<li>通过 ViewRootImpl 来更新界面并完成 Window 的添加过程<br>ViewRootImpl 不是View，实际上是顶级View的管理者。每一个 ViewRootImpl 都对应着一个ViewTree ，通过它来完成 View 的绘制及显示过程。下图展示了它与WM、WMS之间的关系:<br><img src="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch4.png" alt="ViewRootImpl 关系图"></li>
 </ol>
 <p>Window是一个抽象的概念，<strong>每一个Window都对应着一个 View 和 ViewRootImpl ，Window与View通过 ViewRootImpl 建立起联系</strong>，Window 是以 View 作为实体存在，实际使用WindowManager访问来Window，外部无法直接访问Window。</p>
 <h2 id="setView"><a href="#setView" class="headerlink" title="setView"></a>setView</h2><p>ViewRootImpl 会通过 setView来完成界面的更新，实现 View 的添加。<br>setView 会执行 View 的绘制 ，</p>
@@ -427,7 +428,7 @@
 <p>这里我们看到了熟悉的 onMeasure onLayout onDraw<br>执行完 requestLayout 之后，便是 mWindowSession 的工作。mWindowSession的类型是IWindowSession，它是一个Binder对象，真正的实现类是Session，因此 Window 的添加的过程是一个IPC调用</p>
 <h2 id="addToDisplay"><a href="#addToDisplay" class="headerlink" title="addToDisplay"></a>addToDisplay</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">res = mWindowSession.addToDisplay(mWindow, mSeq, mWindowAttributes,</span><br><span class="line">                            getHostVisibility(), mDisplay.getDisplayId(), mWinFrame,</span><br><span class="line">                            mAttachInfo.mContentInsets, mAttachInfo.mStableInsets,</span><br><span class="line">                            mAttachInfo.mOutsets, mAttachInfo.mDisplayCutout, mInputChannel);</span><br></pre></td></tr></table></figure>
 
-<p>addToDisplay 中Session 会通过 addWindow 方法将 Window 添加到 WindowManagerService 中，WindowManagerService会为每个应用保留一个单独的Session。<br><img src="http://upload-images.jianshu.io/upload_images/16327616-090dcf85dea2d9bd?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="委托流程"><br>最终，Window 的添加请求移交给 WindowManagerService 手上。</p>
+<p>addToDisplay 中Session 会通过 addWindow 方法将 Window 添加到 WindowManagerService 中，WindowManagerService会为每个应用保留一个单独的Session。<br><img src="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch5.png" alt="委托流程"><br>最终，Window 的添加请求移交给 WindowManagerService 手上。</p>
 <h2 id="removeView"><a href="#removeView" class="headerlink" title="removeView"></a>removeView</h2><p>删除与添加类似，具体流程可以查看源码。</p>
 <p>值得注意的是，删除操作是由ViewRootImpl来完成的，删除分为两种，分别为同步删除（removeViewImmediate）和异步删除（removeView）,在ViewRootImpl的die（immediate）方法中进行判断。如果为同步则直接调用doDie方法进行删除，否则会发送一个消息进行异步处理，同时执行mDyingViews.add(view)<br>最终的删除操作还是交给Session: mWindowSession.remove(mWindow)，此过程是一个IPC过程，最终会调用WindowManagerService的removeWindow方法。</p>
 <h1 id="普通Window创建"><a href="#普通Window创建" class="headerlink" title="普通Window创建"></a>普通Window创建</h1><p>我们知道 Activity 开始应用是从 attach 开始的。这里除了attachContext 外，就是Window的初始化在<code>performLaunchActivity()</code> -&gt;<code>Activity.attach()</code> 方法中</p>
@@ -471,7 +472,7 @@
 
 <h1 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h1><p>任何 View 都是附属在一个 Window 上面的，Window 表示一个窗口的概念，也是一个抽象的概念，Window 并不是实际存在的，它是以 View 的形式存在的。WindowManager 是外界也就是我们访问 Window 的入口，Window 的具体实现位于 WindowManagerService 中，WindowManagerService 和 WindowManager 的交互是一个 IPC 过程。</p>
 <h1 id="其他问题"><a href="#其他问题" class="headerlink" title="其他问题"></a>其他问题</h1><p>这里顺便解决一个疑惑，为什么在 onCreate 中创建的子线程更新UI不会崩溃？<br>答：我们知道android重绘有两个重要的ViewRootImpl方法，一是 requestLayout，一个是invalidate，（requestLayout 只会调用 onMeasure、onLayout，而 invalidate 会调用 onDraw），在 ViewRootImpl.requestLayout 中首先执行的就是 checkThread 方法，也就是用来抛出 CalledFromWrongThreadException 异常的，根据上面的总结我们知道，ViewRootImpl 是在 onResume 的时候创建的，在 onCreate 的时候还没有创建，也就没有办法调用 checkThread</p>
-<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><p><img src="https://upload-images.jianshu.io/upload_images/944365-6ec2e864af7ffd37.png" alt="touch事件传递处理"><br><img src="http://gityuan.com/images/touch/touch1.jpg" alt="touch"></p>
+<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><p><img src="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch1.png" alt="touch事件传递处理"><br><img src="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch6.png" alt="touch事件传递处理"><br><img src="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch7.jpg" alt="touch"></p>
 
       
     </div>
