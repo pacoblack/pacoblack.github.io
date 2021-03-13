@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="android,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Gradle的构建过程都分为三部分：初始化阶段、配置阶段和执行阶段">
+<meta name="keywords" content="android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gradle的构建生命周期和hook技术">
+<meta property="og:url" content="https://pacoblack.github.io/2020/12/10/gradle的构建生命周期和hook技术/index.html">
+<meta property="og:site_name" content="我爱学习">
+<meta property="og:description" content="Gradle的构建过程都分为三部分：初始化阶段、配置阶段和执行阶段">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/4780870-aa344276a97f09cb.png">
+<meta property="og:updated_time" content="2021-03-13T06:56:15.540Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="gradle的构建生命周期和hook技术">
+<meta name="twitter:description" content="Gradle的构建过程都分为三部分：初始化阶段、配置阶段和执行阶段">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/4780870-aa344276a97f09cb.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://pacoblack.github.io/2020/12/10/gradle的构建生命周期和hook技术/">
+
+
+
+
+
+  <title>gradle的构建生命周期和hook技术 | 我爱学习</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">我爱学习</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">这只是一场演习</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-主页"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-标签"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-分类"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-归档"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-关于"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://pacoblack.github.io/2020/12/10/gradle的构建生命周期和hook技术/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pacoblack">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar1.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="我爱学习">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">gradle的构建生命周期和hook技术</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-10T20:44:44+08:00">
+                2020-12-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Gradle的构建过程都分为三部分：初始化阶段、配置阶段和执行阶段</p>
+<a id="more"></a>
+<h1 id="初始化阶段"><a href="#初始化阶段" class="headerlink" title="初始化阶段"></a>初始化阶段</h1><p>初始化阶段的任务是创建项目的层次结构，并且为每一个项目创建一个Project实例。与初始化阶段相关的脚本文件是settings.gradle。包括<user_home>/.gradle/init.d目录下的所有.gradle脚本文件，这些文件作用于本机的所有构建过程）<br>一个settings.gradle脚本对应一个<code>org.gradle.api.initialization.Settings</code>对象，我们最常用来声明项目的层次结构的include就是Settings类下的一个方法，在Gradle初始化的时候会构造一个Settings实例对象。</user_home></p>
+<p>比如可以通过如下代码向Gradle的构建过程添加监听：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">gradle.addBuildListener(new BuildListener() &#123;</span><br><span class="line">  void buildStarted(Gradle var1) &#123;</span><br><span class="line">    println &apos;开始构建&apos;</span><br><span class="line">  &#125;</span><br><span class="line">  void settingsEvaluated(Settings var1) &#123;</span><br><span class="line">    println &apos;settings评估完成（settins.gradle中代码执行完毕）&apos;</span><br><span class="line">    // var1.gradle.rootProject 这里访问Project对象时会报错，还未完成Project的初始化</span><br><span class="line">  &#125;</span><br><span class="line">  void projectsLoaded(Gradle var1) &#123;</span><br><span class="line">    println &apos;项目结构加载完成（初始化阶段结束）&apos;</span><br><span class="line">    println &apos;初始化结束，可访问根项目：&apos; + var1.gradle.rootProject</span><br><span class="line">  &#125;</span><br><span class="line">  void projectsEvaluated(Gradle var1) &#123;</span><br><span class="line">    println &apos;所有项目评估完成（配置阶段结束）&apos;</span><br><span class="line">  &#125;</span><br><span class="line">  void buildFinished(BuildResult var1) &#123;</span><br><span class="line">    println &apos;构建结束 &apos;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>执行gradle build，打印结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">settings评估完成（settins.gradle中代码执行完毕）</span><br><span class="line">项目结构加载完成（初始化阶段结束）</span><br><span class="line">初始化结束，可访问根项目：root project &apos;GradleTest&apos;</span><br><span class="line">所有项目评估完成（配置阶段结束）</span><br><span class="line">:buildEnvironment</span><br><span class="line"></span><br><span class="line">------------------------------------------------------------</span><br><span class="line">Root project</span><br><span class="line">------------------------------------------------------------</span><br><span class="line"></span><br><span class="line">classpath</span><br><span class="line">No dependencies</span><br><span class="line"></span><br><span class="line">BUILD SUCCESSFUL</span><br><span class="line"></span><br><span class="line">Total time: 0.959 secs</span><br><span class="line">构建结束</span><br></pre></td></tr></table></figure>
+
+<h1 id="配置阶段"><a href="#配置阶段" class="headerlink" title="配置阶段"></a>配置阶段</h1><p>配置阶段的任务是执行各项目下的build.gradle脚本，完成Project的配置，并且构造Task任务依赖关系图以便在执行阶段按照依赖关系执行Task。</p>
+<p>每个build.gralde脚本文件对应一个Project对象，在初始化阶段创建，Project的<a href="https://docs.gradle.org/current/javadoc/org/gradle/api/Project.html" target="_blank" rel="noopener">接口文档</a>。<br>配置阶段执行的代码包括build.gralde中的各种语句、闭包以及Task中的配置段语句，在根目录的build.gradle中添加如下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">println &apos;build.gradle的配置阶段&apos;</span><br><span class="line"></span><br><span class="line">// 调用Project的dependencies(Closure c)声明项目依赖</span><br><span class="line">dependencies &#123;</span><br><span class="line">    // 闭包中执行的代码</span><br><span class="line">    println &apos;dependencies中执行的代码&apos;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 创建一个Task</span><br><span class="line">task test() &#123;</span><br><span class="line">  println &apos;Task中的配置代码&apos;</span><br><span class="line">  // 定义一个闭包</span><br><span class="line">  def a = &#123;</span><br><span class="line">    println &apos;Task中的配置代码2&apos;</span><br><span class="line">  &#125;</span><br><span class="line">  // 执行闭包</span><br><span class="line">  a()</span><br><span class="line">  doFirst &#123;</span><br><span class="line">    println &apos;这段代码配置阶段不执行&apos;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">println &apos;我是顺序执行的&apos;</span><br></pre></td></tr></table></figure>
+
+<p>调用gradle build，得到如下结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">build.gradle的配置阶段</span><br><span class="line">dependencies中执行的代码</span><br><span class="line">Task中的配置代码</span><br><span class="line">Task中的配置代码2</span><br><span class="line">我是顺序执行的</span><br><span class="line">:buildEnvironment</span><br><span class="line"></span><br><span class="line">------------------------------------------------------------</span><br><span class="line">Root project</span><br><span class="line">------------------------------------------------------------</span><br><span class="line"></span><br><span class="line">classpath</span><br><span class="line">No dependencies</span><br><span class="line"></span><br><span class="line">BUILD SUCCESSFUL</span><br><span class="line"></span><br><span class="line">Total time: 1.144 secs</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>一定要注意，配置阶段不仅执行build.gradle中的语句，还包括了Task中的配置语句。从上面执行结果中可以看到，在执行了dependencies的闭包后，直接执行的是任务test中的配置段代码（Task中除了Action外的代码段都在配置阶段执行）。<br>另外一点，无论执行Gradle的任何命令，初始化阶段和配置阶段的代码都会被执行。</p>
+</blockquote>
+<h1 id="执行阶段"><a href="#执行阶段" class="headerlink" title="执行阶段"></a>执行阶段</h1><p>在配置阶段结束后，Gradle会根据任务Task的依赖关系创建一个有向无环图，可以通过Gradle对象的getTaskGraph方法访问，对应的类为TaskExecutionGraph，然后通过调用gradle &lt;任务名&gt;执行对应任务。</p>
+<p>下面我们展示如何调用子项目中的任务。</p>
+<p>在根目录下创建目录subproject，并添加文件build.gradle<br>在settings.gradle中添加include ‘:subproject’<br>在subproject的build.gradle中添加如下代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">task grandpa &#123;</span><br><span class="line">  doFirst &#123;</span><br><span class="line">    println &apos;task grandpa：doFirst 先于 doLast 执行&apos;</span><br><span class="line">  &#125;</span><br><span class="line">  doLast &#123;</span><br><span class="line">    println &apos;task grandpa：doLast&apos;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">task father(dependsOn: grandpa) &#123;</span><br><span class="line">  doLast &#123;</span><br><span class="line">    println &apos;task father：doLast&apos;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">task mother &lt;&lt; &#123;</span><br><span class="line">  println &apos;task mother 先于 task father 执行&apos;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">task child(dependsOn: [father, mother])&#123;</span><br><span class="line">  doLast &#123;</span><br><span class="line">    println &apos;task child 最后执行&apos;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">task nobody &#123;</span><br><span class="line">  doLast &#123;</span><br><span class="line">    println &apos;我不执行&apos;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">// 指定任务father必须在任务mother之后执行</span><br><span class="line">father.mustRunAfter mother</span><br></pre></td></tr></table></figure>
+
+<p>它们的依赖关系如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">:subproject:child</span><br><span class="line">+--- :subproject:father</span><br><span class="line">|    \--- :subproject:grandpa</span><br><span class="line">\--- :subproject:mother</span><br></pre></td></tr></table></figure>
+
+<p>执行gradle <code>:subproject:child</code>，得到如下打印结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">:subproject:mother</span><br><span class="line">task mother 先于 task father 执行</span><br><span class="line">:subproject:grandpa</span><br><span class="line">task grandpa：doFirst 先于 doLast 执行</span><br><span class="line">task grandpa：doLast</span><br><span class="line">:subproject:father</span><br><span class="line">task father：doLast</span><br><span class="line">:subproject:child</span><br><span class="line">task child 最后执行</span><br><span class="line"></span><br><span class="line">BUILD SUCCESSFUL</span><br><span class="line"></span><br><span class="line">Total time: 1.005 secs</span><br></pre></td></tr></table></figure>
+
+<p>因为在配置阶段，我们声明了任务mother的优先级高于任务father，所以mother先于father执行，而任务father依赖于任务grandpa，所以grandpa先于father执行。任务nobody不存在于child的依赖关系中，所以不执行</p>
+<h1 id="Hook"><a href="#Hook" class="headerlink" title="Hook"></a>Hook</h1><p>Gradle提供了非常多的钩子供开发人员修改构建过程中的行为,先看下图<br><img src="https://upload-images.jianshu.io/upload_images/4780870-aa344276a97f09cb.png" alt><br>radle在构建的各个阶段都提供了很多回调，我们在添加对应监听时要注意，监听器一定要在回调的生命周期之前添加，比如我们在根项目的build.gradle中添加下面的代码就是错误的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">gradle.settingsEvaluated &#123; setting -&gt;</span><br><span class="line">  // do something with setting</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">gradle.projectsLoaded &#123;</span><br><span class="line">  gradle.rootProject.afterEvaluate &#123;</span><br><span class="line">    println &apos;rootProject evaluated&apos;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当构建走到build.gradle时说明初始化过程已经结束了，所以上面的回调都不会执行，把上述代码移动到settings.gradle中就正确了。</p>
+<p>下面通过一些例子来解释如何Hook Gradle的构建过程。</p>
+<h2 id="为所有子项目添加公共代码"><a href="#为所有子项目添加公共代码" class="headerlink" title="为所有子项目添加公共代码"></a>为所有子项目添加公共代码</h2><p>在根项目的build.gradle中添加如下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gradle.beforeProject &#123; project -&gt;</span><br><span class="line">  println &apos;apply plugin java for &apos; + project</span><br><span class="line">  project.apply plugin: &apos;java&apos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码的作用是为所有子项目应用Java插件，因为代码是在根项目的配置阶段执行的，所以并不会应用到根项目中。<br>这里说明一下Gradle的beforeProject方法和Project的beforeEvaluate的执行时机是一样的，只是beforeProject应用于所有项目，而beforeEvaluate只应用于调用的Project，上面的代码等价于：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">allprojects &#123;</span><br><span class="line">  beforeEvaluate &#123; project -&gt;</span><br><span class="line">    println &apos;apply plugin java for &apos; + project</span><br><span class="line">    project.apply plugin: &apos;java&apos;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>after***也是同理的，但afterProject还有一点不一样，无论Project的配置过程是否出错，afterProject都会收到回调。</p>
+<h2 id="为指定Task动态添加Action"><a href="#为指定Task动态添加Action" class="headerlink" title="为指定Task动态添加Action"></a>为指定Task动态添加Action</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">gradle.taskGraph.beforeTask &#123; task -&gt;</span><br><span class="line">  task &lt;&lt; &#123;</span><br><span class="line">    println &apos;动态添加的Action&apos;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">task Test &#123;</span><br><span class="line">  doLast &#123;</span><br><span class="line">    println &apos;原始Action&apos;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在任务Test执行前，动态添加了一个doLast动作。</p>
+<h2 id="获取构建各阶段耗时情况"><a href="#获取构建各阶段耗时情况" class="headerlink" title="获取构建各阶段耗时情况"></a>获取构建各阶段耗时情况</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">long beginOfSetting = System.currentTimeMillis()</span><br><span class="line"></span><br><span class="line">gradle.projectsLoaded &#123;</span><br><span class="line">  println &apos;初始化阶段，耗时：&apos; + (System.currentTimeMillis() - beginOfSetting) + &apos;ms&apos;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">def beginOfConfig</span><br><span class="line">def configHasBegin = false</span><br><span class="line">def beginOfProjectConfig = new HashMap()</span><br><span class="line">gradle.beforeProject &#123; project -&gt;</span><br><span class="line">  if (!configHasBegin) &#123;</span><br><span class="line">    configHasBegin = true</span><br><span class="line">    beginOfConfig = System.currentTimeMillis()</span><br><span class="line">  &#125;</span><br><span class="line">  beginOfProjectConfig.put(project, System.currentTimeMillis())</span><br><span class="line">&#125;</span><br><span class="line">gradle.afterProject &#123; project -&gt;</span><br><span class="line">  def begin = beginOfProjectConfig.get(project)</span><br><span class="line">  println &apos;配置阶段，&apos; + project + &apos;耗时：&apos; + (System.currentTimeMillis() - begin) + &apos;ms&apos;</span><br><span class="line">&#125;</span><br><span class="line">def beginOfProjectExcute</span><br><span class="line">gradle.taskGraph.whenReady &#123;</span><br><span class="line">  println &apos;配置阶段，总共耗时：&apos; + (System.currentTimeMillis() - beginOfConfig) + &apos;ms&apos;</span><br><span class="line">  beginOfProjectExcute = System.currentTimeMillis()</span><br><span class="line">&#125;</span><br><span class="line">gradle.taskGraph.beforeTask &#123; task -&gt;</span><br><span class="line">  task.doFirst &#123;</span><br><span class="line">    task.ext.beginOfTask = System.currentTimeMillis()</span><br><span class="line">  &#125;</span><br><span class="line">  task.doLast &#123;</span><br><span class="line">    println &apos;执行阶段，&apos; + task + &apos;耗时：&apos; + (System.currentTimeMillis() - task.beginOfTask) + &apos;ms&apos;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">gradle.buildFinished &#123;</span><br><span class="line">  println &apos;执行阶段，耗时：&apos; + (System.currentTimeMillis() - beginOfProjectExcute) + &apos;ms&apos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将上述代码段添加到settings.gradle脚本文件的开头，再执行任意构建任务，你就可以看到各阶段、各任务的耗时情况。</p>
+<h2 id="动态改变Task依赖关系"><a href="#动态改变Task依赖关系" class="headerlink" title="动态改变Task依赖关系"></a>动态改变Task依赖关系</h2><p>有时我们需要在一个已有的构建系统中插入我们自己的构建任务，比如在执行Java构建后我们想要删除构建过程中产生的临时文件，那么我们就可以自定义一个名叫cleanTemp的任务，让其依赖于build任务，然后调用cleanTemp任务即可。<br>但是这种方式适用范围太小，比如在使用IDE执行构建时，IDE默认就是调用build任务，我们没法修改IDE的行为，所以我们需要将自定义的任务插入到原有的任务关系中。</p>
+<ol>
+<li>寻找插入点<br>如果你对一个构建的任务依赖关系不熟悉的话，可以使用一个插件来查看，在根项目的build.gradle中添加如下代码:<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">  repositories &#123;</span><br><span class="line">    maven &#123;</span><br><span class="line">      url &quot;https://plugins.gradle.org/m2/&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  dependencies &#123;</span><br><span class="line">    classpath &quot;gradle.plugin.com.dorongold.plugins:task-tree:1.2.2&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">apply plugin: &quot;com.dorongold.task-tree&quot;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>然后执行<code>gradle &lt;任务名&gt; taskTree --no-repeat</code>，即可看到指定Task的依赖关系，比如在Java构建中查看build任务的依赖关系：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">:build</span><br><span class="line">+--- :assemble</span><br><span class="line">|    \--- :jar</span><br><span class="line">|         \--- :classes</span><br><span class="line">|              +--- :compileJava</span><br><span class="line">|              \--- :processResources</span><br><span class="line">\--- :check</span><br><span class="line">     \--- :test</span><br><span class="line">          +--- :classes *</span><br><span class="line">          \--- :testClasses</span><br><span class="line">               +--- :compileTestJava</span><br><span class="line">               |    \--- :classes *</span><br><span class="line">               \--- :processTestResources</span><br></pre></td></tr></table></figure>
+
+<p>我们看到build主要执行了assemble包装任务和check测试任务，那么我们可以将我们自定义的cleanTemp插入到build和assemble之间。</p>
+<ol start="2">
+<li><p>动态插入自定义任务<br>我们先定义一个自定的任务cleanTemp，让其依赖于assemble。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">task cleanTemp(dependsOn: assemble) &#123;</span><br><span class="line">  doLast &#123;</span><br><span class="line">    println &apos;清除所有临时文件&apos;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>接着，我们将cleanTemp添加到build的依赖项中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">afterEvaluate &#123;</span><br><span class="line">  build.dependsOn cleanTemp</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p><strong>注意，dependsOn方法只是添加一个依赖项，并不清除之前的依赖项</strong>，所以现在的依赖关系如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">:build</span><br><span class="line">+--- :assemble</span><br><span class="line">|    \--- :jar</span><br><span class="line">|         \--- :classes</span><br><span class="line">|              +--- :compileJava</span><br><span class="line">|              \--- :processResources</span><br><span class="line">+--- :check</span><br><span class="line">|    \--- :test</span><br><span class="line">|         +--- :classes</span><br><span class="line">|         |    +--- :compileJava</span><br><span class="line">|         |    \--- :processResources</span><br><span class="line">|         \--- :testClasses</span><br><span class="line">|              +--- :compileTestJava</span><br><span class="line">|              |    \--- :classes</span><br><span class="line">|              |         +--- :compileJava</span><br><span class="line">|              |         \--- :processResources</span><br><span class="line">|              \--- :processTestResources</span><br><span class="line">\--- :cleanTemp</span><br><span class="line">     \--- :assemble</span><br><span class="line">          \--- :jar</span><br><span class="line">               \--- :classes</span><br><span class="line">                    +--- :compileJava</span><br><span class="line">                    \--- :processResources</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，cleanTemp依赖于assemble，同时build任务多了一个依赖，而build和assemble原有的依赖关系并没有改变，执行gradle build后任务调用结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">:compileJava UP-TO-DATE</span><br><span class="line">:processResources UP-TO-DATE</span><br><span class="line">:classes UP-TO-DATE</span><br><span class="line">:jar UP-TO-DATE</span><br><span class="line">:assemble UP-TO-DATE</span><br><span class="line">:compileTestJava UP-TO-DATE</span><br><span class="line">:processTestResources UP-TO-DATE</span><br><span class="line">:testClasses UP-TO-DATE</span><br><span class="line">:test UP-TO-DATE</span><br><span class="line">:check UP-TO-DATE</span><br><span class="line">:cleanTemp</span><br><span class="line">清除所有临时文件</span><br><span class="line">:build</span><br><span class="line"></span><br><span class="line">BUILD SUCCESSFUL</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/android/" rel="tag"># android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/12/10/gradle自定义task/" rel="next" title="gradle自定义task">
+                <i class="fa fa-chevron-left"></i> gradle自定义task
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/12/28/SurfaceView与Vsync原理/" rel="prev" title="SurfaceView与Vsync原理">
+                SurfaceView与Vsync原理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar1.jpeg" alt="pacoblack">
+            
+              <p class="site-author-name" itemprop="name">pacoblack</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/pacoblack" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:pacoson.wang@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/pacoblacksee" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="skype:yourname?call|chat" target="_blank" title="Skype">
+                      
+                        <i class="fa fa-fw fa-skype"></i>Skype</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#初始化阶段"><span class="nav-number">1.</span> <span class="nav-text">初始化阶段</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#配置阶段"><span class="nav-number">2.</span> <span class="nav-text">配置阶段</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#执行阶段"><span class="nav-number">3.</span> <span class="nav-text">执行阶段</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hook"><span class="nav-number">4.</span> <span class="nav-text">Hook</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#为所有子项目添加公共代码"><span class="nav-number">4.1.</span> <span class="nav-text">为所有子项目添加公共代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为指定Task动态添加Action"><span class="nav-number">4.2.</span> <span class="nav-text">为指定Task动态添加Action</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#获取构建各阶段耗时情况"><span class="nav-number">4.3.</span> <span class="nav-text">获取构建各阶段耗时情况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动态改变Task依赖关系"><span class="nav-number">4.4.</span> <span class="nav-text">动态改变Task依赖关系</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pacoblack</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="[object Object]"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+  <link rel="stylesheet" href="/assets/css/APlayer.min.css" class="aplayer-style-marker">
+  <script src="/assets/js/APlayer.min.js" class="aplayer-script-marker"></script>
+  <script src="/assets/js/Meting.min.js" class="meting-script-marker"></script>
+  <div id="aplayer-AXqIDvNX" class="aplayer aplayer-tag-marker meting-tag-marker aplayer-fixed" data-id="71075946" data-server="netease" data-type="playlist" data-mode="circulation" data-autoplay="false" data-mutex="true" data-listmaxheight="340px" data-preload="auto" data-fixed="true" data-lrctype="0" data-theme="#555"></div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/Epsilon2.1.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
