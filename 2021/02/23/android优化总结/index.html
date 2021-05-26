@@ -88,7 +88,7 @@
 <meta property="og:description" content="对之前遇到的优化进行一个小结">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/optm/optm1.jpg">
-<meta property="og:updated_time" content="2021-02-23T11:19:32.688Z">
+<meta property="og:updated_time" content="2021-05-26T07:27:21.717Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android优化总结">
 <meta name="twitter:description" content="对之前遇到的优化进行一个小结">
@@ -356,6 +356,28 @@
       
         <p>对之前遇到的优化进行一个小结</p>
 <a id="more"></a>
+<h1 id="apk瘦身"><a href="#apk瘦身" class="headerlink" title="apk瘦身"></a>apk瘦身</h1><ol>
+<li>开启混淆压缩</li>
+<li>D8/R8优化<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#开启D8优化</span><br><span class="line">android.enableD8 = true</span><br><span class="line"></span><br><span class="line">#R8优化</span><br><span class="line">android.enableR8=true</span><br><span class="line">android.enableR8.libraries=true</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>ProGuard 和 R8 都应用了基本名称混淆：它们 都使用简短，无意义的名称重命名类，字段和方法。他们还可以 删除调试属性。但是，R8 在 inline 内联容器类中更有效，并且在删除未使用的类，字段和方法上则更具侵略性。</p>
+<ol start="3">
+<li>通过ReDex去除debug信息与行号信息</li>
+<li>通过ReDex将有调用关系的类和方法分配到同一个 Dex 中，从而实现分包优化</li>
+<li>通过ThinRPlugin进行R Field的内联优化（它解决了 R Field 过多导致 MultiDex 65536 的问题）</li>
+<li>XZ Utils进行Dex压缩 - 使用了 LZMA/LZMA2 算法。LZMA 提供了高压缩比和快速解压缩，因此非常适合嵌入式应用。</li>
+<li>只引入需要的第三方库来减少包大小</li>
+<li>通过Lint监测无效代码，删除无用的代码</li>
+<li>通过Lint删除冗余资源，android-arscblamer删除没有用到的资源，并解析resources.arsc中可以优化的部分</li>
+<li>通过android-chunk-utils优化重复的资源，首先需要通过资源包中的每个ZipEntry的CRC-32 checksum来筛选出重复的资源。</li>
+<li>通过AndroidResGuard进行资源混淆</li>
+<li>通过TinyPngPlugin等进行图片压缩，通过不同的图片格式进行优化</li>
+<li>对resources.arsc进行压缩优化</li>
+<li>通过ByteX的access_inline插件避免产生Java access方法（Java 编译器在编译过程中自动生成 package 可见性的静态 access$xxx 方法，并且在需要访问对方私有成员的地方改为调用对应的 access 方法。）</li>
+<li>so优化：尽量只用armeabi架构，使用XZ Utils进行压缩，删除无用的symbol，动态加载</li>
+</ol>
 <h1 id="绘制优化"><a href="#绘制优化" class="headerlink" title="绘制优化"></a>绘制优化</h1><h2 id="刷新机制"><a href="#刷新机制" class="headerlink" title="刷新机制"></a>刷新机制</h2><p>4.1版本的Project Butter对Android Display系统进行了重构，引入了三个核心元素：VSYNC（Vertical Synchronization）、Triple Buffer、Choreographer。</p>
 <ul>
 <li>VSYNC，即垂直同步可认为是一种定时中断。</li>
@@ -614,7 +636,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#绘制优化"><span class="nav-number">1.</span> <span class="nav-text">绘制优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#刷新机制"><span class="nav-number">1.1.</span> <span class="nav-text">刷新机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#双缓冲技术"><span class="nav-number">1.2.</span> <span class="nav-text">双缓冲技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化方法"><span class="nav-number">1.3.</span> <span class="nav-text">优化方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内存优化"><span class="nav-number">2.</span> <span class="nav-text">内存优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#对象声明周期"><span class="nav-number">2.1.</span> <span class="nav-text">对象声明周期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚拟机内存分配"><span class="nav-number">2.2.</span> <span class="nav-text">虚拟机内存分配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存回收"><span class="nav-number">2.3.</span> <span class="nav-text">内存回收</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见内存泄漏场景"><span class="nav-number">2.4.</span> <span class="nav-text">常见内存泄漏场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化方法-1"><span class="nav-number">2.5.</span> <span class="nav-text">优化方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#启动速度优化"><span class="nav-number">3.</span> <span class="nav-text">启动速度优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#统计方式"><span class="nav-number">3.1.</span> <span class="nav-text">统计方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化方案"><span class="nav-number">3.2.</span> <span class="nav-text">优化方案</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#稳定性优化"><span class="nav-number">4.</span> <span class="nav-text">稳定性优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#native崩溃信号"><span class="nav-number">4.1.</span> <span class="nav-text">native崩溃信号</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#apk瘦身"><span class="nav-number">1.</span> <span class="nav-text">apk瘦身</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#绘制优化"><span class="nav-number">2.</span> <span class="nav-text">绘制优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#刷新机制"><span class="nav-number">2.1.</span> <span class="nav-text">刷新机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#双缓冲技术"><span class="nav-number">2.2.</span> <span class="nav-text">双缓冲技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化方法"><span class="nav-number">2.3.</span> <span class="nav-text">优化方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内存优化"><span class="nav-number">3.</span> <span class="nav-text">内存优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#对象声明周期"><span class="nav-number">3.1.</span> <span class="nav-text">对象声明周期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚拟机内存分配"><span class="nav-number">3.2.</span> <span class="nav-text">虚拟机内存分配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存回收"><span class="nav-number">3.3.</span> <span class="nav-text">内存回收</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见内存泄漏场景"><span class="nav-number">3.4.</span> <span class="nav-text">常见内存泄漏场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化方法-1"><span class="nav-number">3.5.</span> <span class="nav-text">优化方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#启动速度优化"><span class="nav-number">4.</span> <span class="nav-text">启动速度优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#统计方式"><span class="nav-number">4.1.</span> <span class="nav-text">统计方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化方案"><span class="nav-number">4.2.</span> <span class="nav-text">优化方案</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#稳定性优化"><span class="nav-number">5.</span> <span class="nav-text">稳定性优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#native崩溃信号"><span class="nav-number">5.1.</span> <span class="nav-text">native崩溃信号</span></a></li></ol></li></ol></div>
             
 
           </div>
