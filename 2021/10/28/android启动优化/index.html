@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="android,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="优化app的启动速度">
+<meta name="keywords" content="android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="android启动优化">
+<meta property="og:url" content="https://pacoblack.github.io/2021/10/28/android启动优化/index.html">
+<meta property="og:site_name" content="我爱学习">
+<meta property="og:description" content="优化app的启动速度">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-10-29T10:50:08.336Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="android启动优化">
+<meta name="twitter:description" content="优化app的启动速度">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://pacoblack.github.io/2021/10/28/android启动优化/">
+
+
+
+
+
+  <title>android启动优化 | 我爱学习</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">我爱学习</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">这只是一场演习</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-主页"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-标签"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-分类"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-归档"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-关于"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://pacoblack.github.io/2021/10/28/android启动优化/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pacoblack">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar1.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="我爱学习">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">android启动优化</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-10-28T18:23:18+08:00">
+                2021-10-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>优化app的启动速度</p>
+<a id="more"></a>
+<h1 id="启动流程"><a href="#启动流程" class="headerlink" title="启动流程"></a>启动流程</h1><p>Click Event -&gt; IPC -&gt; Process.start -&gt; ActivityThread -&gt; bindApplication -&gt; LifeCycle -&gt; ViewRootImpl</p>
+<p>首先，用户进行了一个点击操作，这个点击事件它会触发一个IPC的操作，之后便会执行到Process的start方法中，这个方法是用于进程创建的，接着，便会执行到ActivityThread的main方法，这个方法可以看做是我们单个App进程的入口，相当于Java进程的main方法，在其中会执行消息循环的创建与主线程Handler的创建，创建完成之后，就会执行到 bindApplication 方法，在这里使用了反射去创建 Application以及调用了 Application相关的生命周期，Application结束之后，便会执行Activity的生命周期，在Activity生命周期结束之后，最后，就会执行到 ViewRootImpl，这时才会进行真正的一个页面的绘制</p>
+<p>启动App<br>加载空白Window<br>创建进程<br>创建 Application<br>启动主线程<br>创建 MainActivity<br>加载布局<br>布置屏幕<br>首帧绘制</p>
+<h1 id="查看启动时间"><a href="#查看启动时间" class="headerlink" title="查看启动时间"></a>查看启动时间</h1><ol>
+<li>在Android Studio Logcat中过滤关键字“Displayed”，可以看到对应的冷启动耗时日志。</li>
+<li>通过 adb 获取<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 其中的AppstartActivity全路径可以省略前面的packageName</span><br><span class="line">adb shell am start -W [packageName]/[AppstartActivity全路径]</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>其中：<br>ThisTime：表示最后一个Activity启动耗时。<br>TotalTime：表示所有Activity启动耗时。<br>WaitTime：表示AMS启动Activity的总耗时。</p>
+<p>3.代码插桩</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 耗时监视器对象，记录整个过程的耗时情况，可以用在很多需要统计的地方，比如Activity的启动耗时和Fragment的启动耗时。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TimeMonitor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String TAG = TimeMonitor.class.getSimpleName();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mMonitord = -<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 保存一个耗时统计模块的各种耗时，tag对应某一个阶段的时间</span></span><br><span class="line">    <span class="keyword">private</span> HashMap&lt;String, Long&gt; mTimeTag = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> mStartTime = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TimeMonitor</span><span class="params">(<span class="keyword">int</span> mMonitorId)</span> </span>&#123;</span><br><span class="line">        Log.d(TAG, <span class="string">"init TimeMonitor id: "</span> + mMonitorId);</span><br><span class="line">        <span class="keyword">this</span>.mMonitorId = mMonitorId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getMonitorId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mMonitorId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">startMonitor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 每次重新启动都把前面的数据清除，避免统计错误的数据</span></span><br><span class="line">        <span class="keyword">if</span> (mTimeTag.size() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        mTimeTag.clear();</span><br><span class="line">        &#125;</span><br><span class="line">        mStartTime = System.currentTimeMillis();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 每打一次点，记录某个tag的耗时</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">recordingTimeTag</span><span class="params">(String tag)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 若保存过相同的tag，先清除</span></span><br><span class="line">        <span class="keyword">if</span> (mTimeTag.get(tag) != <span class="keyword">null</span>) &#123;</span><br><span class="line">            mTimeTag.remove(tag);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">long</span> time = System.currentTimeMillis() - mStartTime;</span><br><span class="line">        Log.d(TAG, tag + <span class="string">": "</span> + time);</span><br><span class="line">        mTimeTag.put(tag, time);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">end</span><span class="params">(String tag, <span class="keyword">boolean</span> writeLog)</span> </span>&#123;</span><br><span class="line">        recordingTimeTag(tag);</span><br><span class="line">        end(writeLog);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">end</span><span class="params">(<span class="keyword">boolean</span> writeLog)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (writeLog) &#123;</span><br><span class="line">            <span class="comment">//写入到本地文件</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> HashMap&lt;String, Long&gt; <span class="title">getTimeTags</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mTimeTag;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 采用单例管理各个耗时统计的数据。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TimeMonitorManager</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> TimeMonitorManager mTimeMonitorManager = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">private</span> HashMap&lt;Integer, TimeMonitor&gt; mTimeMonitorMap = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">static</span> TimeMonitorManager <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mTimeMonitorManager == <span class="keyword">null</span>) &#123;</span><br><span class="line">            mTimeMonitorManager = <span class="keyword">new</span> TimeMonitorManager();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> mTimeMonitorManager;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TimeMonitorManager</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.mTimeMonitorMap = <span class="keyword">new</span> HashMap&lt;Integer, TimeMonitor&gt;();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 初始化打点模块</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">resetTimeMonitor</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mTimeMonitorMap.get(id) != <span class="keyword">null</span>) &#123;</span><br><span class="line">            mTimeMonitorMap.remove(id);</span><br><span class="line">        &#125;</span><br><span class="line">        getTimeMonitor(id).startMonitor();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 获取打点器</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> TimeMonitor <span class="title">getTimeMonitor</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</span><br><span class="line">        TimeMonitor monitor = mTimeMonitorMap.get(id);</span><br><span class="line">        <span class="keyword">if</span> (monitor == <span class="keyword">null</span>) &#123;</span><br><span class="line">            monitor = <span class="keyword">new</span> TimeMonitor(id);</span><br><span class="line">            mTimeMonitorMap.put(id, monitor);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> monitor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">attachBaseContext</span><span class="params">(Context base)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.attachBaseContext(base);</span><br><span class="line">    TimeMonitorManager.getInstance().resetTimeMonitor(TimeMonitorConfig.TIME_MONITOR_ID_APPLICATION_START);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate();</span><br><span class="line">    SoLoader.init(<span class="keyword">this</span>, <span class="comment">/* native exopackage */</span> <span class="keyword">false</span>);</span><br><span class="line">    TimeMonitorManager.getInstance().getTimeMonitor(TimeMonitorConfig.TIME_MONITOR_ID_APPLICATION_START).recordingTimeTag(<span class="string">"Application-onCreate"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>AOP插桩<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Aspect</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ApplicationAop</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Around</span>(<span class="string">"call (* com.json.chao.application.BaseApplication.**(..))"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getTime</span><span class="params">(ProceedingJoinPoint joinPoint)</span> </span>&#123;</span><br><span class="line">    Signature signature = joinPoint.getSignature();</span><br><span class="line">    String name = signature.toShortString();</span><br><span class="line">    <span class="keyword">long</span> time = System.currentTimeMillis();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        joinPoint.proceed();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Throwable throwable) &#123;</span><br><span class="line">        throwable.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    Log.i(TAG, name + <span class="string">" cost"</span> +     (System.currentTimeMillis() - time));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h1 id="启动分析工具（TraceView）"><a href="#启动分析工具（TraceView）" class="headerlink" title="启动分析工具（TraceView）"></a>启动分析工具（TraceView）</h1><p>1、代码中添加：Debug.startMethodTracing()、检测方法、Debug.stopMethodTracing()。（需要使用adb pull将生成的.trace文件导出到电脑，然后使用Android Studio的Profiler进行加载）<br>2、打开 Profiler  -&gt;  CPU   -&gt;    点击 Record   -&gt;  点击 Stop  -&gt;  查看Profiler下方Top Down/Bottom Up 区域，以找出耗时的热点方法。</p>
+<h1 id="启动分析工具（Systrace）"><a href="#启动分析工具（Systrace）" class="headerlink" title="启动分析工具（Systrace）"></a>启动分析工具（Systrace）</h1><ol>
+<li>定义一个Trace静态工厂类，将Trace.begainSection()，Trace.endSection()封装成i、o方法，然后再在想要分析的方法前后进行插桩即可。</li>
+<li>在命令行下执行systrace.py脚本<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python /Users/quchao/Library/Android/sdk/platform-tools/systrace/systrace.py -t 20 sched gfx view wm am app webview -a &quot;com.wanandroid.json.chao&quot; -o ~/Documents/open-project/systrace_data/wanandroid_start_1.html</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h1 id="优化方案"><a href="#优化方案" class="headerlink" title="优化方案"></a>优化方案</h1><h2 id="第三方库懒加载"><a href="#第三方库懒加载" class="headerlink" title="第三方库懒加载"></a>第三方库懒加载</h2><p>按需初始化，特别是针对于一些应用启动时不需要初始化的库，可以等到用时才进行加载。</p>
+<h2 id="Android异步加载"><a href="#Android异步加载" class="headerlink" title="Android异步加载"></a>Android异步加载</h2><ul>
+<li>Thread</li>
+<li>HandlerThread</li>
+<li>IntentService</li>
+<li>AsyncTask</li>
+<li>线程池</li>
+<li>RxJava</li>
+</ul>
+<h2 id="线程池优化实践"><a href="#线程池优化实践" class="headerlink" title="线程池优化实践"></a>线程池优化实践</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 如果当前执行的任务是CPU密集型任务，则从基础线程池组件</span></span><br><span class="line"><span class="comment">// DispatcherExecutor中获取到用于执行 CPU 密集型任务的线程池</span></span><br><span class="line">DispatcherExecutor.getCPUExecutor().execute(YourRunable());</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果当前执行的任务是IO密集型任务，则从基础线程池组件</span></span><br><span class="line"><span class="comment">// DispatcherExecutor中获取到用于执行 IO 密集型任务的线程池</span></span><br><span class="line">DispatcherExecutor.getIOExecutor().execute(YourRunable());</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DispatcherExecutor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * CPU 密集型任务的线程池</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> ThreadPoolExecutor sCPUThreadPoolExecutor;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * IO 密集型任务的线程池</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> ExecutorService sIOThreadPoolExecutor;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 当前设备可以使用的 CPU 核数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> CPU_COUNT = Runtime.getRuntime().availableProcessors();</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 线程池核心线程数，其数量在2 ~ 5这个区域内</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> CORE_POOL_SIZE = Math.max(<span class="number">2</span>, Math.min(CPU_COUNT - <span class="number">1</span>, <span class="number">5</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 线程池线程数的最大值：这里指定为了核心线程数的大小</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAXIMUM_POOL_SIZE = CORE_POOL_SIZE;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 线程池中空闲线程等待工作的超时时间，当线程池中</span></span><br><span class="line"><span class="comment">    * 线程数量大于corePoolSize（核心线程数量）或</span></span><br><span class="line"><span class="comment">    * 设置了allowCoreThreadTimeOut（是否允许空闲核心线程超时）时，</span></span><br><span class="line"><span class="comment">    * 线程会根据keepAliveTime的值进行活性检查，一旦超时便销毁线程。</span></span><br><span class="line"><span class="comment">    * 否则，线程会永远等待新的工作。</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> KEEP_ALIVE_SECONDS = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 创建一个基于链表节点的阻塞队列</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> BlockingQueue&lt;Runnable&gt; S_POOL_WORK_QUEUE = <span class="keyword">new</span> LinkedBlockingQueue&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 用于创建线程的线程工厂</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> DefaultThreadFactory S_THREAD_FACTORY = <span class="keyword">new</span> DefaultThreadFactory();</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 线程池执行耗时任务时发生异常所需要做的拒绝执行处理</span></span><br><span class="line"><span class="comment">     * 注意：一般不会执行到这里</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> RejectedExecutionHandler S_HANDLER = <span class="keyword">new</span> RejectedExecutionHandler() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">rejectedExecution</span><span class="params">(Runnable r, ThreadPoolExecutor executor)</span> </span>&#123;</span><br><span class="line">            Executors.newCachedThreadPool().execute(r);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取CPU线程池</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> CPU线程池</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ThreadPoolExecutor <span class="title">getCPUExecutor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> sCPUThreadPoolExecutor;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取IO线程池</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> IO线程池</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">getIOExecutor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> sIOThreadPoolExecutor;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 实现一个默认的线程工厂</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultThreadFactory</span> <span class="keyword">implements</span> <span class="title">ThreadFactory</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> AtomicInteger POOL_NUMBER = <span class="keyword">new</span> AtomicInteger(<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> ThreadGroup group;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> AtomicInteger threadNumber = <span class="keyword">new</span> AtomicInteger(<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> String namePrefix;</span><br><span class="line"></span><br><span class="line">        DefaultThreadFactory() &#123;</span><br><span class="line">            SecurityManager s = System.getSecurityManager();</span><br><span class="line">            group = (s != <span class="keyword">null</span>) ? s.getThreadGroup() :</span><br><span class="line">                    Thread.currentThread().getThreadGroup();</span><br><span class="line">            namePrefix = <span class="string">"TaskDispatcherPool-"</span> +</span><br><span class="line">                    POOL_NUMBER.getAndIncrement() +</span><br><span class="line">                    <span class="string">"-Thread-"</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Thread <span class="title">newThread</span><span class="params">(Runnable r)</span> </span>&#123;</span><br><span class="line">            <span class="comment">// 每一个新创建的线程都会分配到线程组group当中</span></span><br><span class="line">            Thread t = <span class="keyword">new</span> Thread(group, r,</span><br><span class="line">                    namePrefix + threadNumber.getAndIncrement(),</span><br><span class="line">                    <span class="number">0</span>);</span><br><span class="line">            <span class="keyword">if</span> (t.isDaemon()) &#123;</span><br><span class="line">                <span class="comment">// 非守护线程</span></span><br><span class="line">                t.setDaemon(<span class="keyword">false</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 设置线程优先级</span></span><br><span class="line">            <span class="keyword">if</span> (t.getPriority() != Thread.NORM_PRIORITY) &#123;</span><br><span class="line">                t.setPriority(Thread.NORM_PRIORITY);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> t;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        sCPUThreadPoolExecutor = <span class="keyword">new</span> ThreadPoolExecutor(</span><br><span class="line">                CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_SECONDS, TimeUnit.SECONDS,</span><br><span class="line">                S_POOL_WORK_QUEUE, S_THREAD_FACTORY, S_HANDLER);</span><br><span class="line">        <span class="comment">// 设置是否允许空闲核心线程超时时，线程会根据keepAliveTime的值进行活性检查，一旦超时便销毁线程。否则，线程会永远等待新的工作。</span></span><br><span class="line">        sCPUThreadPoolExecutor.allowCoreThreadTimeOut(<span class="keyword">true</span>);</span><br><span class="line">        <span class="comment">// IO密集型任务线程池直接采用CachedThreadPool来实现，</span></span><br><span class="line">        <span class="comment">// 它最多可以分配Integer.MAX_VALUE个非核心线程用来执行任务</span></span><br><span class="line">        sIOThreadPoolExecutor = Executors.newCachedThreadPool(S_THREAD_FACTORY);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="异步启动器"><a href="#异步启动器" class="headerlink" title="异步启动器"></a>异步启动器</h2><p><a href="https://github.com/zeshaoaaa/AppStarter" target="_blank" rel="noopener">https://github.com/zeshaoaaa/AppStarter</a><br>启动的核心流程如下所示：<br>1、任务Task化，启动逻辑抽象成Task（Task即对应一个个的初始化任务）。<br>2、根据所有任务依赖关系排序生成一个有向无环图：例如推送SDK初始化任务需要依赖于获取设备id的初始化任务，各个任务之间都可能存在依赖关系，所以将它们的依赖关系排序生成一个有向无环图能将并行效率最大化。<br>3、多线程按照排序后的优先级依次执行：例如必须先初始化获取设备id的初始化任务，才能去进行推送SDK的初始化任务。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1、启动器初始化</span></span><br><span class="line">TaskDispatcher.init(<span class="keyword">this</span>);</span><br><span class="line"><span class="comment">// 2、创建启动器实例，这里每次获取的都是新对象</span></span><br><span class="line">TaskDispatcher dispatcher = TaskDispatcher.createInstance();</span><br><span class="line"><span class="comment">// 3、给启动器配置一系列的（异步/非异步）初始化任务并启动启动器</span></span><br><span class="line">dispatcher</span><br><span class="line">        .addTask(<span class="keyword">new</span> InitAMapTask())</span><br><span class="line">        .addTask(<span class="keyword">new</span> InitStethoTask())</span><br><span class="line">        .addTask(<span class="keyword">new</span> InitWeexTask())</span><br><span class="line">        .addTask(<span class="keyword">new</span> InitBuglyTask())</span><br><span class="line">        .addTask(<span class="keyword">new</span> InitFrescoTask())</span><br><span class="line">        .addTask(<span class="keyword">new</span> InitJPushTask())</span><br><span class="line">        .addTask(<span class="keyword">new</span> InitUmengTask())</span><br><span class="line">        .addTask(<span class="keyword">new</span> GetDeviceIdTask())</span><br><span class="line">        .start();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 4、需要等待微信SDK初始化完成，程序才能往下执行</span></span><br><span class="line">dispatcher.await();</span><br></pre></td></tr></table></figure>
+
+<p>在注释3处，我们给启动器配置了一系列的初始化任务并启动启动器，需要注意的是，这里的Task既可以是用于执行异步任务（子线程）的也可以是用于执行非异步任务（主线程）。下面，我们来分析下这两种Task的用法，比如InitStethoTask这个异步任务的初始化，代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Task中的runOnMainThread方法返回为false，说明 task 是用于处理异步任务的task</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InitStethoTask</span> <span class="keyword">extends</span> <span class="title">Task</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Stetho.initializeWithDefaults(mContext);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面，我们再看看另一个用于初始化非异步任务的例子，例如用于微信SDK初始化的InitWeexTask，代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 主线程中的非异步任务</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">MainTask</span> <span class="keyword">extends</span> <span class="title">Task</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">runOnMainThread</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 它直接继承了MainTask,主线程执行的task</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InitWeexTask</span> <span class="keyword">extends</span> <span class="title">MainTask</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 表示在某个时刻之前必须等待当前Task初始化完成程序才能继续往下执行</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">needWait</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        InitConfig config = <span class="keyword">new</span> InitConfig.Builder().build();</span><br><span class="line">        WXSDKEngine.initialize((Application) mContext, config);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 存在依赖关系的Task</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InitJPushTask</span> <span class="keyword">extends</span> <span class="title">Task</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> List&lt;Class&lt;? extends Task&gt;&gt; dependsOn() &#123;</span><br><span class="line">        List&lt;Class&lt;? extends Task&gt;&gt; task = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        task.add(GetDeviceIdTask.class);</span><br><span class="line">        <span class="keyword">return</span> task;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        JPushInterface.init(mContext);</span><br><span class="line">        MyApplication app = (MyApplication) mContext;</span><br><span class="line">        JPushInterface.setAlias(mContext, <span class="number">0</span>, app.getDeviceId());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="延迟初始化"><a href="#延迟初始化" class="headerlink" title="延迟初始化"></a>延迟初始化</h2><p><a href="https://github.com/zeshaoaaa/AppStarter" target="_blank" rel="noopener">https://github.com/zeshaoaaa/AppStarter</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 延迟初始化分发器</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DelayInitDispatcher</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Queue&lt;Task&gt; mDelayTasks = <span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> MessageQueue.IdleHandler mIdleHandler = <span class="keyword">new</span>     MessageQueue.IdleHandler() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">queueIdle</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="comment">// 分批执行的好处在于每一个task占用主线程的时间相对</span></span><br><span class="line">            <span class="comment">// 来说很短暂，并且此时CPU是空闲的，这些能更有效地避免UI卡顿</span></span><br><span class="line">            <span class="keyword">if</span>(mDelayTasks.size()&gt;<span class="number">0</span>)&#123;</span><br><span class="line">                Task task = mDelayTasks.poll();</span><br><span class="line">                <span class="keyword">new</span> DispatchRunnable(task).run();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> !mDelayTasks.isEmpty();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> DelayInitDispatcher <span class="title">addTask</span><span class="params">(Task task)</span></span>&#123;</span><br><span class="line">        mDelayTasks.add(task);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span></span>&#123;</span><br><span class="line">        Looper.myQueue().addIdleHandler(mIdleHandler);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Multidex预加载优化"><a href="#Multidex预加载优化" class="headerlink" title="Multidex预加载优化"></a>Multidex预加载优化</h2><p><a href="https://github.com/lanshifu/MultiDexTest" target="_blank" rel="noopener">https://github.com/lanshifu/MultiDexTest</a></p>
+<p>1、启动时单独开一个进程去异步进行Multidex的第一次加载，即Dex提取和Dexopt操作。<br>2、此时，主进程Application进入while循环，不断检测Multidex操作是否完成。<br>3、执行到Multidex时，则已经发现提取并优化好了Dex，直接执行。MultiDex执行完之后主进程Application继续执行ContentProvider初始化和Application的onCreate方法。</p>
+<h3 id="抖音BoostMultiDex优化"><a href="#抖音BoostMultiDex优化" class="headerlink" title="抖音BoostMultiDex优化"></a>抖音BoostMultiDex优化</h3><p><a href="https://juejin.cn/post/6844904079206907911" target="_blank" rel="noopener">https://juejin.cn/post/6844904079206907911</a></p>
+<ol>
+<li>在第一次启动的时候，直接加载没有经过 OPT 优化的原始 DEX，先使得 APP 能够正常启动。</li>
+<li>在后台启动一个单独进程，慢慢地做完 DEX 的 OPT 工作，尽可能避免影响到前台 APP 的正常使用。<br>绕过 ODEX 直接加载 DEX 的方案如下：<br>1）从 APK 中解压获取原始 Secondary DEX 文件的字节码<br>2）通过 dlsym 获取dvm_dalvik_system_DexFile数组<br>3）在数组中查询得到Dalvik_dalvik_system_DexFile_openDexFile_bytearray函数<br>4）调用该函数，逐个传入之前从 APK 获取的 DEX 字节码，完成 DEX 加载，得到合法的DexFile对象<br>5）把DexFile对象都添加到 APP 的PathClassLoader的 pathList 里</li>
+</ol>
+<h2 id="类预加载优化"><a href="#类预加载优化" class="headerlink" title="类预加载优化"></a>类预加载优化</h2><p>在Application中提前异步加载初始化耗时较长的类。</p>
+<blockquote>
+<p>如何找到耗时较长的类？<br>替换系统的ClassLoader，打印类加载的时间，按需选取需要异步加载的类。</p>
+</blockquote>
+<h2 id="WebView启动优化"><a href="#WebView启动优化" class="headerlink" title="WebView启动优化"></a>WebView启动优化</h2><p>1、WebView首次创建比较耗时，需要预先创建WebView提前将其内核初始化。<br>2、使用WebView缓存池，用到WebView的时候都从缓存池中拿，注意内存泄漏问题。<br>3、本地离线包，即预置静态页面资源。</p>
+<h2 id="优化黑科技"><a href="#优化黑科技" class="headerlink" title="优化黑科技"></a>优化黑科技</h2><ol>
+<li>启动阶段抑制GC</li>
+<li>CPU锁频</li>
+<li>IO优化</li>
+<li>数据重排</li>
+<li>类加载优化（Dalvik）</li>
+<li>保活</li>
+</ol>
+<p>参考资料：<a href="https://juejin.cn/post/6870457006784774152#heading-91" target="_blank" rel="noopener">https://juejin.cn/post/6870457006784774152#heading-91</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/android/" rel="tag"># android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/10/28/android内存优化/" rel="next" title="android内存优化">
+                <i class="fa fa-chevron-left"></i> android内存优化
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar1.jpeg" alt="pacoblack">
+            
+              <p class="site-author-name" itemprop="name">pacoblack</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">50</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/pacoblack" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:pacoson.wang@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/pacoblacksee" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="skype:yourname?call|chat" target="_blank" title="Skype">
+                      
+                        <i class="fa fa-fw fa-skype"></i>Skype</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#启动流程"><span class="nav-number">1.</span> <span class="nav-text">启动流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查看启动时间"><span class="nav-number">2.</span> <span class="nav-text">查看启动时间</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#启动分析工具（TraceView）"><span class="nav-number">3.</span> <span class="nav-text">启动分析工具（TraceView）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#启动分析工具（Systrace）"><span class="nav-number">4.</span> <span class="nav-text">启动分析工具（Systrace）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优化方案"><span class="nav-number">5.</span> <span class="nav-text">优化方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第三方库懒加载"><span class="nav-number">5.1.</span> <span class="nav-text">第三方库懒加载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Android异步加载"><span class="nav-number">5.2.</span> <span class="nav-text">Android异步加载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程池优化实践"><span class="nav-number">5.3.</span> <span class="nav-text">线程池优化实践</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#异步启动器"><span class="nav-number">5.4.</span> <span class="nav-text">异步启动器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#延迟初始化"><span class="nav-number">5.5.</span> <span class="nav-text">延迟初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Multidex预加载优化"><span class="nav-number">5.6.</span> <span class="nav-text">Multidex预加载优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#抖音BoostMultiDex优化"><span class="nav-number">5.6.1.</span> <span class="nav-text">抖音BoostMultiDex优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类预加载优化"><span class="nav-number">5.7.</span> <span class="nav-text">类预加载优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WebView启动优化"><span class="nav-number">5.8.</span> <span class="nav-text">WebView启动优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化黑科技"><span class="nav-number">5.9.</span> <span class="nav-text">优化黑科技</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pacoblack</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="[object Object]"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+  <link rel="stylesheet" href="/assets/css/APlayer.min.css" class="aplayer-style-marker">
+  <script src="/assets/js/APlayer.min.js" class="aplayer-script-marker"></script>
+  <script src="/assets/js/Meting.min.js" class="meting-script-marker"></script>
+  <div id="aplayer-AXqIDvNX" class="aplayer aplayer-tag-marker meting-tag-marker aplayer-fixed" data-id="71075946" data-server="netease" data-type="playlist" data-mode="circulation" data-autoplay="false" data-mutex="true" data-listmaxheight="340px" data-preload="auto" data-fixed="true" data-lrctype="0" data-theme="#555"></div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/Epsilon2.1.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
