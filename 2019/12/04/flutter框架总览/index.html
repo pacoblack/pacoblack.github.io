@@ -99,7 +99,7 @@
 <meta property="og:image" content="https://pacoblack.github.io/2019/12/04/flutter框架总览/flutter8.jpg">
 <meta property="og:image" content="https://pacoblack.github.io/2019/12/04/flutter框架总览/flutter9.jpg">
 <meta property="og:image" content="https://pacoblack.github.io/2019/12/04/flutter框架总览/flutter10.jpg">
-<meta property="og:updated_time" content="2021-03-13T06:56:15.515Z">
+<meta property="og:updated_time" content="2021-10-29T10:56:45.345Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="flutter框架总览">
 <meta name="twitter:description" content="先来看看Flutter的大体构造">
@@ -391,7 +391,7 @@
 <p>Flutter 有 Flutter 的 Application 和 Flutter 的 Activity。在 Flutter Application 中就会把 Dart 写的代码生成一个产物，把它加载起来，我们的 Flutter Activity 过程中会拉起我们的引擎。</p>
 <p>引擎中，Flutter 四个核心线程：平台线程、UI 线程、GPU 线程、IO 线程，它们各有分工：</p>
 <ul>
-<li>平台线程，对于安卓和 iOS 来说就是常说的主线程，<br>一般来说，一个Flutter应用启动的时候会创建一个Engine实例，Engine创建的时候会创建一个线程供 Platform Runner 使用。跟Flutter Engine的所有交互（接口调用）必须在 Platform Thread 进行，否则可能导致无法预期的异常。这跟iOS UI相关的操作都必须在主线程进行相类似。需要注意的是在Flutter Engine中有很多模块都是非线程安全的。规则很简单，对于Flutter Engine的接口调用都需保证在Platform Thread进行。阻塞 Platform Thread 不会直接导致Flutter应用的卡顿（跟iOS android主线程不同）。尽管如此，也不建议在这个Runner执行繁重的操作，长时间卡住Platform Thread应用有可能会被系统Watchdog强杀。</li>
+<li>平台线程，对于安卓和 iOS 来说就是常说的主线程，<br>一般来说，一个Flutter应用启动的时候会创建一个Engine实例，Engine创建的时候会创建一个线程供 Platform Runner 使用。跟Flutter Engine的所有交互（接口调用）必须在 Platform Thread 进行，否则可能导致无法预期的异常。这跟iOS UI相关的操作都必须在主线程进行相类似。需要注意的是在Flutter Engine中有很多模块都是非线程安全的。规则很简单，对于Flutter Engine的接口调用都需保证在Platform Thread进行。阻塞 Platform Thread 不会直接导致Flutter应用的卡顿（跟iOS android主线程不同）。尽管如此，也不建议在这个Runner执行繁重的操作，长时间卡住Platform Thread应用有可能会被系统Watchdog强杀。<br>实际上我们可以同时启动多个Engine实例，每个Engine对应一个Platform Runxner，每个Runner跑在各自的线程里。</li>
 <li>UI 线程，面对安卓本身的主线程，就是一个独立的线程；UI Task Runner用于执行Dart root isolate代码<br>Root isolate比较特殊，它绑定了不少Flutter需要的函数方法，以便进行渲染相关操作。对于每一帧，引擎要做的事情有：<ol>
 <li>Root isolate通知Flutter Engine有帧需要渲染。</li>
 <li>Flutter Engine通知平台，需要在下一个vsync的时候得到通知。</li>
@@ -400,16 +400,9 @@
 <li>创建或者更新Tree，这个Tree包含了用于屏幕上显示Widgets的语义信息。这个东西主要用于平台相关的辅助Accessibility元素的配置和渲染。<br>除了渲染相关逻辑之外Root Isolate还是处理来自Native Plugins的消息，Timers，Microtasks和异步IO等操作。Root Isolate负责创建管理的Layer Tree最终决定绘制到屏幕上的内容。因此这个线程的过载会直接导致卡顿掉帧。</li>
 </ol>
 </li>
-<li>GPU 线程，指的是跑在 CPU 上的线程，它做的主要是 Skia 相关工作。<br>UI Task Runner创建的Layer Tree是跨平台的，它不关心到底由谁来完成绘制。GPU Task Runner负责将Layer Tree提供的信息转化为平台可执行的GPU指令。GPU Task Runner同时负责绘制所需要的GPU资源的管理。资源主要包括平台Framebuffer，Surface，Texture和Buffers等。</li>
+<li>GPU 线程，指的是跑在 GPU 上的线程，它做的主要是 Skia 相关工作。<br>UI Task Runner创建的Layer Tree是跨平台的，它不关心到底由谁来完成绘制。GPU Task Runner负责将Layer Tree提供的信息转化为平台可执行的GPU指令。GPU Task Runner同时负责绘制所需要的GPU资源的管理。资源主要包括平台Framebuffer，Surface，Texture和Buffers等。<br>一般来说UI Runner和GPU Runner跑在不同的线程。GPU Runner会根据目前帧执行的进度去向UI Runner要求下一帧的数据，在任务繁重的时候可能会告诉UI Runner延迟任务。这种调度机制确保GPU Runner不至于过载，同时也避免了UI Runner不必要的消耗。<br>建议为每一个Engine实例都新建一个专用的GPU Runner线程。</li>
+<li>IO 线程，比如图片解码、编解码，主要做 IO 相关的工作。<br>Platform Runner过载可能导致系统WatchDog强杀，UI和GPU Runner过载则可能导致Flutter应用的卡顿。但是GPU线程的一些必要操作，例如IO，放到哪里执行呢？答案正是IO Runner。<br>IO Runner的主要功能是从图片存储（比如磁盘）中读取压缩的图片格式，将图片数据进行处理为GPU Runner的渲染做好准备。IO Runner首先要读取压缩的图片二进制数据（比如PNG，JPEG），将其解压转换成GPU能够处理的格式然后将数据上传到GPU。<br>获取诸如ui.Image这样的资源只有通过async call去调用，当调用发生的时候Flutter Framework告诉IO Runner进行加载的异步操作。<br>IO Runner直接决定了图片和其它一些资源加载的延迟间接影响性能。所以建议为IO Runner创建一个专用的线程。</li>
 </ul>
-<p>一般来说UI Runner和GPU Runner跑在不同的线程。GPU Runner会根据目前帧执行的进度去向UI Runner要求下一帧的数据，在任务繁重的时候可能会告诉UI Runner延迟任务。这种调度机制确保GPU Runner不至于过载，同时也避免了UI Runner不必要的消耗。</p>
-<p>建议为每一个Engine实例都新建一个专用的GPU Runner线程。</p>
-<ul>
-<li>IO 线程，比如图片解码、编解码，主要做 IO 相关的工作。<br>Platform Runner过载可能导致系统WatchDog强杀，UI和GPU Runner过载则可能导致Flutter应用的卡顿。但是GPU线程的一些必要操作，例如IO，放到哪里执行呢？答案正是IO Runner。</li>
-</ul>
-<p>IO Runner的主要功能是从图片存储（比如磁盘）中读取压缩的图片格式，将图片数据进行处理为GPU Runner的渲染做好准备。IO Runner首先要读取压缩的图片二进制数据（比如PNG，JPEG），将其解压转换成GPU能够处理的格式然后将数据上传到GPU。</p>
-<p>获取诸如ui.Image这样的资源只有通过async call去调用，当调用发生的时候Flutter Framework告诉IO Runner进行加载的异步操作。</p>
-<p>IO Runner直接决定了图片和其它一些资源加载的延迟间接影响性能。所以建议为IO Runner创建一个专用的线程。</p>
 <h1 id="线程框架"><a href="#线程框架" class="headerlink" title="线程框架"></a>线程框架</h1><p><img src="//pacoblack.github.io/2019/12/04/flutter框架总览/flutter5.jpg" alt="线程通信"></p>
 <p>以安卓为例，Flutter 依然有一个 Looper 线程，对于主线程复用了原来的 Native 的，对于另外三个线程创建的独立的 Looper，不同的是它有两个消息队列，依然是发送消息的方式，通过 Task Runner 就好比安卓的 Handler，通过 PostTask 就好比把一个消息放在一个消息队列里去。同样在 Dart 里经常用 Furture 和异步的方法，核心还是用 Task Runner 发一个消息。</p>
 <h1 id="Dart虚拟机"><a href="#Dart虚拟机" class="headerlink" title="Dart虚拟机"></a>Dart虚拟机</h1><p><img src="//pacoblack.github.io/2019/12/04/flutter框架总览/flutter6.jpg" alt="Dart虚拟机"></p>
@@ -563,7 +556,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">50</span>
+                  <span class="site-state-item-count">51</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -574,7 +567,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -585,7 +578,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">18</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
