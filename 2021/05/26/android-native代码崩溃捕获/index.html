@@ -1,37 +1,841 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html>
 
 
-{% block title %}{{ page.title }} | {{ config.title }}{% endblock %}
 
-{% block page_class %}page-post-detail{% endblock %}
+  
 
 
-{% block content %}
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="捕获native异常栈">
+<meta property="og:type" content="article">
+<meta property="og:title" content="android native代码崩溃捕获">
+<meta property="og:url" content="https://pacoblack.github.io/2021/05/26/android-native%E4%BB%A3%E7%A0%81%E5%B4%A9%E6%BA%83%E6%8D%95%E8%8E%B7/index.html">
+<meta property="og:site_name" content="我爱学习">
+<meta property="og:description" content="捕获native异常栈">
+<meta property="og:locale">
+<meta property="article:published_time" content="2021-05-26T08:22:51.000Z">
+<meta property="article:modified_time" content="2021-10-29T10:56:45.344Z">
+<meta property="article:author" content="pacoblack">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://pacoblack.github.io/2021/05/26/android-native代码崩溃捕获/"/>
+
+
+
+
+
+  <title>android native代码崩溃捕获 | 我爱学习</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">我爱学习</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">这只是一场演习</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-主页"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-标签"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-分类"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-归档"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-关于"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
 
   <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://pacoblack.github.io/2021/05/26/android-native%E4%BB%A3%E7%A0%81%E5%B4%A9%E6%BA%83%E6%8D%95%E8%8E%B7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar1.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="我爱学习">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">android native代码崩溃捕获</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-05-26T16:22:51+08:00">
+                2021-05-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>捕获native异常栈</p>
+<span id="more"></span>
+<p>#订阅异常发生的信号</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">extern</span> <span class="keyword">int</span> <span class="title">sigaction</span><span class="params">(<span class="keyword">int</span>, <span class="keyword">const</span> struct sigaction*, struct sigaction*)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h1 id="设置额外栈空间"><a href="#设置额外栈空间" class="headerlink" title="设置额外栈空间"></a>设置额外栈空间</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sigaltstack</span><span class="params">(<span class="keyword">const</span> <span class="keyword">stack_t</span> *ss, <span class="keyword">stack_t</span> *oss)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h1 id="捕获Crash位置"><a href="#捕获Crash位置" class="headerlink" title="捕获Crash位置"></a>捕获Crash位置</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> signal_array[] = &#123;SIGILL, SIGABRT, SIGBUS, SIGFPE, SIGSEGV, SIGSTKFLT, SIGSYS&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">signal_handle</span><span class="params">(<span class="keyword">int</span> code, <span class="keyword">siginfo_t</span> *si, <span class="keyword">void</span> *context)</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sigaction</span> <span class="title">old_signal_handlers</span>[<span class="title">SIGNALS_LEN</span>];</span></span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sigaction</span> <span class="title">handler</span>;</span></span><br><span class="line">    handler.sa_sigaction = signal_handle;</span><br><span class="line">    handler.sa_flags = SA_SIGINFO;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; SIGNALS_LEN; ++i) &#123;</span><br><span class="line">        <span class="built_in">sigaction</span>(signal_array[i], &amp;handler, &amp; old_signal_handlers[i]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>signal_handle()</code> 函数中的第三个参数 <code>context</code> 是 <code>uc_mcontext</code> 的结构体指针，它封装了 cpu 相关的上下文，包括当前线程的寄存器信息和奔溃时的 pc 值，能够知道崩溃时的pc，就能知道崩溃时执行的是那条指令.<br>不过uc_mcontext结构体的定义是平台相关的，比如我们熟知的arm、x86这种都不是同一个结构体定义，上面的代码只列出了arm架构的寄存器信息，要兼容其他架构的 cpu 在处理的时候，就得要寄出宏编译大法，不同的架构使用不同的定义。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">uintptr_t</span> <span class="title">pc_from_ucontext</span><span class="params">(<span class="keyword">const</span> <span class="keyword">ucontext_t</span> *uc)</span> </span>&#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> (defined(__arm__))</span></span><br><span class="line">    <span class="keyword">return</span> uc-&gt;uc_mcontext.arm_pc;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">elif</span> defined(__aarch64__)</span></span><br><span class="line">    <span class="keyword">return</span> uc-&gt;uc_mcontext.pc;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">elif</span> (defined(__x86_64__))</span></span><br><span class="line">    <span class="keyword">return</span> uc-&gt;uc_mcontext.gregs[REG_RIP];</span><br><span class="line"><span class="meta">#<span class="meta-keyword">elif</span> (defined(__i386))</span></span><br><span class="line">  <span class="keyword">return</span> uc-&gt;uc_mcontext.gregs[REG_EIP];</span><br><span class="line"><span class="meta">#<span class="meta-keyword">elif</span> (defined (__ppc__)) || (defined (__powerpc__))</span></span><br><span class="line">  <span class="keyword">return</span> uc-&gt;uc_mcontext.regs-&gt;nip;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">elif</span> (defined(__hppa__))</span></span><br><span class="line">  <span class="keyword">return</span> uc-&gt;uc_mcontext.sc_iaoq[<span class="number">0</span>] &amp; ~<span class="number">0x3</span>UL;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">elif</span> (defined(__sparc__) &amp;&amp; defined (__arch64__))</span></span><br><span class="line">  <span class="keyword">return</span> uc-&gt;uc_mcontext.mc_gregs[MC_PC];</span><br><span class="line"><span class="meta">#<span class="meta-keyword">elif</span> (defined(__sparc__) &amp;&amp; !defined (__arch64__))</span></span><br><span class="line">  <span class="keyword">return</span> uc-&gt;uc_mcontext.gregs[REG_PC];</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">error</span> <span class="meta-string">&quot;Architecture is unknown, please report me!&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>获取到的pc值是程序加载到内存中的绝对地址，绝对地址不能直接使用，因为每次程序运行创建的内存肯定都不是固定区域的内存，所以绝对地址肯定每次运行都不一致。我们需要拿到崩溃代码相对于当前库的相对偏移地址，这样才能使用 <code>addr2line</code> 分析出是哪一行代码。通过<code>dladdr()</code>可以获得共享库加载到内存的起始地址，和pc值相减就可以获得相对偏移地址，并且可以获得共享库的名字。</p>
+<h1 id="获取的crash的堆栈"><a href="#获取的crash的堆栈" class="headerlink" title="获取的crash的堆栈"></a>获取的crash的堆栈</h1><p>获取函数调用栈是最麻烦的，至今没有一个好用的，全都要做一些大改动。常见的做法有四种：</p>
+<ul>
+<li>第一种：直接使用系统的&lt;unwind.h&gt;库，可以获取到出错文件与函数名。只不过需要自己解析函数符号，同时经常会捕获到系统错误，需要手动过滤。</li>
+<li>第二种：在4.1.1以上，5.0以下，使用系统自带的libcorkscrew.so，5.0开始，系统中没有了libcorkscrew.so，可以自己编译系统源码中的libunwind。libunwind是一个开源库，事实上高版本的安卓源码中就使用了他的优化版替换libcorkscrew。</li>
+<li>第三种：使用开源库coffeecatch，但是这种方案也不能百分之百兼容所有机型。</li>
+<li>第四种：使用 Google 的breakpad，这是所有 C/C++堆栈获取的权威方案，基本上业界都是基于这个库来做的。只不过这个库是全平台的 android、iOS、Windows、Linux、MacOS 全都有，所以非常大，在使用的时候得把无关的平台剥离掉减小体积。</li>
+</ul>
+<p>下面以第一种为例讲一下实现：<br>核心方法是使用<code>&lt;unwind.h&gt;</code>库提供的一个方法<code>_Unwind_Backtrace()</code>这个函数可以传入一个函数指针作为回调，指针指向的函数有一个重要的参数是<code>_Unwind_Context</code>类型的结构体指针。<br>可以使用<code>_Unwind_GetIP()</code>函数将当前函数调用栈中每个函数的绝对内存地址（也就是上文中提到的 pc 值），写入到<code>_Unwind_Context</code>结构体中，最终返回的是当前调用栈的全部函数地址了，<code>_Unwind_Word</code>实际上就是一个unsigned int。<br>而<code>capture_backtrace()</code>返回的就是当前我们获取到调用栈中内容的数量。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * callback used when using &lt;unwind.h&gt; to get the trace for the current context</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">_Unwind_Reason_Code <span class="title">unwind_callback</span><span class="params">(struct _Unwind_Context *context, <span class="keyword">void</span> *arg)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">backtrace_state_t</span> *state = (<span class="keyword">backtrace_state_t</span> *) arg;</span><br><span class="line">    _Unwind_Word pc = _Unwind_GetIP(context);</span><br><span class="line">    <span class="keyword">if</span> (pc) &#123;</span><br><span class="line">        <span class="keyword">if</span> (state-&gt;current == state-&gt;end) &#123;</span><br><span class="line">            <span class="keyword">return</span> _URC_END_OF_STACK;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            *state-&gt;current++ = (<span class="keyword">void</span> *) pc;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> _URC_NO_REASON;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * uses built in &lt;unwind.h&gt; to get the trace for the current context</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">size_t</span> <span class="title">capture_backtrace</span><span class="params">(<span class="keyword">void</span> **buffer, <span class="keyword">size_t</span> max)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">backtrace_state_t</span> state = &#123;buffer, buffer + max&#125;;</span><br><span class="line">    _Unwind_Backtrace(unwind_callback, &amp;state);</span><br><span class="line">    <span class="keyword">return</span> state.current - buffer;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当所有的函数的绝对内存地址(pc 值)都获取到了，就可以用上文讲的办法将 pc 值转换为相对偏移量，获取到真正的函数信息和相对内存地址了。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> *buffer[max_line];</span><br><span class="line"><span class="keyword">int</span> frames_size = <span class="built_in">capture_backtrace</span>(buffer, max_line);</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; frames_size; i++) &#123;</span><br><span class="line">    Dl_info info;  </span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">void</span> *addr = buffer[i];</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">dladdr</span>(addr, &amp;info) &amp;&amp; info.dli_fname) &#123;  </span><br><span class="line">      <span class="keyword">void</span> * <span class="keyword">const</span> nearest = info.dli_saddr;  </span><br><span class="line">      <span class="keyword">uintptr_t</span> addr_relative = addr - info.dli_fbase;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Dl_info是一个结构体，内部封装了函数所在文件、函数名、当前库的基地址等信息</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *dli_fname;  <span class="comment">/* Pathname of shared object that</span></span><br><span class="line"><span class="comment">                               contains address */</span></span><br><span class="line">    <span class="keyword">void</span>       *dli_fbase;  <span class="comment">/* Address at which shared object</span></span><br><span class="line"><span class="comment">                               is loaded */</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *dli_sname;  <span class="comment">/* Name of nearest symbol with address</span></span><br><span class="line"><span class="comment">                               lower than addr */</span></span><br><span class="line">    <span class="keyword">void</span>       *dli_saddr;  <span class="comment">/* Exact address of symbol named</span></span><br><span class="line"><span class="comment">                               in dli_sname */</span></span><br><span class="line">&#125; Dl_info;</span><br></pre></td></tr></table></figure>
+<p>有了这个对象，我们就能获取到全部想要的信息了。虽然获取到全部想要的信息，但&lt;unwind.h&gt;有个麻烦的就是不想要的信息也给你了，所以需要手动过滤掉各种系统错误，最终得到的数据，就可以上报到自己的服务器了。</p>
+<h1 id="获取当前java堆栈"><a href="#获取当前java堆栈" class="headerlink" title="获取当前java堆栈"></a>获取当前java堆栈</h1><p>我们认为crash线程就是捕获到信号的线程，虽然这在SIGABRT下不一定可靠。在信号处理函数中获得当前线程的名字，然后把crash线程的名字传给java层，在java里dump出这个线程的堆栈，就是crash所对应的java层堆栈了。</p>
+<p>在c中获得线程名字：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">char</span>* <span class="title">getThreadName</span><span class="params">(<span class="keyword">pid_t</span> tid)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (tid &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">char</span>* path = (<span class="keyword">char</span> *) <span class="built_in">calloc</span>(<span class="number">1</span>, <span class="number">80</span>);</span><br><span class="line">    <span class="keyword">char</span>* line = (<span class="keyword">char</span> *) <span class="built_in">calloc</span>(<span class="number">1</span>, THREAD_NAME_LENGTH);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">snprintf</span>(path, PATH_MAX, <span class="string">&quot;proc/%d/comm&quot;</span>, tid);</span><br><span class="line">    FILE* commFile = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">if</span> (commFile = fopen(path, <span class="string">&quot;r&quot;</span>)) &#123;</span><br><span class="line">        fgets(line, THREAD_NAME_LENGTH, commFile);</span><br><span class="line">        fclose(commFile);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">free</span>(path);</span><br><span class="line">    <span class="keyword">if</span> (line) &#123;</span><br><span class="line">        <span class="keyword">int</span> length = <span class="built_in">strlen</span>(line);</span><br><span class="line">        <span class="keyword">if</span> (line[length - <span class="number">1</span>] == <span class="string">&#x27;\n&#x27;</span>) &#123;</span><br><span class="line">            line[length - <span class="number">1</span>] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> line;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后传给java层：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 根据线程名获得线程对象，native层会调用该方法，不能混淆</span></span><br><span class="line"><span class="comment"> * @param threadName</span></span><br><span class="line"><span class="comment"> * @return</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">@<span class="function">Keep</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Thread <span class="title">getThreadByName</span><span class="params">(String threadName)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (TextUtils.isEmpty(threadName)) &#123;</span><br><span class="line">        <span class="keyword">return</span> null;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Set&lt;Thread&gt; threadSet = Thread.getAllStackTraces().keySet();</span><br><span class="line">    Thread[] threadArray = threadSet.toArray(<span class="keyword">new</span> Thread[threadSet.size()]);</span><br><span class="line"></span><br><span class="line">    Thread theThread = null;</span><br><span class="line">    <span class="keyword">for</span>(Thread thread : threadArray) &#123;</span><br><span class="line">        <span class="keyword">if</span> (thread.getName().equals(threadName)) &#123;</span><br><span class="line">            theThread =  thread;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Log.d(TAG, <span class="string">&quot;threadName: &quot;</span> + threadName + <span class="string">&quot;, thread: &quot;</span> + theThread);</span><br><span class="line">    <span class="keyword">return</span> theThread;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="防止死锁或者死循环"><a href="#防止死锁或者死循环" class="headerlink" title="防止死锁或者死循环"></a>防止死锁或者死循环</h1><p>首先我们要了解async-signal-safe和可重入函数概念：</p>
+<blockquote>
+<p>A signal handler function must be very careful, since processing elsewhere may be interrupted at some arbitrary point in the execution of the program.<br>POSIX has the concept of “safe function”.  If a signal interrupts the execution of an unsafe function, and handler  either calls an unsafe function or handler terminates via a call to longjmp() or siglongjmp() and the program subsequently calls an unsafe function, then the behavior of the program is undefined.</p>
+</blockquote>
+<p>进程捕捉到信号并对其进行处理时，进程正在执行的正常指令序列就被信号处理程序临时中断，它首先执行该信号处理程序中的指令（类似发生硬件中断）。但在信号处理程序中，不能判断捕捉到信号时进程执行到何处。如果进程正在执行malloc，在其堆中分配另外的存储空间，而此时由于捕捉到信号而插入执行该信号处理程序，其中又调用malloc，这时会发生什么？这可能会对进程造成破坏，因为malloc通常为它所分配的存储区维护一个链表，而插入执行信号处理程序时，进程可能正在更改此链表。（参考《UNIX环境高级编程》）</p>
+<p>Single UNIX Specification说明了在信号处理程序中保证调用安全的函数。这些函数是可重入的并被称为是异步信号安全（async-signal-safe）。除了可重入以外，在信号处理操作期间，它会阻塞任何会引起不一致的信号发送。<br>但即使我们自己在信号处理程序中不使用不可重入的函数，也无法保证保存的旧的信号处理程序中不会有非异步信号安全的函数。所以要使用alarm保证信号处理程序不会陷入死锁或者死循环的状态。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">signal_handler</span><span class="params">(<span class="keyword">const</span> <span class="keyword">int</span> code, <span class="keyword">siginfo_t</span> *<span class="keyword">const</span> si,</span></span></span><br><span class="line"><span class="params"><span class="function">                                    <span class="keyword">void</span> *<span class="keyword">const</span> sc)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Ensure we do not deadlock. Default of ALRM is to die.</span></span><br><span class="line"><span class="comment">    * (signal() and alarm() are signal-safe) */</span></span><br><span class="line">    signal(code, SIG_DFL);</span><br><span class="line">    signal(SIGALRM, SIG_DFL);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Ensure we do not deadlock. Default of ALRM is to die.</span></span><br><span class="line"><span class="comment">      * (signal() and alarm() are signal-safe) */</span></span><br><span class="line">    (<span class="keyword">void</span>) alarm(<span class="number">8</span>);</span><br><span class="line">    ....</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>参考资料：<br><a target="_blank" rel="noopener" href="https://www.kymjs.com/code/2018/08/22/01/">https://www.kymjs.com/code/2018/08/22/01/</a><br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/g-WzYF3wWAljok1XjPoo7w">https://mp.weixin.qq.com/s/g-WzYF3wWAljok1XjPoo7w</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/04/17/%E5%9C%A8%E7%BA%BF%E5%BD%B1%E9%99%A2/" rel="next" title="在线影院">
+                <i class="fa fa-chevron-left"></i> 在线影院
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/10/28/android%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/" rel="prev" title="android内存优化">
+                android内存优化 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
 
     <div class="post-spread">
-      {% if theme.jiathis %}
-        {% include '_partials/share/jiathis.swig' %}
-      {% elseif theme.baidushare %}
-        {% include '_partials/share/baidushare.swig' %}
-      {% elseif theme.add_this_id %}
-        {% include '_partials/share/add-this.swig' %}
-      {% elseif theme.duoshuo_shortname and theme.duoshuo_share %}
-        {% include '_partials/share/duoshuo_share.swig' %}
-      {% endif %}
+      
     </div>
   </div>
 
-{% endblock %}
 
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
+          </div>
+          
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar1.jpeg"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20%E5%BD%92%E6%A1%A3">
+              
+                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/pacoblack" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:pacoson.wang@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/pacoblacksee" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="skype:yourname?call|chat" target="_blank" title="Skype">
+                      
+                        <i class="fa fa-fw fa-skype"></i>Skype</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E9%A2%9D%E5%A4%96%E6%A0%88%E7%A9%BA%E9%97%B4"><span class="nav-number">1.</span> <span class="nav-text">设置额外栈空间</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8D%95%E8%8E%B7Crash%E4%BD%8D%E7%BD%AE"><span class="nav-number">2.</span> <span class="nav-text">捕获Crash位置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E7%9A%84crash%E7%9A%84%E5%A0%86%E6%A0%88"><span class="nav-number">3.</span> <span class="nav-text">获取的crash的堆栈</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8Djava%E5%A0%86%E6%A0%88"><span class="nav-number">4.</span> <span class="nav-text">获取当前java堆栈</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%98%B2%E6%AD%A2%E6%AD%BB%E9%94%81%E6%88%96%E8%80%85%E6%AD%BB%E5%BE%AA%E7%8E%AF"><span class="nav-number">5.</span> <span class="nav-text">防止死锁或者死循环</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pacoblack</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="[object Object]"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+  <link rel="stylesheet" href="/assets/css/APlayer.min.css" class="aplayer-style-marker">
+  <script src="/assets/js/APlayer.min.js" class="aplayer-script-marker"></script>
+  <script src="/assets/js/Meting.min.js" class="meting-script-marker"></script>
+  <div id="aplayer-AXqIDvNX"
+      class="aplayer aplayer-tag-marker meting-tag-marker aplayer-fixed"
+      data-id="71075946"
+      data-server="netease"
+      data-type="playlist"
+      data-mode="circulation"
+      data-autoplay="false"
+      data-mutex="true"
+      data-listmaxheight="340px"
+      data-preload="auto"
+      data-fixed="true"
+      data-lrctype="0"
+      data-theme="#555"></div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/Epsilon2.1.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>

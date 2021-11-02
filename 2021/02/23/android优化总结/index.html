@@ -1,37 +1,922 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html>
 
 
-{% block title %}{{ page.title }} | {{ config.title }}{% endblock %}
 
-{% block page_class %}page-post-detail{% endblock %}
+  
 
 
-{% block content %}
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="android," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="对之前遇到的优化进行一个小结">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android优化总结">
+<meta property="og:url" content="https://pacoblack.github.io/2021/02/23/android%E4%BC%98%E5%8C%96%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="我爱学习">
+<meta property="og:description" content="对之前遇到的优化进行一个小结">
+<meta property="og:locale">
+<meta property="og:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/optm/optm1.jpg">
+<meta property="article:published_time" content="2021-02-23T07:06:09.000Z">
+<meta property="article:modified_time" content="2021-10-29T10:56:45.345Z">
+<meta property="article:author" content="pacoblack">
+<meta property="article:tag" content="android">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/optm/optm1.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://pacoblack.github.io/2021/02/23/android优化总结/"/>
+
+
+
+
+
+  <title>Android优化总结 | 我爱学习</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">我爱学习</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">这只是一场演习</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-主页"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-标签"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-分类"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-归档"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-关于"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
 
   <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://pacoblack.github.io/2021/02/23/android%E4%BC%98%E5%8C%96%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar1.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="我爱学习">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android优化总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-02-23T15:06:09+08:00">
+                2021-02-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>对之前遇到的优化进行一个小结</p>
+<span id="more"></span>
+<h1 id="apk瘦身"><a href="#apk瘦身" class="headerlink" title="apk瘦身"></a>apk瘦身</h1><ol>
+<li>开启混淆压缩</li>
+<li>D8/R8优化<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#开启D8优化</span><br><span class="line">android.enableD8 = true</span><br><span class="line"></span><br><span class="line">#R8优化</span><br><span class="line">android.enableR8=true</span><br><span class="line">android.enableR8.libraries=true</span><br></pre></td></tr></table></figure>
+ProGuard 和 R8 都应用了基本名称混淆：它们 都使用简短，无意义的名称重命名类，字段和方法。他们还可以 删除调试属性。但是，R8 在 inline 内联容器类中更有效，并且在删除未使用的类，字段和方法上则更具侵略性。</li>
+<li>通过ReDex去除debug信息与行号信息</li>
+<li>通过ReDex将有调用关系的类和方法分配到同一个 Dex 中，从而实现分包优化</li>
+<li>通过ThinRPlugin进行R Field的内联优化（它解决了 R Field 过多导致 MultiDex 65536 的问题）</li>
+<li>XZ Utils进行Dex压缩 - 使用了 LZMA/LZMA2 算法。LZMA 提供了高压缩比和快速解压缩，因此非常适合嵌入式应用。</li>
+<li>只引入需要的第三方库来减少包大小</li>
+<li>通过Lint监测无效代码，删除无用的代码</li>
+<li>通过Lint删除冗余资源，android-arscblamer删除没有用到的资源，并解析resources.arsc中可以优化的部分</li>
+<li>通过android-chunk-utils优化重复的资源，首先需要通过资源包中的每个ZipEntry的CRC-32 checksum来筛选出重复的资源。</li>
+<li>通过AndroidResGuard进行资源混淆</li>
+<li>通过TinyPngPlugin等进行图片压缩，通过不同的图片格式进行优化</li>
+<li>对resources.arsc进行压缩优化</li>
+<li>通过ByteX的access_inline插件避免产生Java access方法（Java 编译器在编译过程中自动生成 package 可见性的静态 access$xxx 方法，并且在需要访问对方私有成员的地方改为调用对应的 access 方法。）</li>
+<li>so优化：尽量只用armeabi架构，使用XZ Utils进行压缩，删除无用的symbol，动态加载</li>
+</ol>
+<h1 id="绘制优化"><a href="#绘制优化" class="headerlink" title="绘制优化"></a>绘制优化</h1><h2 id="刷新机制"><a href="#刷新机制" class="headerlink" title="刷新机制"></a>刷新机制</h2><p>4.1版本的Project Butter对Android Display系统进行了重构，引入了三个核心元素：VSYNC（Vertical Synchronization）、Triple Buffer、Choreographer。</p>
+<ul>
+<li>VSYNC，即垂直同步可认为是一种定时中断。</li>
+<li>Choreographer，起调度的作用，将绘制工作统一到VSYNC的某个时间点上，使应用的绘制工作有序。当收到VSYNC信号时，就会调用用户设置的回调函数。回调类型的优先级从高到低为CALLBACK_INPUT、CALLBACK_ANIMATION、CALLBACK_TRAVERSAL。</li>
+</ul>
+<h2 id="双缓冲技术"><a href="#双缓冲技术" class="headerlink" title="双缓冲技术"></a>双缓冲技术</h2><p>在Linux上通常使用Framebuffer来做显示输出，当用户进程更新Framebuffer中的数据后，显示驱动会把FrameBuffer中每个像素点的值更新到屏幕，但是如果上一帧数据还没显示完，Framebuffer中的数据又更新了，就会带来残影的问题，用户会觉得有闪烁感，所以采用了双缓冲技术。</p>
+<p>双缓冲意味着要使用两个缓冲区（在上文提及的SharedBufferStack中），其中一个称为Front Buffer，另一个称为Back Buffer。UI总是先在Back Buffer中绘制，然后再和Front Buffer交换，渲染到显示设备中。即只有当另一个buffer的数据准备好后，通过io_ctl来通知显示设备切换Buffer。</p>
+<h2 id="优化方法"><a href="#优化方法" class="headerlink" title="优化方法"></a>优化方法</h2><ul>
+<li>布局优化：减少层级、提升显示速度(ViewStub)、复用布局</li>
+<li>绘制优化：减少背景设置、自定义View优化</li>
+</ul>
+<h1 id="内存优化"><a href="#内存优化" class="headerlink" title="内存优化"></a>内存优化</h1><h2 id="优化策略"><a href="#优化策略" class="headerlink" title="优化策略"></a>优化策略</h2><ol>
+<li>检测内存抖动、内存泄漏、内存溢出、图片bitmap</li>
+<li>修复抖动：字符串拼接、资源复用、减少对象创建、使用恰当的数据结构</li>
+<li>图片优化：统一的图片库、不同设备不同的图片加载策略、坚持使用小图片、ARTHook监测ImageView的操作、线上监测Bitmap的创建和回收（通过全局的WeakHashMap，包括第三方的bitmap，然后定时监测bitmap是否被引用）</li>
+</ol>
+<ul>
+<li>高级：在native分配bitmap，参考fresco；编码降级</li>
+</ul>
+<ol start="4">
+<li>线上内存监测：</li>
+</ol>
+<ul>
+<li>内存使用率超过阈值、dump内存、回传服务端、分析</li>
+<li>定制LeakCanary中的haha组件，预设可疑泄漏点，存在泄漏则上传</li>
+<li>服务端分析内存快照，如果发现问题，分配相应负责人</li>
+<li>通过onTrimMemory / onLowMemory 添加监听回调，超过阈值则触发警告</li>
+</ul>
+<ol start="5">
+<li>监听线程相关信息，定时上传相关数据</li>
+<li>监听GC情况，如内存分配次数、大小以及GC次数</li>
+<li>通过Probe监听线上OOM</li>
+<li>线下native内存检测，可以使用 Address Sanitizer、Malloc 调试和 Malloc 钩子 进行 native 内存分析</li>
+<li>内存兜底，在用户无感知的情况下，在接近触发系统异常前，选择合适的场景杀死进程并将其重启，从而使得应用内存占用回到正常情况。</li>
+</ol>
+<ul>
+<li>1）、是否在主界面退到后台且位于后台时间超过 30min。</li>
+<li>2）、当前时间为早上 2~5 点。</li>
+<li>3）、不存在前台服务（通知栏、音乐播放栏等情况）。</li>
+<li>4）、Java heap 必须大于当前进程最大可分配的85% || native内存大于800MB。</li>
+<li>5）、vmsize 超过了4G（32bit）的85%。</li>
+<li>6）、非大量的流量消耗（不超过1M/min） &amp;&amp; 进程无大量CPU调度情况。</li>
+</ul>
+<ol start="10">
+<li>优化建议：</li>
+</ol>
+<ul>
+<li>每隔 3 分钟去获取当前应用内存占最大内存的比例，超过设定的危险阈值（如80%）则主动释放应用 cache（Bitmap 为大头），并且显示地除去应用的 memory</li>
+<li>webView使用单独进程</li>
+<li>使用类似 Hack 的方式修复系统内存泄漏，如 Booster</li>
+<li>当应用使用的Service不再使用时应该销毁它，建议使用 IntentServcie</li>
+<li>谨慎使用第三方库</li>
+</ul>
+<ol start="11">
+<li>其他工具如：top、dumpsys meminfo、LeakInspector、jHat</li>
+</ol>
+<h2 id="对象声明周期"><a href="#对象声明周期" class="headerlink" title="对象声明周期"></a>对象声明周期</h2><ul>
+<li>Created</li>
+</ul>
+<ol>
+<li>为对象分配存储空间。</li>
+<li>构造对象。</li>
+<li>从超类到子类对static成员进行初始化，类的static成员的初始化在ClassLoader加载该类时进行。</li>
+<li>超类成员变量按顺序初始化，递归调用超类的构造方法。</li>
+<li>子类成员变量按顺序初始化，一旦对象被创建，子类构造方法就调用该对象并为某些变量赋值。</li>
+</ol>
+<ul>
+<li>InUse 此时对象至少被一个强引用持有。</li>
+<li>Invisible 当一个对象处于不可见阶段时，说明程序本身不再持有该对象的任何强引用，虽然该对象仍然是存在的。</li>
+<li>Unreachable 该对象不再被任何强引用持有。</li>
+<li>Collected 当GC已经对该对象的内存空间重新分配做好准备时，对象进入收集阶段，如果该对象重写了finalize()方法，则执行它</li>
+<li>Finalized 等待垃圾回收器回收该对象空间</li>
+<li>Deallocated GC对该对象所占用的内存空间进行回收或者再分配，则该对象彻底消失。</li>
+</ul>
+<h2 id="虚拟机内存分配"><a href="#虚拟机内存分配" class="headerlink" title="虚拟机内存分配"></a>虚拟机内存分配</h2><p>对于Android Runtime有两种虚拟机，Dalvik和ART，不管是Dlavik还是ART，运行时堆都分为LinearAlloc（类似于ART的Non Moving Space）、Zygote Space和Alloc Space。它们分配的内存区域块是不同的：</p>
+<p>Dalvik</p>
+<ul>
+<li>Linear Alloc<br>是一个线性内存空间，是一个只读区域，主要用来存储虚拟机中的类，因为类加载后只需要读的属性，并且不会改变它。把这些只读属性以及在整个进程的生命周期都不能结束的永久数据放到线性分配器中管理，能很好地减少堆混乱和GC扫描，提升内存管理的性能。</li>
+<li>Zygote Space<br>在Zygote进程和应用程序进程之间共享</li>
+<li>Alloc Space<br>每个进程独占</li>
+</ul>
+<p>ART</p>
+<ul>
+<li>Non Moving Space</li>
+<li>Zygote Space</li>
+<li>Alloc Space</li>
+<li>Image Space 存放一些预加载类，类似于Dalvik中的Linear Alloc。与Zygote Space一样，在Zygote进程和应用程序进程之间共享。</li>
+<li>Large Obj Space 离散地址的集合，分配一些大对象，用于提高GC的管理效率和整体性能。</li>
+</ul>
+<p>Android系统的第一个虚拟机由Zygote进程创建并且只有一个Zygote Space。但是当Zygote进程在fork第一个应用程序进程之前，会将已经使用的那部分堆内存划分为一部分，还没有使用的堆内存划分为另一部分，也就是Allocation Space。但无论是应用程序进程，还是Zygote进程，当他们需要分配对象时，都是在各自的Allocation Space堆上进行。</p>
+<h2 id="内存回收"><a href="#内存回收" class="headerlink" title="内存回收"></a>内存回收</h2><p><img src="https://raw.githubusercontent.com/pacoblack/BlogImages/master/optm/optm1.jpg"><br>1、对象创建后在Eden区。(Copying算法)<br>2、执行GC后，如果对象仍然存活，则复制到S0区。<br>3、当S0区满时，该区域存活对象将复制到S1区，然后S0清空，接下来S0和S1角色互换。<br>4、当第3步达到一定次数（系统版本不同会有差异）后，存活对象将被复制到Old Generation。(标记算法)<br>5、当这个对象在Old Generation区域停留的时间达到一定程度时，它会被移动到Old Generation，最后累积一定时间再移动到Permanent Generation区域。</p>
+<h2 id="常见内存泄漏场景"><a href="#常见内存泄漏场景" class="headerlink" title="常见内存泄漏场景"></a>常见内存泄漏场景</h2><p>资源性对象未关闭、注册对象未注销、类的静态变量持有大数据对象、非静态内部类的静态实例、Handler临时性内存泄漏、容器中的对象没清理造成的内存泄漏、WebView（为WebView开启一个独立的进程，使用AIDL与应用的主进程进行通信，WebView所在的进程可以根据业务的需要选择合适的时机进行销毁）</p>
+<h2 id="优化方法-1"><a href="#优化方法-1" class="headerlink" title="优化方法"></a>优化方法</h2><p>引用方式(SoftReference、WeakReference和PhantomReference)、减少不必要的内存开销（自动装箱、内存复用）、合理使用数据结构、图片优化</p>
+<h1 id="启动速度优化"><a href="#启动速度优化" class="headerlink" title="启动速度优化"></a>启动速度优化</h1><h2 id="统计方式"><a href="#统计方式" class="headerlink" title="统计方式"></a>统计方式</h2><p>代码打点、AOP动态代理打点</p>
+<h2 id="优化方案"><a href="#优化方案" class="headerlink" title="优化方案"></a>优化方案</h2><p>懒加载、线程池、hook线程构建、预加载优化（替换ClassLOader，打印加载时间）、webView启动优化、页面数据预加载、启动阶段不启动子进程、闪屏页优化、IO优化、定义task绘制有向无环图</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//hook线程的构造函数</span></span><br><span class="line">DexposedBridge.hookAllConstructors(Thread.class, <span class="keyword">new</span> XC_MethodHook() &#123;</span><br><span class="line">    <span class="meta">@Override</span> <span class="keyword">protected</span> <span class="keyword">void</span> afterHookedMethod（MethodHookParam param）<span class="keyword">throws</span> Throwable &#123;                         </span><br><span class="line">        <span class="keyword">super</span>.afterHookedMethod(param);</span><br><span class="line">        Thread thread = (Thread) param.thisObject;</span><br><span class="line">        LogUtils.i(<span class="string">&quot;stack &quot;</span> + Log.getStackTraceString(<span class="keyword">new</span> Throwable());</span><br><span class="line">    &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h1 id="稳定性优化"><a href="#稳定性优化" class="headerlink" title="稳定性优化"></a>稳定性优化</h1><h2 id="native崩溃信号"><a href="#native崩溃信号" class="headerlink" title="native崩溃信号"></a>native崩溃信号</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">#define SIGHUP 1  // 终端连接结束时发出(不管正常或非正常)</span><br><span class="line">#define SIGINT 2  // 程序终止(例如Ctrl-C)</span><br><span class="line">#define SIGQUIT 3 // 程序退出(Ctrl-\)</span><br><span class="line">#define SIGILL 4 // 执行了非法指令，或者试图执行数据段，堆栈溢出</span><br><span class="line">#define SIGTRAP 5 // 断点时产生，由debugger使用</span><br><span class="line">#define SIGABRT 6 // 调用abort函数生成的信号，表示程序异常</span><br><span class="line">#define SIGIOT 6 // 同上，更全，IO异常也会发出</span><br><span class="line">#define SIGBUS 7 // 非法地址，包括内存地址对齐出错，比如访问一个4字节的整数, 但其地址不是4的倍数</span><br><span class="line">#define SIGFPE 8 // 计算错误，比如除0、溢出</span><br><span class="line">#define SIGKILL 9 // 强制结束程序，具有最高优先级，本信号不能被阻塞、处理和忽略</span><br><span class="line">#define SIGUSR1 10 // 未使用，保留</span><br><span class="line">#define SIGSEGV 11 // 非法内存操作，与 SIGBUS不同，他是对合法地址的非法访问，    比如访问没有读权限的内存，向没有写权限的地址写数据</span><br><span class="line">#define SIGUSR2 12 // 未使用，保留</span><br><span class="line">#define SIGPIPE 13 // 管道破裂，通常在进程间通信产生</span><br><span class="line">#define SIGALRM 14 // 定时信号,</span><br><span class="line">#define SIGTERM 15 // 结束程序，类似温和的 SIGKILL，可被阻塞和处理。通常程序如    果终止不了，才会尝试SIGKILL</span><br><span class="line">#define SIGSTKFLT 16  // 协处理器堆栈错误</span><br><span class="line">#define SIGCHLD 17 // 子进程结束时, 父进程会收到这个信号。</span><br><span class="line">#define SIGCONT 18 // 让一个停止的进程继续执行</span><br><span class="line">#define SIGSTOP 19 // 停止进程,本信号不能被阻塞,处理或忽略</span><br><span class="line">#define SIGTSTP 20 // 停止进程,但该信号可以被处理和忽略</span><br><span class="line">#define SIGTTIN 21 // 当后台作业要从用户终端读数据时, 该作业中的所有进程会收到SIGTTIN信号</span><br><span class="line">#define SIGTTOU 22 // 类似于SIGTTIN, 但在写终端时收到</span><br><span class="line">#define SIGURG 23 // 有紧急数据或out-of-band数据到达socket时产生</span><br><span class="line">#define SIGXCPU 24 // 超过CPU时间资源限制时发出</span><br><span class="line">#define SIGXFSZ 25 // 当进程企图扩大文件以至于超过文件大小资源限制</span><br><span class="line">#define SIGVTALRM 26 // 虚拟时钟信号. 类似于SIGALRM,     但是计算的是该进程占用的CPU时间.</span><br><span class="line">#define SIGPROF 27 // 类似于SIGALRM/SIGVTALRM, 但包括该进程用的CPU时间以及系统调用的时间</span><br><span class="line">#define SIGWINCH 28 // 窗口大小改变时发出</span><br><span class="line">#define SIGIO 29 // 文件描述符准备就绪, 可以开始进行输入/输出操作</span><br><span class="line">#define SIGPOLL SIGIO // 同上，别称</span><br><span class="line">#define SIGPWR 30 // 电源异常</span><br><span class="line">#define SIGSYS 31 // 非法的系统调用</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/android/" rel="tag"># android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/02/22/jvm%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" rel="next" title="JVM内存模型">
+                <i class="fa fa-chevron-left"></i> JVM内存模型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/02/24/okhttp%E6%9E%B6%E6%9E%84%E8%A7%A3%E6%9E%90/" rel="prev" title="okhttp架构解析">
+                okhttp架构解析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
 
     <div class="post-spread">
-      {% if theme.jiathis %}
-        {% include '_partials/share/jiathis.swig' %}
-      {% elseif theme.baidushare %}
-        {% include '_partials/share/baidushare.swig' %}
-      {% elseif theme.add_this_id %}
-        {% include '_partials/share/add-this.swig' %}
-      {% elseif theme.duoshuo_shortname and theme.duoshuo_share %}
-        {% include '_partials/share/duoshuo_share.swig' %}
-      {% endif %}
+      
     </div>
   </div>
 
-{% endblock %}
 
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
+          </div>
+          
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar1.jpeg"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20%E5%BD%92%E6%A1%A3">
+              
+                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/pacoblack" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:pacoson.wang@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/pacoblacksee" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="skype:yourname?call|chat" target="_blank" title="Skype">
+                      
+                        <i class="fa fa-fw fa-skype"></i>Skype</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#apk%E7%98%A6%E8%BA%AB"><span class="nav-number">1.</span> <span class="nav-text">apk瘦身</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%98%E5%88%B6%E4%BC%98%E5%8C%96"><span class="nav-number">2.</span> <span class="nav-text">绘制优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%B7%E6%96%B0%E6%9C%BA%E5%88%B6"><span class="nav-number">2.1.</span> <span class="nav-text">刷新机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8C%E7%BC%93%E5%86%B2%E6%8A%80%E6%9C%AF"><span class="nav-number">2.2.</span> <span class="nav-text">双缓冲技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95"><span class="nav-number">2.3.</span> <span class="nav-text">优化方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text">内存优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E7%AD%96%E7%95%A5"><span class="nav-number">3.1.</span> <span class="nav-text">优化策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1%E5%A3%B0%E6%98%8E%E5%91%A8%E6%9C%9F"><span class="nav-number">3.2.</span> <span class="nav-text">对象声明周期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-number">3.3.</span> <span class="nav-text">虚拟机内存分配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%9B%9E%E6%94%B6"><span class="nav-number">3.4.</span> <span class="nav-text">内存回收</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E5%9C%BA%E6%99%AF"><span class="nav-number">3.5.</span> <span class="nav-text">常见内存泄漏场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95-1"><span class="nav-number">3.6.</span> <span class="nav-text">优化方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E9%80%9F%E5%BA%A6%E4%BC%98%E5%8C%96"><span class="nav-number">4.</span> <span class="nav-text">启动速度优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%9F%E8%AE%A1%E6%96%B9%E5%BC%8F"><span class="nav-number">4.1.</span> <span class="nav-text">统计方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88"><span class="nav-number">4.2.</span> <span class="nav-text">优化方案</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A8%B3%E5%AE%9A%E6%80%A7%E4%BC%98%E5%8C%96"><span class="nav-number">5.</span> <span class="nav-text">稳定性优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#native%E5%B4%A9%E6%BA%83%E4%BF%A1%E5%8F%B7"><span class="nav-number">5.1.</span> <span class="nav-text">native崩溃信号</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pacoblack</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="[object Object]"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+  <link rel="stylesheet" href="/assets/css/APlayer.min.css" class="aplayer-style-marker">
+  <script src="/assets/js/APlayer.min.js" class="aplayer-script-marker"></script>
+  <script src="/assets/js/Meting.min.js" class="meting-script-marker"></script>
+  <div id="aplayer-AXqIDvNX"
+      class="aplayer aplayer-tag-marker meting-tag-marker aplayer-fixed"
+      data-id="71075946"
+      data-server="netease"
+      data-type="playlist"
+      data-mode="circulation"
+      data-autoplay="false"
+      data-mutex="true"
+      data-listmaxheight="340px"
+      data-preload="auto"
+      data-fixed="true"
+      data-lrctype="0"
+      data-theme="#555"></div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/Epsilon2.1.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>

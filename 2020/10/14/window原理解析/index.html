@@ -1,37 +1,899 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html>
 
 
-{% block title %}{{ page.title }} | {{ config.title }}{% endblock %}
 
-{% block page_class %}page-post-detail{% endblock %}
+  
 
 
-{% block content %}
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="android," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="分析下window原理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="window原理解析">
+<meta property="og:url" content="https://pacoblack.github.io/2020/10/14/window%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/index.html">
+<meta property="og:site_name" content="我爱学习">
+<meta property="og:description" content="分析下window原理">
+<meta property="og:locale">
+<meta property="og:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch2.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch5.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch6.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch7.jpg">
+<meta property="article:published_time" content="2020-10-14T09:30:14.000Z">
+<meta property="article:modified_time" content="2021-03-13T06:56:15.543Z">
+<meta property="article:author" content="pacoblack">
+<meta property="article:tag" content="android">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch2.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://pacoblack.github.io/2020/10/14/window原理解析/"/>
+
+
+
+
+
+  <title>window原理解析 | 我爱学习</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">我爱学习</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">这只是一场演习</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-主页"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-标签"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-分类"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-归档"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-关于"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
 
   <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://pacoblack.github.io/2020/10/14/window%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar1.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="我爱学习">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">window原理解析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-10-14T17:30:14+08:00">
+                2020-10-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>分析下window原理</p>
+<span id="more"></span>
+<h1 id="Touch简介"><a href="#Touch简介" class="headerlink" title="Touch简介"></a>Touch简介</h1><p><img src="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch2.jpg" alt="Activity与Window.jpg"></p>
+<p>我们已知<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/1c127769c9ea">touch 事件起始</a>是 Activity -&gt; PhoneWindow -&gt; DecorView -&gt; (TitleView + ContentView) 传递的，但是这个touch事件的源头是哪里呢，是从Window中获取的</p>
+<p>这里我们只关注Window相关。</p>
+<h1 id="Window介绍"><a href="#Window介绍" class="headerlink" title="Window介绍"></a>Window介绍</h1><p><img src="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch3.png" alt="window关系图"></p>
+<h2 id="WindowManager"><a href="#WindowManager" class="headerlink" title="WindowManager"></a>WindowManager</h2><p>Android中基本上<strong>所有的View都是通过Window来呈现的</strong>，不管是Activity、Toast还是Dialog，它们的视图都是附加到Window上的，因此可以将Window理解为View的承载者与直接管理者。而Window需要WindowManager协助完成，这里它的实现类是 WindowManagerImpl . 而 WindowManagerImpl 通过 getSystemService(Context.WINDOW_SERVICE) 来得到。</p>
+<h2 id="WindowManagerService"><a href="#WindowManagerService" class="headerlink" title="WindowManagerService"></a>WindowManagerService</h2><p>WindowManagerService 位于 Framework 层的窗口管理服务，它的职责就是管理系统中的所有窗口，负责协调Window的层级、显示及事件派发等。可以这样理解，<strong>WindowManager 是本地端的管理者，负责与 WindowManagerService 进行交互</strong>，从而使Window能层次分明的显示出来。WindowManager 与 WindowManagerService 的交互是一个IPC过程。<br>WindowManagerService 会在 SystemServer 启动的时候创建，并注册到 ServiceManager 中。</p>
+<h2 id="WindowManagerGlobal"><a href="#WindowManagerGlobal" class="headerlink" title="WindowManagerGlobal"></a>WindowManagerGlobal</h2><p>WindowManagerImpl 是 WindowManager 的实现类，但实际上它的工作基本委托给了 WindowManagerGlobal 类来完成。 WindowManagerGlobal 实现了 WindowManagerImpl 的功能，并对 View、ViewRootImpl 以及LayoutParams 进行管理</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mViews：存储了所有Window所对应的View</span><br><span class="line">mRoots：存储了所有Window所对应的ViewRootImpl</span><br><span class="line">mParams：存储了所有Window所对应的布局参数</span><br><span class="line">mDyingViews：存储的是即将被删除的View对象或正在被删除的View对象</span><br></pre></td></tr></table></figure>
+<h1 id="Window分析"><a href="#Window分析" class="headerlink" title="Window分析"></a>Window分析</h1><p>Window 有三种类型，分别是应用 Window、子 Window 和系统 Window。应用类 Window 对应一个 Acitivity，子 Window 不能单独存在，需要依附在特定的父 Window 中，比如常见的一些 Dialog 就是一个子 Window。系统 Window是需要声明权限才能创建的 Window，比如 Toast 和系统状态栏都是系统 Window。<br>Window 是分层的，每个 Window 都有对应的 z-ordered，层级大的会覆盖在层级小的 Window 上面，这和 HTML 中的 z-index 概念是完全一致的。在三种 Window 中，应用 Window 层级范围是 1<del>99，子 Window 层级范围是 1000</del>1999，系统 Window 层级范围是 2000~2999。</p>
+<h2 id="WindowManager-1"><a href="#WindowManager-1" class="headerlink" title="WindowManager"></a>WindowManager</h2><p>WindowManager  继承自 ViewManager</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public interface ViewManager&#123;</span><br><span class="line">    public void addView(View view, ViewGroup.LayoutParams params);</span><br><span class="line">    public void updateViewLayout(View view, ViewGroup.LayoutParams params);</span><br><span class="line">    public void removeView(View view);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以用来添加和删除 View，但是在实际使用中无法直接访问 Window，对 Window 的访问必须通过 WindowManager，它的实现类是WindowMagerImpl，具体的添加删除View 都是委托给了 WindowManagerGlobal。</p>
+<h2 id="addView"><a href="#addView" class="headerlink" title="addView"></a>addView</h2><p>具体过程如下：</p>
+<ol>
+<li>检查合法性<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"> public void addView(View view, ViewGroup.LayoutParams params,</span><br><span class="line">            Display display, Window parentWindow) &#123;</span><br><span class="line">        if (view == null) &#123;</span><br><span class="line">            throw new IllegalArgumentException(&quot;view must not be null&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        if (display == null) &#123;</span><br><span class="line">            throw new IllegalArgumentException(&quot;display must not be null&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        if (!(params instanceof WindowManager.LayoutParams)) &#123;</span><br><span class="line">            throw new IllegalArgumentException(&quot;Params must be WindowManager.LayoutParams&quot;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        final WindowManager.LayoutParams wparams = (WindowManager.LayoutParams) params;</span><br><span class="line">        if (parentWindow != null) &#123;</span><br><span class="line">            parentWindow.adjustLayoutParamsForSubWindow(wparams);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            // If there&#x27;s no parent, then hardware acceleration for this view is</span><br><span class="line">            // set from the application&#x27;s hardware acceleration setting.</span><br><span class="line">            final Context context = view.getContext();</span><br><span class="line">            if (context != null</span><br><span class="line">                    &amp;&amp; (context.getApplicationInfo().flags</span><br><span class="line">                            &amp; ApplicationInfo.FLAG_HARDWARE_ACCELERATED) != 0) &#123;</span><br><span class="line">                wparams.flags |= WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">     ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>创建 ViewRootImpl，并将View 添加到集合中<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// WindowManagerGlobal 中几个重要的集合</span><br><span class="line">private final ArrayList&lt;View&gt; mViews = new ArrayList&lt;View&gt;();</span><br><span class="line">private final ArrayList&lt;ViewRootImpl&gt; mRoots = new ArrayList&lt;ViewRootImpl&gt;();</span><br><span class="line">private final ArrayList&lt;WindowManager.LayoutParams&gt; mParams = new ArrayList&lt;WindowManager.LayoutParams&gt;();</span><br><span class="line">private final ArraySet&lt;View&gt; mDyingViews = new ArraySet&lt;View&gt;();</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>集合</th>
+<th>存储内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>mViews</td>
+<td>Window 对应的 View</td>
+</tr>
+<tr>
+<td>mRoots</td>
+<td>Window 对应的 ViewRootImpl</td>
+</tr>
+<tr>
+<td>mParams</td>
+<td>Window 对应的布局参数</td>
+</tr>
+<tr>
+<td>mDyingViews</td>
+<td>正在被删除的 View</td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">synchronized (mLock) &#123;</span><br><span class="line">    ...</span><br><span class="line">    root = new ViewRootImpl(view.getContext(), display);</span><br><span class="line">    view.setLayoutParams(wparams);</span><br><span class="line"></span><br><span class="line">     mViews.add(view);</span><br><span class="line">     mRoots.add(root);</span><br><span class="line">     mParams.add(wparams);</span><br><span class="line">     ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>通过 ViewRootImpl 来更新界面并完成 Window 的添加过程<br>ViewRootImpl 不是View，实际上是顶级View的管理者。每一个 ViewRootImpl 都对应着一个ViewTree ，通过它来完成 View 的绘制及显示过程。下图展示了它与WM、WMS之间的关系:<br><img src="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch4.png" alt="ViewRootImpl 关系图"></li>
+</ol>
+<p>Window是一个抽象的概念，<strong>每一个Window都对应着一个 View 和 ViewRootImpl ，Window与View通过 ViewRootImpl 建立起联系</strong>，Window 是以 View 作为实体存在，实际使用WindowManager访问来Window，外部无法直接访问Window。</p>
+<h2 id="setView"><a href="#setView" class="headerlink" title="setView"></a>setView</h2><p>ViewRootImpl 会通过 setView来完成界面的更新，实现 View 的添加。<br>setView 会执行 View 的绘制 ，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">public void setView(View view, WindowManager.LayoutParams attrs, View panelParentView) &#123;</span><br><span class="line">    synchronized (this) &#123;</span><br><span class="line">     ...</span><br><span class="line">     requestLayout();</span><br><span class="line">     ...</span><br><span class="line">     res = mWindowSession.addToDisplay(mWindow, mSeq, mWindowAttributes,</span><br><span class="line">                        getHostVisibility(), mDisplay.getDisplayId(), mWinFrame,</span><br><span class="line">                        mAttachInfo.mContentInsets, mAttachInfo.mStableInsets,</span><br><span class="line">                        mAttachInfo.mOutsets, mAttachInfo.mDisplayCutout, mInputChannel);</span><br><span class="line">     ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">@Override</span><br><span class="line">public void requestLayout() &#123;</span><br><span class="line">    if (!mHandlingLayoutInLayoutRequest) &#123;</span><br><span class="line">        checkThread();</span><br><span class="line">        mLayoutRequested = true;</span><br><span class="line">        scheduleTraversals();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>调用栈为<br>setView -&gt; requestLayout -&gt; scheduleTraversals -&gt; doTraversal (mTraversalRunnable) -&gt; performTraversal</p>
+<h2 id="performTraversal"><a href="#performTraversal" class="headerlink" title="performTraversal"></a>performTraversal</h2><p>performTranversal 主要工作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dispatchAttachedToWindow -&gt; onAttachedToWindow // 第一次添加时调用</span><br><span class="line">executeActions // 执行 attach view 中 post 的 Runnable action</span><br><span class="line">relayoutWindow //  请求 WindowManagerService 来计算窗体大小，内容区域等。</span><br><span class="line">performMeasure -&gt; measure -&gt; onMeasure // 递归执行测量</span><br><span class="line">performLayout -&gt; layout -&gt; onLayout //  递归执行布局</span><br><span class="line">performDraw -&gt; draw -&gt; onDraw // 递归执行绘制</span><br></pre></td></tr></table></figure>
+<p>这里我们看到了熟悉的 onMeasure onLayout onDraw<br>执行完 requestLayout 之后，便是 mWindowSession 的工作。mWindowSession的类型是IWindowSession，它是一个Binder对象，真正的实现类是Session，因此 Window 的添加的过程是一个IPC调用</p>
+<h2 id="addToDisplay"><a href="#addToDisplay" class="headerlink" title="addToDisplay"></a>addToDisplay</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">res = mWindowSession.addToDisplay(mWindow, mSeq, mWindowAttributes,</span><br><span class="line">                            getHostVisibility(), mDisplay.getDisplayId(), mWinFrame,</span><br><span class="line">                            mAttachInfo.mContentInsets, mAttachInfo.mStableInsets,</span><br><span class="line">                            mAttachInfo.mOutsets, mAttachInfo.mDisplayCutout, mInputChannel);</span><br></pre></td></tr></table></figure>
+<p>addToDisplay 中Session 会通过 addWindow 方法将 Window 添加到 WindowManagerService 中，WindowManagerService会为每个应用保留一个单独的Session。<br><img src="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch5.png" alt="委托流程"><br>最终，Window 的添加请求移交给 WindowManagerService 手上。</p>
+<h2 id="removeView"><a href="#removeView" class="headerlink" title="removeView"></a>removeView</h2><p>删除与添加类似，具体流程可以查看源码。</p>
+<p>值得注意的是，删除操作是由ViewRootImpl来完成的，删除分为两种，分别为同步删除（removeViewImmediate）和异步删除（removeView）,在ViewRootImpl的die（immediate）方法中进行判断。如果为同步则直接调用doDie方法进行删除，否则会发送一个消息进行异步处理，同时执行mDyingViews.add(view)<br>最终的删除操作还是交给Session: mWindowSession.remove(mWindow)，此过程是一个IPC过程，最终会调用WindowManagerService的removeWindow方法。</p>
+<h1 id="普通Window创建"><a href="#普通Window创建" class="headerlink" title="普通Window创建"></a>普通Window创建</h1><p>我们知道 Activity 开始应用是从 attach 开始的。这里除了attachContext 外，就是Window的初始化在<code>performLaunchActivity()</code> -&gt;<code>Activity.attach()</code> 方法中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">mWindow = new PhoneWindow(this, window, activityConfigCallback);</span><br><span class="line">Window.setWindowControllerCallback(this);</span><br><span class="line">mWindow.setCallback(this);</span><br><span class="line">mWindow.setOnWindowDismissedCallback(this);</span><br><span class="line">mWindow.getLayoutInflater().setPrivateFactory(this);</span><br><span class="line">if (info.softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED) &#123;</span><br><span class="line">      mWindow.setSoftInputMode(info.softInputMode);</span><br><span class="line">&#125;</span><br><span class="line">if (info.uiOptions != 0) &#123;</span><br><span class="line">      mWindow.setUiOptions(info.uiOptions);</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line">mWindow.setWindowManager(</span><br><span class="line">                (WindowManager)context.getSystemService(Context.WINDOW_SERVICE),</span><br><span class="line">                mToken, mComponent.flattenToString(),</span><br><span class="line">                (info.flags &amp; ActivityInfo.FLAG_HARDWARE_ACCELERATED) != 0);</span><br><span class="line">if (mParent != null) &#123;</span><br><span class="line">       mWindow.setContainer(mParent.getWindow());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里为我们注备好了 Window，接下来是将Activity 附属到Window上，而Activity视图是有 setContentView 提供的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">// Activity.java</span><br><span class="line">public void setContentView(@LayoutRes int layoutResID) &#123;</span><br><span class="line">     getWindow().setContentView(layoutResID);</span><br><span class="line">     initWindowDecorActionBar();</span><br><span class="line"> &#125;</span><br><span class="line"> // PhoneWindow.java</span><br><span class="line"> @Override</span><br><span class="line"> public void setContentView(View view, ViewGroup.LayoutParams params) &#123;</span><br><span class="line">     // Note: FEATURE_CONTENT_TRANSITIONS may be set in the process of installing the window</span><br><span class="line">     // decor, when theme attributes and the like are crystalized. Do not check the feature</span><br><span class="line">     // before this happens.</span><br><span class="line">     if (mContentParent == null) &#123;</span><br><span class="line">         installDecor();  // 创建DecorView</span><br><span class="line">     &#125; else if (!hasFeature(FEATURE_CONTENT_TRANSITIONS)) &#123;</span><br><span class="line">         mContentParent.removeAllViews();</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     if (hasFeature(FEATURE_CONTENT_TRANSITIONS)) &#123;</span><br><span class="line">         view.setLayoutParams(params);</span><br><span class="line">         final Scene newScene = new Scene(mContentParent, view);</span><br><span class="line">         transitionTo(newScene);</span><br><span class="line">     &#125; else &#123;</span><br><span class="line">         mContentParent.addView(view, params); //我们的布局被填充到了mContentParent中</span><br><span class="line">     &#125;</span><br><span class="line">     mContentParent.requestApplyInsets();</span><br><span class="line">     final Callback cb = getCallback(); // 得到的是mCallback，实际上是设置回调传入的activity引用</span><br><span class="line">     if (cb != null &amp;&amp; !isDestroyed()) &#123;  // 最后还会回调Activity来通知content改变</span><br><span class="line">         cb.onContentChanged();</span><br><span class="line">     &#125;</span><br><span class="line">     mContentParentExplicitlySet = true;</span><br></pre></td></tr></table></figure>
+<p>大体过程如下：</p>
+<ol>
+<li>创建 DecorView<br> DecorView 是 Activity 中的顶级 View，是一个 FrameLayout，一般来说它的内部包含标题栏和内容栏，但是这个会随着主题的变化而改变，不管怎么样，内容栏是一定存在的，并且有固定的 id：”android.R.id.content”，在 PhoneWindow 中，通过 generateDecor 方法创建 DecorView，通过 generateLayout 初始化主题有关布局。</li>
+<li>将 View 添加到 DecorView 的 mContentParent 中</li>
+<li>回调 Activity 的 onContentChanged 方法通知 Activity 视图已经发生改变</li>
+</ol>
+<p>经过上面的三个步骤，DecorView 已经被创建并初始化完毕，Activity 的布局文件也已经成功添加到了 DecorView 的 mContentParent 中，但是这个时候 DecorView 还没有被 WindowManager 正式添加到 Window 中。在 ActivityThread 的 handleResumeActivity 方法中，会调用onResume 方法，接着会调用 Activity 的 makeVisible() 方法，正是在 makeVisible 方法中，DecorView 才真正的完成了显示过程，到这里 Activity 的视图才能被用户看到，如下：<br>ActivityThread.java</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public void handleResumeActivity(IBinder token, boolean finalStateRequest, boolean isForward,</span><br><span class="line">        String reason) &#123;</span><br><span class="line">...</span><br><span class="line">       if (r.activity.mVisibleFromClient) &#123;</span><br><span class="line">            r.activity.makeVisible(); //  设置 View 显示</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void makeVisible() &#123;</span><br><span class="line">    if (!mWindowAdded) &#123;</span><br><span class="line">        ViewManager wm = getWindowManager();</span><br><span class="line">        wm.addView(mDecor, getWindow().getAttributes());</span><br><span class="line">        mWindowAdded = true;</span><br><span class="line">    &#125;</span><br><span class="line">    mDecor.setVisibility(View.VISIBLE);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>调用 WindowManager.addView 添加到WindowService，并显示</strong></p>
+<h1 id="Dialog的Window创建过程"><a href="#Dialog的Window创建过程" class="headerlink" title="Dialog的Window创建过程"></a>Dialog的Window创建过程</h1><ol>
+<li>创建 PhoneWindow</li>
+<li>初始化 DecorView 并将 Dialog 的视图添加到 DecorView 中<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public void setContentView(int layoutResID)&#123;</span><br><span class="line">   mWindow.setContentView(layoutResID);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>将 DecorView 添加到 Window 中并显示</li>
+</ol>
+<p>从上面三个步骤可以发现，Dialog 的 Window 创建过程和 Activity 创建过程很类似，当 Dialog 关闭时，它会通过 WindowManager 来移除 DecorView。普通的 Dialog 必须采用 Activity 的 Context，如果采用 Application 的 Context 就会报错。这是因为没有应用 token 导致的，而应用 token 一般只有 Activity 拥有，另外，系统 Window 比较特殊，可以不需要 token。</p>
+<h1 id="Toast-的-Window-创建"><a href="#Toast-的-Window-创建" class="headerlink" title="Toast 的 Window 创建"></a>Toast 的 Window 创建</h1><p>Toast 与 Dialog 不同，它的工作过程稍显复杂，首先 Toast 也是基于 Window 来实现的，但是由于 Toast 具有<strong>定时取消</strong>这一功能，所以系统采用了 Handler。在 Toast 内部有两类 IPC 过程，一是 Toast 访问 <strong>NotificationManagerService</strong>，第二类是 NotificationManagerService <strong>回调 Toast 里的 TN 接口</strong>。NotificationManagerService 同 WindowManagerService 一样，都是位于 Framework 层的服务。<br>Toast 属于系统 Window，Toast 提供 show 和 cancel 分别用于显示和隐藏 Toast，它们内部是一个 IPC 过程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"> public void show() &#123;</span><br><span class="line">     if (mNextView == null) &#123;</span><br><span class="line">         throw new RuntimeException(&quot;setView must have been called&quot;);</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     INotificationManager service = getService();</span><br><span class="line">     String pkg = mContext.getOpPackageName();</span><br><span class="line">     TN tn = mTN;</span><br><span class="line">     tn.mNextView = mNextView;</span><br><span class="line"></span><br><span class="line">     try &#123;</span><br><span class="line">         service.enqueueToast(pkg, tn, mDuration);</span><br><span class="line">     &#125; catch (RemoteException e) &#123;</span><br><span class="line">         // Empty</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line">public void cancel() &#123;</span><br><span class="line">     mTN.cancel();</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line">// class TN</span><br><span class="line">public void cancel() &#123;</span><br><span class="line">     if (localLOGV) Log.v(TAG, &quot;CANCEL: &quot; + this);</span><br><span class="line">     mHandler.obtainMessage(CANCEL).sendToTarget();</span><br><span class="line"> &#125;</span><br><span class="line"> mHandler = new Handler(looper, null) &#123;</span><br><span class="line">     @Override</span><br><span class="line">     public void handleMessage(Message msg) &#123;</span><br><span class="line">         switch (msg.what) &#123;</span><br><span class="line">             case SHOW: &#123;</span><br><span class="line">                  IBinder token = (IBinder) msg.obj;</span><br><span class="line">                  handleShow(token);</span><br><span class="line">                  break;</span><br><span class="line">              &#125;</span><br><span class="line">              case HIDE: &#123;</span><br><span class="line">                   handleHide();</span><br><span class="line">                   // Don&#x27;t do this in handleHide() because it is also invoked by</span><br><span class="line">                   // handleShow()</span><br><span class="line">                   mNextView = null;</span><br><span class="line">                   break;</span><br><span class="line">               &#125;</span><br><span class="line">               case CANCEL: &#123;</span><br><span class="line">                    handleHide();</span><br><span class="line">                     // Don&#x27;t do this in handleHide() because it is also invoked by</span><br><span class="line">                     // handleShow()</span><br><span class="line">                     mNextView = null;</span><br><span class="line">                     try &#123;</span><br><span class="line">                         getService().cancelToast(mPackageName, TN.this);</span><br><span class="line">                     &#125; catch (RemoteException e) &#123;</span><br><span class="line">                     &#125;</span><br><span class="line">                     break;</span><br><span class="line">                 &#125;</span><br><span class="line">             &#125;</span><br><span class="line">         &#125;</span><br><span class="line">    &#125;;</span><br></pre></td></tr></table></figure>
+<p>TN 是一个 Binder 类，当 NotificationManagerService 处理 Toast 的显示或隐藏请求时会跨进程回调 TN 中的方法。由于 TN 运行在 Binder 线程池中，所以需要通过 Handler 将其切换到当前线程中，这里的当前线程指的是发送 Toast 请求所在的线程。</p>
+<p>代码在显示 Toast 中调用了 NotificationManagerService 的 enqueueToast 方法， enqueueToast 方法内部将 Toast 请求封装为 ToastRecord 对象并将其添加到一个名为 mToastQueue 的队列中，对于非系统应用来说，mToastQueue 中最多同时存在 50 个 ToastRecord，用于防止 DOS （Denial of Service 拒绝服务）。</p>
+<p>当 ToastRecord 添加到 mToastQueue 中后，NotificationManagerService 就会通过 showNextToastLocked 方法来顺序显示 Toast，但是 Toast 真正的显示并不是在 NotificationManagerService 中完成的，而是由 ToastRecord 的 callback 来完成的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">// NotificationManagerService.java</span><br><span class="line">void showNextToastLocked() &#123;</span><br><span class="line">    ToastRecord record = mToastQueue.get(0);</span><br><span class="line">    while (record != null) &#123;</span><br><span class="line">        if (DBG) Slog.d(TAG, &quot;Show pkg=&quot; + record.pkg + &quot; callback=&quot; + record.callback);</span><br><span class="line">        try &#123;</span><br><span class="line">            record.callback.show(record.token); // 这里</span><br><span class="line">            scheduleDurationReachedLocked(record);</span><br><span class="line">            return;</span><br><span class="line">        &#125; catch (RemoteException e) &#123;</span><br><span class="line">            Slog.w(TAG, &quot;Object died trying to show notification &quot; + record.callback</span><br><span class="line">                    + &quot; in package &quot; + record.pkg);</span><br><span class="line">            // remove it from the list and let the process die</span><br><span class="line">            int index = mToastQueue.indexOf(record);</span><br><span class="line">            if (index &gt;= 0) &#123;</span><br><span class="line">                mToastQueue.remove(index);</span><br><span class="line">            &#125;</span><br><span class="line">            keepProcessAliveIfNeededLocked(record.pid);</span><br><span class="line">            if (mToastQueue.size() &gt; 0) &#123;</span><br><span class="line">                record = mToastQueue.get(0);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                record = null;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个 callback 就是 Toast 中的 TN 对象的远程 Binder，最终被调用的 TN 中的方法会运行在发起 Toast 请求的应用的 Binder 线程池中。Toast 显示以后，NotificationManagerService 还调用了 sheduleTimeoutLocked 方法，此方法中首先进行延时，具体的延时时长取决于 Toast 的显示时长，延迟相应时间后，NMS 会通过 cancelToastLocked 方法来隐藏 Toast 并将它从 mToastQueue 中移除，这时如果 mToastQueue 中还有其他 Toast，那么 NotificationManagerService 就继续显示其他 Toast。Toast 的隐藏也是通过 ToastRecord 的 callback 来完成的，同样也是一次 IPC 过程。</p>
+<p>从上面的分析，可以知道 NotificationManagerService 只是起到了管理 Toast 队列及其延时的效果，Toast 的显示和隐藏过程实际上是通过 Toast 的 TN 类来实现的，TN 类的两个方法 show 和 hide，是被 NotificationManagerService 以跨进程的方式调用的，因此它们运行在 Binder 线程池中，为了将执行环境切换到 Toast 请求所在的线程，在它们内部使用了 Handler。</p>
+<p>Toast 毕竟是要在 Window 中实现的，因此它最终还是要依附于 WindowManager，TN 的 handleShow 中代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mWM = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);</span><br><span class="line">try &#123;</span><br><span class="line">      mWM.addView(mView, mParams);</span><br><span class="line">      trySendAccessibilityEvent();</span><br><span class="line"> &#125; catch (WindowManager.BadTokenException ignore) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h1><p>任何 View 都是附属在一个 Window 上面的，Window 表示一个窗口的概念，也是一个抽象的概念，Window 并不是实际存在的，它是以 View 的形式存在的。WindowManager 是外界也就是我们访问 Window 的入口，Window 的具体实现位于 WindowManagerService 中，WindowManagerService 和 WindowManager 的交互是一个 IPC 过程。</p>
+<h1 id="其他问题"><a href="#其他问题" class="headerlink" title="其他问题"></a>其他问题</h1><p>这里顺便解决一个疑惑，为什么在 onCreate 中创建的子线程更新UI不会崩溃？<br>答：我们知道android重绘有两个重要的ViewRootImpl方法，一是 requestLayout，一个是invalidate，（requestLayout 只会调用 onMeasure、onLayout，而 invalidate 会调用 onDraw），在 ViewRootImpl.requestLayout 中首先执行的就是 checkThread 方法，也就是用来抛出 CalledFromWrongThreadException 异常的，根据上面的总结我们知道，ViewRootImpl 是在 onResume 的时候创建的，在 onCreate 的时候还没有创建，也就没有办法调用 checkThread</p>
+<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><p><img src="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch1.png" alt="touch事件传递处理"><br><img src="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch6.png" alt="touch事件传递处理"><br><img src="https://raw.githubusercontent.com/pacoblack/BlogImages/master/touch/touch7.jpg" alt="touch"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/android/" rel="tag"># android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/10/14/android%E6%89%93%E5%8C%85%E6%B5%81%E7%A8%8B/" rel="next" title="android打包流程">
+                <i class="fa fa-chevron-left"></i> android打包流程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/10/19/android%E8%AE%BE%E5%A4%87id%E6%96%B9%E6%A1%88%E5%AF%B9%E6%AF%94/" rel="prev" title="android设备id方案对比">
+                android设备id方案对比 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
 
     <div class="post-spread">
-      {% if theme.jiathis %}
-        {% include '_partials/share/jiathis.swig' %}
-      {% elseif theme.baidushare %}
-        {% include '_partials/share/baidushare.swig' %}
-      {% elseif theme.add_this_id %}
-        {% include '_partials/share/add-this.swig' %}
-      {% elseif theme.duoshuo_shortname and theme.duoshuo_share %}
-        {% include '_partials/share/duoshuo_share.swig' %}
-      {% endif %}
+      
     </div>
   </div>
 
-{% endblock %}
 
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
+          </div>
+          
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar1.jpeg"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20%E5%BD%92%E6%A1%A3">
+              
+                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/pacoblack" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:pacoson.wang@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/pacoblacksee" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="skype:yourname?call|chat" target="_blank" title="Skype">
+                      
+                        <i class="fa fa-fw fa-skype"></i>Skype</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Touch%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">Touch简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Window%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">Window介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#WindowManager"><span class="nav-number">2.1.</span> <span class="nav-text">WindowManager</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WindowManagerService"><span class="nav-number">2.2.</span> <span class="nav-text">WindowManagerService</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WindowManagerGlobal"><span class="nav-number">2.3.</span> <span class="nav-text">WindowManagerGlobal</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Window%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">Window分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#WindowManager-1"><span class="nav-number">3.1.</span> <span class="nav-text">WindowManager</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#addView"><span class="nav-number">3.2.</span> <span class="nav-text">addView</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#setView"><span class="nav-number">3.3.</span> <span class="nav-text">setView</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#performTraversal"><span class="nav-number">3.4.</span> <span class="nav-text">performTraversal</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#addToDisplay"><span class="nav-number">3.5.</span> <span class="nav-text">addToDisplay</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#removeView"><span class="nav-number">3.6.</span> <span class="nav-text">removeView</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%99%AE%E9%80%9AWindow%E5%88%9B%E5%BB%BA"><span class="nav-number">4.</span> <span class="nav-text">普通Window创建</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Dialog%E7%9A%84Window%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B"><span class="nav-number">5.</span> <span class="nav-text">Dialog的Window创建过程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Toast-%E7%9A%84-Window-%E5%88%9B%E5%BB%BA"><span class="nav-number">6.</span> <span class="nav-text">Toast 的 Window 创建</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%80%E5%90%8E"><span class="nav-number">7.</span> <span class="nav-text">最后</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E9%97%AE%E9%A2%98"><span class="nav-number">8.</span> <span class="nav-text">其他问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A1%A5%E5%85%85"><span class="nav-number">9.</span> <span class="nav-text">补充</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pacoblack</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="[object Object]"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+  <link rel="stylesheet" href="/assets/css/APlayer.min.css" class="aplayer-style-marker">
+  <script src="/assets/js/APlayer.min.js" class="aplayer-script-marker"></script>
+  <script src="/assets/js/Meting.min.js" class="meting-script-marker"></script>
+  <div id="aplayer-AXqIDvNX"
+      class="aplayer aplayer-tag-marker meting-tag-marker aplayer-fixed"
+      data-id="71075946"
+      data-server="netease"
+      data-type="playlist"
+      data-mode="circulation"
+      data-autoplay="false"
+      data-mutex="true"
+      data-listmaxheight="340px"
+      data-preload="auto"
+      data-fixed="true"
+      data-lrctype="0"
+      data-theme="#555"></div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/Epsilon2.1.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>

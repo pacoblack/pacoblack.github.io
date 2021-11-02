@@ -1,37 +1,912 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html>
 
 
-{% block title %}{{ page.title }} | {{ config.title }}{% endblock %}
 
-{% block page_class %}page-post-detail{% endblock %}
+  
 
 
-{% block content %}
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="android," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="续接上一章">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VSync信号原理详解">
+<meta property="og:url" content="https://pacoblack.github.io/2020/12/28/VSync%E4%BF%A1%E5%8F%B7%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="我爱学习">
+<meta property="og:description" content="续接上一章">
+<meta property="og:locale">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/12/14/16f0212047509703?imageslim">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/12/14/16f021204a24864e?imageslim">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/12/14/16f021204a378b28?imageslim">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/12/14/16f021204a48aed5?imageslim">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/12/14/16f02120504f2943?imageslim">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/12/14/16f021204f051793?imageslim">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/12/8/16ee4ecc61418ae5?imageslim">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/12/14/16f0212083662e09?imageslim">
+<meta property="article:published_time" content="2020-12-28T08:05:55.000Z">
+<meta property="article:modified_time" content="2021-03-13T06:56:15.510Z">
+<meta property="article:author" content="pacoblack">
+<meta property="article:tag" content="android">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2019/12/14/16f0212047509703?imageslim">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://pacoblack.github.io/2020/12/28/VSync信号原理详解/"/>
+
+
+
+
+
+  <title>VSync信号原理详解 | 我爱学习</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">我爱学习</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">这只是一场演习</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-主页"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-标签"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-分类"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-归档"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-关于"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
 
   <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://pacoblack.github.io/2020/12/28/VSync%E4%BF%A1%E5%8F%B7%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar1.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="我爱学习">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">VSync信号原理详解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-28T16:05:55+08:00">
+                2020-12-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>续接上一章</p>
+<span id="more"></span>
+<h1 id="VSync信号的产生"><a href="#VSync信号的产生" class="headerlink" title="VSync信号的产生"></a>VSync信号的产生</h1><p>VSync信号是由HWC硬件模块根据屏幕刷新率产生。DispSync是VSync事件核心类，根据HWC产生的硬件VSync信号，通过内部的DispSyncThread线程向外分发DispSync::Callback回调，DispSyncSource就是实现了该回调接口。<br>为了处理VSync信号，SurfaceFlinger启动了两个EventThread线程：</p>
+<ul>
+<li>mEventThread：服务于客户端APP UI渲染。<br>= mSFEventThread：服务于SurfaceFlinger合成和上屏。</li>
+</ul>
+<p>两个VSync线程在SurfaceFlinger::init中完成初始化，如下所示</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// start the EventThread vsyncSrc 表示渲染用的Vsync</span></span><br><span class="line">sp&lt;VSyncSource&gt; vsyncSrc = <span class="keyword">new</span> <span class="built_in">DispSyncSource</span>(&amp;mPrimaryDispSync, vsyncPhaseOffsetNs, <span class="literal">true</span>, <span class="string">&quot;app&quot;</span>);</span><br><span class="line"><span class="comment">// 客户端UI渲染使用的VSync线程</span></span><br><span class="line">mEventThread = <span class="keyword">new</span> <span class="built_in">EventThread</span>(vsyncSrc, *<span class="keyword">this</span>);</span><br><span class="line"><span class="comment">// sfVsyncSrc表示SF合成用的VSync</span></span><br><span class="line">sp&lt;VSyncSource&gt; sfVsyncSrc = <span class="keyword">new</span> <span class="built_in">DispSyncSource</span>(&amp;mPrimaryDispSync, sfVsyncPhaseOffsetNs, <span class="literal">true</span>, <span class="string">&quot;sf&quot;</span>);</span><br><span class="line"><span class="comment">// SF使用的VSync线程</span></span><br><span class="line">mSFEventThread = <span class="keyword">new</span> <span class="built_in">EventThread</span>(sfVsyncSrc, *<span class="keyword">this</span>);</span><br><span class="line"><span class="comment">//MessageQueue向SF的EventThread注册监听器</span></span><br><span class="line">mEventQueue.<span class="built_in">setEventThread</span>(mSFEventThread);</span><br></pre></td></tr></table></figure>
+<p>DispSyncSource实现了DispSync::Callback回调接口，可以从DispSync接收VSync事件。上述代码创建了两个DispSyncSource对象，vsyncSrc是给CPU服务，驱动客户端APP UI线程渲染；sfVsyncSrc是给GPU服务，驱动SF主线程合成上屏。两个DispSyncSource分别指定了不同的时间戳偏移量（相对于标准的VSync时间戳），可以精细控制VSync的回调时机，通过adb shell dumpsys SurfaceFlinger可以查看这两个偏移量.</p>
+<p>每个DispSyncSource对象与一个EventThread相关联，DispSync的VSync事件会通过DispSyncSource传递到EventThread::onVSyncEvent，再通过EventThread::Connection向外分发。<br>基于DispSync的VSync架构如下所示：<br><img src="https://user-gold-cdn.xitu.io/2019/12/14/16f0212047509703?imageslim"></p>
+<ol>
+<li>DispSync借助硬件VSync（HW_VSYNC）训练了一个模拟的VSync模型（SW-VSYNC）。</li>
+<li>模拟的VSync模型为驱动APP绘制的VSync信号添加了时间戳偏移（phase-app），生成了Vsync-app事件。</li>
+<li>模拟的VSync模型为驱动SF合成的VSync信号添加了时间戳偏移（phase-sf），生成了Vsync-sf事件。</li>
+<li>Vsync-app和Vsync-sf是外界真正接触到的VSync事件。</li>
+<li>addPresentFence用来检查模拟的VSync模型与硬件VSync之间是否超过了一定误差，若是，则需要重启硬件Vsync，训练新的VSync模型。</li>
+</ol>
+<h2 id="训练Vsync"><a href="#训练Vsync" class="headerlink" title="训练Vsync"></a>训练Vsync</h2><p>DispSync是如何训练出模拟的VSync事件的，<a target="_blank" rel="noopener" href="https://www.zybuluo.com/ltlovezh/note/1547782">这篇文章</a>中提到，HWC2::Device构造函数会通过Device::registerCallbacks向显示设备注册三个Display回调：热插拔，刷新和VSync信号，然后经过一系列回调到达SurfaceFlinger.onVSyncReceived方法。onVSyncReceived通过addResyncSample方法把硬件VSync时间戳交给DispSync，训练一个模拟的VSync事件模型，addResyncSample主要逻辑：</p>
+<blockquote>
+<p>1.几个关键变量：mReferenceTime记录第一个硬件VSync时间戳；mResyncSamples存储所有硬件Vsync时间戳（数组长度为NUM_PRESENT_SAMPLES，目前为32）；mNumResyncSamples表示参与计算的时间戳个数。在时间戳个数达到MIN_RESYNC_SAMPLES_FOR_UPDATE（常量，目前为6）时，会触发真正的模型计算updateModelLocked。<br>2.计算过程：首先，计算出相邻时间戳时间差的均值（排除了最大和最小值），作为模拟的Vsync的时间周期mPeriod（这个值理论上等于16.66666…ms）；然后根据每个硬件时间戳相比于mPeriod的偏差，计算出平均偏差mPhase，范围是(-mPeriod/2 , mPeriod/2]；最后把mPeriod、mPhase和mReferenceTime设置给DispSyncThread线程。<br>3.DispSyncThread线程根据上面计算出的mPeriod、mPhase、mReferenceTime以及每个DispSync::Callback要求的Phase，定时回调每个Callback，其中Callback的时间戳参数，不是系统时间，而是基于第一个硬件Vsync时间戳mReferenceTime计算出来的。<br>4.如果训练的模拟VSync时间戳与硬件VSync时间戳在一定的误差范围内，则addResyncSample返回false，表示模拟的硬件VSync模型已经OK，不再需要硬件VSync时间戳了，否则返回true，表示需要更多的硬件VSync时间戳来训练模型。<br>如果DispSync检测到硬件VSync与模拟的VSync模型之间存在较大误差，则会重新训练新的VSync模型。</p>
+</blockquote>
+<p>核心代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 收到HWComposer的Vsync信号</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SurfaceFlinger::onVSyncReceived</span><span class="params">(<span class="keyword">int32_t</span> type, <span class="keyword">nsecs_t</span> timestamp)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">bool</span> needsHwVsync = <span class="literal">false</span>;</span><br><span class="line">    &#123; <span class="comment">// Scope for the lock</span></span><br><span class="line">        Mutex::Autolock _l(mHWVsyncLock);</span><br><span class="line">        <span class="comment">// type为0，表示主显示屏</span></span><br><span class="line">        <span class="keyword">if</span> (type == <span class="number">0</span> &amp;&amp; mPrimaryHWVsyncEnabled) &#123;</span><br><span class="line">            <span class="comment">//训练模型，返回false，则表示模型训练成功</span></span><br><span class="line">            needsHwVsync = mPrimaryDispSync.<span class="built_in">addResyncSample</span>(timestamp);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (needsHwVsync) &#123;</span><br><span class="line">        <span class="built_in">enableHardwareVsync</span>();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123; <span class="comment">// 关闭硬件VSync</span></span><br><span class="line">        <span class="built_in">disableHardwareVsync</span>(<span class="literal">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// DispSyncThread线程注册的监听器</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">EventListener</span> &#123;</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span>* mName;</span><br><span class="line">    <span class="keyword">nsecs_t</span> mPhase; <span class="comment">// 时间戳偏移量</span></span><br><span class="line">    <span class="keyword">nsecs_t</span> mLastEventTime; <span class="comment">// 上次VSync事件的时间戳</span></span><br><span class="line">    sp&lt;DispSync::Callback&gt; mCallback; <span class="comment">// 对应的回调，即DispSyncSource</span></span><br><span class="line">    &#125;;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>为了控制硬件VSync的打开与关闭，专门提供了一个线程EventControlThread，当内部的mVsyncEnabled状态改变时，会调用到下面的SurfaceFlinger::setVsyncEnabled方法：<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SurfaceFlinger::setVsyncEnabled</span><span class="params">(<span class="keyword">int</span> disp, <span class="keyword">int</span> enabled)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 打开 or 关闭HWC VSync，最终调用到下面的 Display::setVsyncEnabled</span></span><br><span class="line">    <span class="built_in">getHwComposer</span>().<span class="built_in">setVsyncEnabled</span>(disp,</span><br><span class="line">            enabled ? HWC2::Vsync::Enable : HWC2::Vsync::Disable);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 硬件模块</span></span><br><span class="line"><span class="function">Error <span class="title">Display::setVsyncEnabled</span><span class="params">(Vsync enabled)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> intEnabled = <span class="keyword">static_cast</span>&lt;<span class="keyword">int32_t</span>&gt;(enabled);</span><br><span class="line">    <span class="comment">// 打开 or 关闭HWC VSync</span></span><br><span class="line">    <span class="keyword">int32_t</span> intError = mDevice.<span class="built_in">mSetVsyncEnabled</span>(mDevice.mHwcDevice, mId, intEnabled);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">static_cast</span>&lt;Error&gt;(intError);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>必须在屏幕亮着时，硬件VSync才能工作，否则只能依赖训练好的模拟硬件VSync，甚至需要在EventThread中通过软件方式进行VSync兜底（后面会介绍），下面是屏幕打开和关闭的逻辑：<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SurfaceFlinger::setPowerModeInternal</span><span class="params">(<span class="keyword">const</span> sp&lt;DisplayDevice&gt;&amp; hw, <span class="keyword">int</span> mode)</span></span>&#123;</span><br><span class="line">    <span class="keyword">int32_t</span> type = hw-&gt;<span class="built_in">getDisplayType</span>();</span><br><span class="line">    <span class="comment">// current hwc power mode</span></span><br><span class="line">    <span class="keyword">int</span> currentMode = hw-&gt;<span class="built_in">getPowerMode</span>();</span><br><span class="line">    <span class="keyword">if</span> (mode == currentMode) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (currentMode == HWC_POWER_MODE_OFF) &#123;</span><br><span class="line">        <span class="built_in">getHwComposer</span>().<span class="built_in">setPowerMode</span>(type, mode);</span><br><span class="line">        <span class="keyword">if</span> (type == DisplayDevice::DISPLAY_PRIMARY) &#123;</span><br><span class="line">            <span class="comment">// 通知为客户端服务的EventThread：显示器打开了</span></span><br><span class="line">            mEventThread-&gt;<span class="built_in">onScreenAcquired</span>();</span><br><span class="line">            <span class="comment">// 显示器打开后，需要重新基于硬件VSync信号，训练软件VSync</span></span><br><span class="line">            <span class="built_in">resyncToHardwareVsync</span>(<span class="literal">true</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        mHasPoweredOff = <span class="literal">true</span>;</span><br><span class="line">        <span class="built_in">repaintEverything</span>();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (mode == HWC_POWER_MODE_OFF) &#123;</span><br><span class="line">        <span class="keyword">if</span> (type == DisplayDevice::DISPLAY_PRIMARY) &#123;</span><br><span class="line">            <span class="comment">// 显示器关闭了，则关闭硬件VSync，停止软件VSync训练</span></span><br><span class="line">            <span class="built_in">disableHardwareVsync</span>(<span class="literal">true</span>); <span class="comment">// also cancels any in-progress resync</span></span><br><span class="line">           <span class="comment">// 通知为客户端服务的EventThread：显示器关闭了</span></span><br><span class="line">            mEventThread-&gt;<span class="built_in">onScreenReleased</span>();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">getHwComposer</span>().<span class="built_in">setPowerMode</span>(type, mode);</span><br><span class="line">        <span class="comment">// from this point on, SF will stop drawing on this display</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">getHwComposer</span>().<span class="built_in">setPowerMode</span>(type, mode);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>为什么屏幕的打开与关闭只通知了mEventThread，而没通知mSFEventThread，因为前者是为客户端进程服务，即使主屏幕关闭了，客户端依然要依赖VSync事件做一些工作，所以在mEventThread中必须通过软件的方式为VSync事件兜底（就是等待模拟的硬件VSync 16ms，若超时了，就使用系统时间戳）。而后者是为SurfaceFlinger的合成上屏服务，当对应的屏幕关闭后，就不再需要上屏了，所以mSFEventThread就可以不工作了。</p>
+</blockquote>
+</li>
+</ol>
+<p><code>adb shell dumpsys SurfaceFlinger</code> 可以查看mEventThread的dump信息</p>
+<ol start="3">
+<li>如果模拟的硬件VSync事件（DispSyncThread产生）是正常的，那么EventThread::onVSyncEvent负责接收VSync事件，并更新vsync.count计数和header.timestamp时间戳。<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 接收到DispSyncSource传过来的VSync信号</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">EventThread::onVSyncEvent</span><span class="params">(<span class="keyword">nsecs_t</span> timestamp)</span> </span>&#123;</span><br><span class="line">    Mutex::Autolock _l(mLock);</span><br><span class="line">    <span class="comment">// 表示VSync事件，也可能是热插拔事件</span></span><br><span class="line">    mVSyncEvent[<span class="number">0</span>].header.type = DisplayEventReceiver::DISPLAY_EVENT_VSYNC;</span><br><span class="line">    mVSyncEvent[<span class="number">0</span>].header.id = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 更新VSync时间戳</span></span><br><span class="line">    mVSyncEvent[<span class="number">0</span>].header.timestamp = timestamp;</span><br><span class="line">    <span class="comment">// VSync的累加计数，即dump信息中的events-delivered值</span></span><br><span class="line">    mVSyncEvent[<span class="number">0</span>].vsync.count++;</span><br><span class="line">    mCondition.<span class="built_in">broadcast</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>如果屏幕关闭了，那么在EventThread::waitForEvent中通过Condition.waitRelative为VSync信号兜底，核心代码如下所示：<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SurfaceFlinger通知屏幕关闭了，模拟的硬件VSync信号可能不准，需要使用软件模拟，即16ms</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">EventThread::onScreenReleased</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Mutex::Autolock _l(mLock);</span><br><span class="line">    <span class="keyword">if</span> (!mUseSoftwareVSync) &#123;</span><br><span class="line">        <span class="comment">// disable reliance on h/w vsync</span></span><br><span class="line">        mUseSoftwareVSync = <span class="literal">true</span>;</span><br><span class="line">        mCondition.<span class="built_in">broadcast</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// SurfaceFlinger通知屏幕打开了，不再需要使用软件模拟VSync</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">EventThread::onScreenAcquired</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Mutex::Autolock _l(mLock);</span><br><span class="line">    <span class="keyword">if</span> (mUseSoftwareVSync) &#123;</span><br><span class="line">        <span class="comment">// resume use of h/w vsync</span></span><br><span class="line">        mUseSoftwareVSync = <span class="literal">false</span>;</span><br><span class="line">        mCondition.<span class="built_in">broadcast</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 下面是EventThread::waitForEvent中产生软件VSync的地方</span></span><br><span class="line"><span class="keyword">bool</span> softwareSync = mUseSoftwareVSync;</span><br><span class="line"><span class="comment">// 如果屏幕没关闭，那么继续等待模拟的硬件VSync信号（超时时间为1S），否则等待时间为16ms。在waitRelative期间，如果模拟的硬件VSync信号到了，那么就继续使用模拟的硬件VSync，否则就自己更新vsync.count和`header.timestamp`时间戳。</span></span><br><span class="line"><span class="keyword">nsecs_t</span> timeout = softwareSync ? <span class="built_in">ms2ns</span>(<span class="number">16</span>) : <span class="built_in">ms2ns</span>(<span class="number">1000</span>);</span><br><span class="line"><span class="keyword">if</span> (mCondition.<span class="built_in">waitRelative</span>(mLock, timeout) == TIMED_OUT) &#123;</span><br><span class="line"><span class="comment">// 这里的代码块是处理等待超时的情况，即模拟的硬件VSync信号在16ms内没到达，就需要软件模拟了</span></span><br><span class="line">    <span class="keyword">if</span> (!softwareSync) &#123;</span><br><span class="line">        <span class="comment">// 硬件Vsync失效了，下面是模拟的Vsync信号</span></span><br><span class="line">        <span class="built_in">ALOGW</span>(<span class="string">&quot;Timed out waiting for hw vsync; faking it&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    mVSyncEvent[<span class="number">0</span>].header.type = DisplayEventReceiver::DISPLAY_EVENT_VSYNC;</span><br><span class="line">    mVSyncEvent[<span class="number">0</span>].header.id = DisplayDevice::DISPLAY_PRIMARY;</span><br><span class="line">    <span class="comment">// 软件方式，更新为系统时间戳</span></span><br><span class="line">    mVSyncEvent[<span class="number">0</span>].header.timestamp = <span class="built_in">systemTime</span>(SYSTEM_TIME_MONOTONIC);</span><br><span class="line">     mVSyncEvent[<span class="number">0</span>].vsync.count++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+屏幕关闭后，DispSyncThread线程还在继续发送模拟的硬件VSync事件，所以正常情况下，还是通过EventThread::onVSyncEvent更新vsync.count计数和header.timestamp时间戳。只有在超过16ms，没有接收到模拟的硬件VSync时，系统才会主动更新vsync.count计数和header.timestamp时间戳。</li>
+</ol>
+<p>针对服务于CPU的mEventThread，vsync.count计数和header.timestamp时间戳一般情况下都是通过EventThread::onVSyncEvent方法来更新，若屏幕关闭了，并且在16ms内EventThread::onVSyncEvent方法未更新VSync信息，那么就在EventThread::waitForEvent中主动更新VSync信息。<br>而针对服务于GPU的mSFEventThread，只会通过EventThread::onVSyncEvent方法更新vsync.count计数和header.timestamp时间戳。</p>
+<ol start="5">
+<li><p>不管是服务于CPU的mEventThread，还是服务于GPU的mSFEventThread，都是通过DispSyncSource接收模拟的硬件VSync事件。差异点在于，当有EventThread::Connection请求了VSync事件，但是此时又没有VSync时，waitRelative等待超时的时间是不同的：在屏幕亮着的情况是1000ms，而屏幕关闭后则是16ms。而SurfaceFlinger只会通知mEventThread屏幕的打开与关闭。所以mSFEventThread等待超时的时间只能是1000ms</p>
+</li>
+<li><p>上文中有提到vsync.count计数和EventThread::Connection.count值，它们主要是控制通知EventThread::Connection的频率，当VSync信号到来时，vsync.count会不断累加，比较简单。而EventThread::Connection.count的取值主要分为三类：</p>
+</li>
+</ol>
+<ul>
+<li>count &gt;= 1 ：当vsync.count % count为0时，通知对应的EventThread::Connection</li>
+<li>count == 0 ：可以通知对应的EventThread::Connection，但是立即赋值为-1，表示下次不再继续通知</li>
+<li>count ==-1 : 不会通知对应的Connection</li>
+</ul>
+<p>核心代码在waitForEvent中，如下所示：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 根据count决定对应的connection是否应该被通知，signalConnections是收集需要通知的connection列表。</span></span><br><span class="line"><span class="keyword">if</span> (connection-&gt;count == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">// 此次通知，下次就不通知VSync事件了</span></span><br><span class="line">    connection-&gt;count = <span class="number">-1</span>;</span><br><span class="line">    signalConnections.<span class="built_in">add</span>(connection);</span><br><span class="line">    added = <span class="literal">true</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (connection-&gt;count == <span class="number">1</span> || (vsyncCount % connection-&gt;count) == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">// continuous event, and time to report it 持续的VSync事件</span></span><br><span class="line">    signalConnections.<span class="built_in">add</span>(connection);</span><br><span class="line">    added = <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>EventThread::Connection提供了setVsyncRate和requestNextVsync方法修改这个count，最终会调用到EventThread对应的方法，如下所示：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 设置指定Connection接收VSync事件的固定频率</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">EventThread::setVsyncRate</span><span class="params">(<span class="keyword">uint32_t</span> count, <span class="keyword">const</span> sp&lt;EventThread::Connection&gt;&amp; connection)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">int32_t</span>(count) &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">        Mutex::Autolock _l(mLock);</span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">int32_t</span> new_count = (count == <span class="number">0</span>) ? <span class="number">-1</span> : count;</span><br><span class="line">        <span class="keyword">if</span> (connection-&gt;count != new_count) &#123;</span><br><span class="line">            <span class="comment">// 更新connection-&gt;count</span></span><br><span class="line">            connection-&gt;count = new_count;</span><br><span class="line">            mCondition.<span class="built_in">broadcast</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 请求接收下一次的VSync事件，请求一次，接收下一次VSync</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">EventThread::requestNextVsync</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="keyword">const</span> sp&lt;EventThread::Connection&gt;&amp; connection)</span> </span>&#123;</span><br><span class="line">    Mutex::Autolock _l(mLock);</span><br><span class="line">    mFlinger.<span class="built_in">resyncWithRateLimit</span>();</span><br><span class="line">    <span class="comment">// 更新connection-&gt;count</span></span><br><span class="line">    <span class="keyword">if</span> (connection-&gt;count &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        connection-&gt;count = <span class="number">0</span>;</span><br><span class="line">        mCondition.<span class="built_in">broadcast</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>setVsyncRate只需要指定一次，后续根据vsync.count % connection-&gt;count == 0来接收VSync事件<br>requestNextVsync则是请求下一次VSync事件，请求一次，接收一次，View.invalidate和SF合成，都是使用这种方式。</p>
+</blockquote>
+<ol start="7">
+<li>上文有提到，当模拟的VSync模型与硬件VSync在一定误差内时，会关闭硬件VSync。那么随着时间推移，如果误差越来越大，如何调整模拟的硬件VSync模型那？<br>原来，SurfaceFlinger在处理Layer合成的最后一步（handleMessageRefresh -&gt; postComposition）会通过addPresentFence把Present Fence交给DispSync, DispSync会检查Present Fence与模拟的VSync周期之间的误差，若误差偏大就会打开HWCVSync，重新走addResyncSample训练逻辑。核心代码如下所示：<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// handleMessageRefresh -&gt; postComposition</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SurfaceFlinger::postComposition</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> HWComposer&amp; hwc = <span class="built_in">getHwComposer</span>();</span><br><span class="line">    sp presentFence = hwc.<span class="built_in">getDisplayFence</span>(HWC_DISPLAY_PRIMARY);</span><br><span class="line">    <span class="keyword">if</span> (presentFence-&gt;<span class="built_in">isValid</span>()) &#123;</span><br><span class="line">        <span class="keyword">if</span> (mPrimaryDispSync.<span class="built_in">addPresentFence</span>(presentFence)) &#123;</span><br><span class="line">            <span class="comment">// 打开HWC VSync，重新训练DispSync的VSync模型</span></span><br><span class="line">            <span class="built_in">enableHardwareVsync</span>();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 关闭HWC VSync</span></span><br><span class="line">            <span class="built_in">disableHardwareVsync</span>(<span class="literal">false</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加Present Fence，检查VSync模型误差</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">DispSync::addPresentFence</span><span class="params">(<span class="keyword">const</span> sp&lt;Fence&gt;&amp; fence)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 保存Present Fence，最大长度为NUM_PRESENT_SAMPLES，目前是8</span></span><br><span class="line">    mPresentFences[mPresentSampleOffset] = fence;</span><br><span class="line">    mPresentTimes[mPresentSampleOffset] = <span class="number">0</span>;</span><br><span class="line">    mPresentSampleOffset = (mPresentSampleOffset + <span class="number">1</span>) % NUM_PRESENT_SAMPLES;</span><br><span class="line">    mNumResyncSamplesSincePresent = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; NUM_PRESENT_SAMPLES; i++) &#123;</span><br><span class="line">        <span class="function"><span class="keyword">const</span> sp&lt;Fence&gt;&amp; <span class="title">f</span><span class="params">(mPresentFences[i])</span></span>;</span><br><span class="line">        <span class="keyword">if</span> (f != <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="keyword">nsecs_t</span> t = f-&gt;<span class="built_in">getSignalTime</span>();</span><br><span class="line">            <span class="keyword">if</span> (t &lt; INT64_MAX) &#123;</span><br><span class="line">                mPresentFences[i].<span class="built_in">clear</span>();</span><br><span class="line">                <span class="comment">// 记录Present Fence的时间戳</span></span><br><span class="line">                mPresentTimes[i] = t + kPresentTimeOffset;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 检查误差</span></span><br><span class="line">    <span class="built_in">updateErrorLocked</span>();</span><br><span class="line">    <span class="comment">// 若误差超过一定阈值，则返回true，表示需要重启硬件VSync</span></span><br><span class="line">    <span class="keyword">return</span> !mModelUpdated || mError &gt; kErrorThreshold;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 检查已经保存的Present Fence与现有VSync周期的均方误差</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">DispSync::updateErrorLocked</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Need to compare present fences against the un-adjusted refresh period, since they might arrive between two events.</span></span><br><span class="line">    <span class="keyword">nsecs_t</span> period = mPeriod / (<span class="number">1</span> + mRefreshSkipCount);</span><br><span class="line">    <span class="keyword">int</span> numErrSamples = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">nsecs_t</span> sqErrSum = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; NUM_PRESENT_SAMPLES; i++) &#123;</span><br><span class="line">        <span class="comment">// mReferenceTime表示之前记录的第一个硬件VSync时间戳</span></span><br><span class="line">        <span class="keyword">nsecs_t</span> sample = mPresentTimes[i] - mReferenceTime;</span><br><span class="line">        <span class="keyword">if</span> (sample &gt; mPhase) &#123;</span><br><span class="line">            <span class="comment">// 相对于现有VSync周期的误差</span></span><br><span class="line">            <span class="keyword">nsecs_t</span> sampleErr = (sample - mPhase) % period;</span><br><span class="line">            <span class="keyword">if</span> (sampleErr &gt; period / <span class="number">2</span>) &#123;</span><br><span class="line">                sampleErr -= period;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 求取误差平方和</span></span><br><span class="line">            sqErrSum += sampleErr * sampleErr;</span><br><span class="line">            numErrSamples++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 计算出均方误差</span></span><br><span class="line">    <span class="keyword">if</span> (numErrSamples &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        mError = sqErrSum / numErrSamples;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        mError = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+当DispSync收到addPresentFence添加的Present Fence时(目前最多8个)，会计算出Present Fence与现有VSync周期的均方误差，若均方误差超过常量：kErrorThreshold = 160000000000，就会打开硬件VSync，重新训练DispSync模拟的硬件VSync模型。</li>
+</ol>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><ul>
+<li>当HWC发出VSync信号时，SurfaceFlinger将会收到回调并且发送给DispSync。</li>
+<li>DispSync将会记录这些硬件VSync时间戳，当累计了足够的硬件VSync以后（目前是大于等于6个），就开始计算VSync周期和偏移：mPeriod和mPhase。</li>
+<li>DispSyncThread将会利用mPeriod和mPhase模拟硬件VSync，并且通知对VSync感兴趣的Listener，这些Listener包括SurfaceFlinger和客户端APP。</li>
+<li>这些Listener以Connection形式注册到EventThread。DispSyncThread与EventThread通过DispSyncSource作为中间人进行连接。</li>
+<li>EventThread收到模拟的硬件VSync后，将会通知所有感兴趣的Connection，然后SurfaceFlinger开始合成，APP开始渲染。当收到足够多的硬件VSync并且在误差允许范围内，将会通过EventControlThread关闭HWC的硬件VSync。<br>通过流程图表示如下：<br><img src="https://user-gold-cdn.xitu.io/2019/12/14/16f021204a24864e?imageslim"></li>
+</ul>
+<h1 id="SurfaceFlinger合成上屏"><a href="#SurfaceFlinger合成上屏" class="headerlink" title="SurfaceFlinger合成上屏"></a>SurfaceFlinger合成上屏</h1><p>SurfaceFlinger::init代码中完成了MessageQueue与mSFEventThread的绑定，即MessageQueue向mSFEventThread注册了EventThread::Connection，并通过BitTube监听Connection写入的事件（通过EventThread::Connection::postEvent写事件到BitTube），例如：VSync和热插拔事件。核心代码如下所示：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 主线程`MessageQueue`绑定`mSFEventThread`，</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">MessageQueue::setEventThread</span><span class="params">(<span class="keyword">const</span> sp&lt;EventThread&gt;&amp; eventThread)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    mEventThread = eventThread;</span><br><span class="line">    <span class="comment">// 创建EventThread::Connection</span></span><br><span class="line">    mEvents = eventThread-&gt;<span class="built_in">createEventConnection</span>();</span><br><span class="line">    mEventTube = mEvents-&gt;<span class="built_in">getDataChannel</span>();</span><br><span class="line">    <span class="comment">// 监听BitTube的方式（用Looper），一旦有数据到来则调用cb_eventReceiver()，this表示透传的参数</span></span><br><span class="line">    mLooper-&gt;<span class="built_in">addFd</span>(mEventTube-&gt;<span class="built_in">getFd</span>(), <span class="number">0</span>, Looper::EVENT_INPUT,</span><br><span class="line">            MessageQueue::cb_eventReceiver, <span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 接收EventThread的VSync事件，分发到MessageQueue线程</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">MessageQueue::cb_eventReceiver</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">int</span> events, <span class="keyword">void</span>* data)</span> </span>&#123;</span><br><span class="line">    MessageQueue* queue = <span class="keyword">reinterpret_cast</span>&lt;MessageQueue *&gt;(data);</span><br><span class="line">    <span class="keyword">return</span> queue-&gt;<span class="built_in">eventReceiver</span>(fd, events);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 创建的Connection在第一次被引用时，才会注册到EventThread</span></span><br><span class="line"><span class="keyword">void</span> EventThread::Connection::<span class="built_in">onFirstRef</span>() &#123;</span><br><span class="line">    <span class="comment">// 当第一次引用Connection时，就会把它添加到所属EventThread维护的Connection队列</span></span><br><span class="line">    mEventThread-&gt;<span class="built_in">registerDisplayEventConnection</span>(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>OK，MessageQueue向mSFEventThread注册EventThread::Connection后，就可以接收VSync事件了，那么SurfaceFlinger是一直接收VSync事件，还是按需请求的那？还记得上面介绍的connection-&gt;count吗？实际上是通过Connection::requestNextVsync按需请求的，这个“按需”就是指有Layer更新了。<br>这里我们通过两个时序图详细看下：<br>驱动SurfaceFlinger合成上屏的VSync是什么时候请求的：<br><img src="https://user-gold-cdn.xitu.io/2019/12/14/16f021204a378b28?imageslim"><br>SurfaceFlinger是怎么接收VSync信号的：<br><img src="https://user-gold-cdn.xitu.io/2019/12/14/16f021204a48aed5?imageslim"></p>
+<ol>
+<li>当View.invalidate调用后，最终会触发ViewRootImpl向SurfaceFlinger的mEventThread请求接收下一次的VSync事件（后面详细介绍）。</li>
+<li>客户端收到VSync事件后，最终通过performTraversals触发View体系的绘制。</li>
+<li>这里以软件绘制为例，通过Surface拿到Canvas，Canvas底层实际对应的是从SurfaceFlinger申请的GraphicBuffer。当Canavs绘制完成后，通过Surface.unlockCanvasAndPost触发GraphicBuffer的入队流程，即通过BufferQueueProducer把GraphicBuffer入队到<code>BufferQueue</code>。</li>
+<li>入队后，通过BufferQueueCore中的mConsumerListener回调一步步通知到SurfaceFlinger。</li>
+<li>SurfaceFlinger通过MessageQueue向mSFEventThread请求下一次的VSync信号。</li>
+<li>Vsync到来后，通过MessageQueue分发到SurfaceFlinger主线程，并且最终通过handleMessageRefresh进行Layer的合成与上屏</li>
+</ol>
+<h1 id="客户端APP-UI渲染"><a href="#客户端APP-UI渲染" class="headerlink" title="客户端APP UI渲染"></a>客户端APP UI渲染</h1><p>驱动客户端APP UI渲染的VSync逻辑，也可以分为客户端请求VSync信号和客户端接收VSync信号，一样可以通过两个时序图来看下：<br>客户端请求VSync：<br><img src="https://user-gold-cdn.xitu.io/2019/12/14/16f02120504f2943?imageslim"><br>客户端接收VSync:<br><img src="https://user-gold-cdn.xitu.io/2019/12/14/16f021204f051793?imageslim"><br>客户端APP怎么请求VSync事件那？实际是View请求重绘时，通过Choreographer向SurfaceFlinger的mEventThread线程请求接收下一次的VSync事件。</p>
+<ol>
+<li>当View.invalidate调用后，最终会触发ViewRootImpl向Choreographer注册一个TraversalRunnable。</li>
+<li>Choreographer本地保存这个TraversalRunnable后，会通过DisplayEventReceiver.java调用到Native层，最终一步步调用到mEventThread线程，修改connection-&gt;count = 0(请求接收下一次VSync)。</li>
+<li>Vsync到来后，会从SurfaceFlinger进程一步步回调到客户端进程，最终触发ViewRootImpl之前注册TraversalRunnable，启动View树的渲染。</li>
+</ol>
+<p>那么这里的EventThread::Connection是怎么注册到mEventThread线程的那？其实在创建DisplayEventReceiver就已经完成了注册，如下所示：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// DisplayEventReceiver的构造函数</span></span><br><span class="line">DisplayEventReceiver::<span class="built_in">DisplayEventReceiver</span>() &#123;</span><br><span class="line">    <span class="comment">// 跨进程获取SurfaceFlinger句柄</span></span><br><span class="line">    <span class="function">sp&lt;ISurfaceComposer&gt; <span class="title">sf</span><span class="params">(ComposerService::getComposerService())</span></span>;</span><br><span class="line">    <span class="keyword">if</span> (sf != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="comment">// 向SurfaceFlinger的mEventThread线程注册Connection</span></span><br><span class="line">        mEventConnection = sf-&gt;<span class="built_in">createDisplayEventConnection</span>();</span><br><span class="line">        <span class="keyword">if</span> (mEventConnection != <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="comment">// 需要监听的句柄</span></span><br><span class="line">            mDataChannel = mEventConnection-&gt;<span class="built_in">getDataChannel</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 添加感兴趣的Connection到mEventThread线程，用于通知客户端APP VSync事件</span></span><br><span class="line"><span class="function">sp&lt;IDisplayEventConnection&gt; <span class="title">SurfaceFlinger::createDisplayEventConnection</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> mEventThread-&gt;<span class="built_in">createEventConnection</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="VSync偏移"><a href="#VSync偏移" class="headerlink" title="VSync偏移"></a>VSync偏移</h1><p>在基于VSync的渲染模型中，涉及到三个组件：APP、SurfaceFlinger和Display，它们都是在VSync到来时开始工作。假如我们请求了View重绘，那么整个渲染流程如下所所示：<br><img src="https://user-gold-cdn.xitu.io/2019/12/8/16ee4ecc61418ae5?imageslim"></p>
+<ol>
+<li>View.invalidate请求重绘，通过Choreographer请求接收下一个VSync信号。</li>
+<li>第一个VSync信号到来时，View开始绘制，绘制完成后通过BufferQueue通知到SurfaceFlinger，SurfaceFlinger通过MessageQueue请求接收下一个VSync信号。</li>
+<li>第二个VSync信号到来时，SurfaceFlinger开始合成Layer，并把结果交给HWC。</li>
+<li>第三个VSync信号到来时，Display开始展示合成好的图像数据。</li>
+</ol>
+<p>同时需要注意到：屏幕开始显示帧N时，SurfaceFlinger开始为帧N+1合成Layer，客户端开始处理View渲染并生成帧N+2，即：从View绘制到显示在屏幕上，延迟至少为两帧，大概33ms。<br>但是对大部分场景来说，APP渲染+SurfaceFlinger合成可能在16ms内就可以完成。为了缩短帧延迟，可以在设备的BoardConfig.mk文件中为驱动APP渲染和SurfaceFlinger合成的VSync信号分别配置时间戳偏移：VSYNC_EVENT_PHASE_OFFSET_NS 和SF_VSYNC_EVENT_PHASE_OFFSET_NS（即SurfaceFlinger::init中创建DispSyncSource时传入的vsyncPhaseOffsetNs与sfVsyncPhaseOffsetNs偏移）。若不设置，则默认都是0，即相对于模拟的硬件VSync信号，都没有时间戳偏移。<br><img src="https://user-gold-cdn.xitu.io/2019/12/14/16f0212083662e09?imageslim"></p>
+<ul>
+<li>VSync-App（驱动APP的VSync） = HW_VSync_0 + phase-app</li>
+<li>VSync-sf（驱动SurfaceFlinger的VSync） = HW_VSync_0 + phase-sf</li>
+</ul>
+<p>理想情况下，App可以在phase-sf - phase-app时间内完成绘制，SurfaceFlinger可以在VSync周期 - phase-sf时间内完成合成，那么在下一个VSync信号时就可以上屏，即帧延迟为16ms。<br>但是若APP绘制耗时超过了phase-sf - phase-app，那就只能等到下一个VSync-sf信号才能开始合成，即等待SurfaceFlinger开始合成的时间由VSync周期变成了VSync周期 + phase-sf - phase-app，若同时SurfaceFlinger的合成耗时超过了VSync周期 - phase-sf，那么就要再等下一个VSync才能上屏，整体延迟了3帧，即将近50ms。所以一般情况下，系统都会将phase-sf - phase-app设置为VSync周期。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/android/" rel="tag"># android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/12/28/SurfaceView%E4%B8%8EVsync%E5%8E%9F%E7%90%86/" rel="next" title="SurfaceView与Vsync原理">
+                <i class="fa fa-chevron-left"></i> SurfaceView与Vsync原理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/02/03/android%E6%B3%A8%E8%A7%A3%E5%A4%84%E7%90%86%E5%99%A8%E4%BB%8B%E7%BB%8D/" rel="prev" title="android注解处理器介绍">
+                android注解处理器介绍 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
 
     <div class="post-spread">
-      {% if theme.jiathis %}
-        {% include '_partials/share/jiathis.swig' %}
-      {% elseif theme.baidushare %}
-        {% include '_partials/share/baidushare.swig' %}
-      {% elseif theme.add_this_id %}
-        {% include '_partials/share/add-this.swig' %}
-      {% elseif theme.duoshuo_shortname and theme.duoshuo_share %}
-        {% include '_partials/share/duoshuo_share.swig' %}
-      {% endif %}
+      
     </div>
   </div>
 
-{% endblock %}
 
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
+          </div>
+          
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar1.jpeg"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20%E5%BD%92%E6%A1%A3">
+              
+                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/pacoblack" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:pacoson.wang@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/pacoblacksee" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="skype:yourname?call|chat" target="_blank" title="Skype">
+                      
+                        <i class="fa fa-fw fa-skype"></i>Skype</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#VSync%E4%BF%A1%E5%8F%B7%E7%9A%84%E4%BA%A7%E7%94%9F"><span class="nav-number">1.</span> <span class="nav-text">VSync信号的产生</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83Vsync"><span class="nav-number">1.1.</span> <span class="nav-text">训练Vsync</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">1.1.1.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SurfaceFlinger%E5%90%88%E6%88%90%E4%B8%8A%E5%B1%8F"><span class="nav-number">2.</span> <span class="nav-text">SurfaceFlinger合成上屏</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AFAPP-UI%E6%B8%B2%E6%9F%93"><span class="nav-number">3.</span> <span class="nav-text">客户端APP UI渲染</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#VSync%E5%81%8F%E7%A7%BB"><span class="nav-number">4.</span> <span class="nav-text">VSync偏移</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pacoblack</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="[object Object]"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+  <link rel="stylesheet" href="/assets/css/APlayer.min.css" class="aplayer-style-marker">
+  <script src="/assets/js/APlayer.min.js" class="aplayer-script-marker"></script>
+  <script src="/assets/js/Meting.min.js" class="meting-script-marker"></script>
+  <div id="aplayer-AXqIDvNX"
+      class="aplayer aplayer-tag-marker meting-tag-marker aplayer-fixed"
+      data-id="71075946"
+      data-server="netease"
+      data-type="playlist"
+      data-mode="circulation"
+      data-autoplay="false"
+      data-mutex="true"
+      data-listmaxheight="340px"
+      data-preload="auto"
+      data-fixed="true"
+      data-lrctype="0"
+      data-theme="#555"></div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/Epsilon2.1.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>

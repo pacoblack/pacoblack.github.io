@@ -1,37 +1,823 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html>
 
 
-{% block title %}{{ page.title }} | {{ config.title }}{% endblock %}
 
-{% block page_class %}page-post-detail{% endblock %}
+  
 
 
-{% block content %}
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Flutter,实践," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="具体用法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flutter与原生通信实践">
+<meta property="og:url" content="https://pacoblack.github.io/2019/12/05/Flutter%E4%B8%8E%E5%8E%9F%E7%94%9F%E9%80%9A%E4%BF%A1%E5%AE%9E%E8%B7%B5/index.html">
+<meta property="og:site_name" content="我爱学习">
+<meta property="og:description" content="具体用法">
+<meta property="og:locale">
+<meta property="og:image" content="https://resource.shangmayuan.com/droxy-blog/2019/11/06/3ba6c6e4f1fe4e0b8e0aabb89a966e53-1.jpg">
+<meta property="article:published_time" content="2019-12-05T03:38:27.000Z">
+<meta property="article:modified_time" content="2021-03-13T06:56:15.505Z">
+<meta property="article:author" content="pacoblack">
+<meta property="article:tag" content="Flutter">
+<meta property="article:tag" content="实践">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://resource.shangmayuan.com/droxy-blog/2019/11/06/3ba6c6e4f1fe4e0b8e0aabb89a966e53-1.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://pacoblack.github.io/2019/12/05/Flutter与原生通信实践/"/>
+
+
+
+
+
+  <title>Flutter与原生通信实践 | 我爱学习</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">我爱学习</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">这只是一场演习</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-主页"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-标签"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-分类"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-归档"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-关于"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
 
   <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://pacoblack.github.io/2019/12/05/Flutter%E4%B8%8E%E5%8E%9F%E7%94%9F%E9%80%9A%E4%BF%A1%E5%AE%9E%E8%B7%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar1.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="我爱学习">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Flutter与原生通信实践</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-05T11:38:27+08:00">
+                2019-12-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/flutter/" itemprop="url" rel="index">
+                    <span itemprop="name">Flutter</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/flutter/%E5%AE%9E%E8%B7%B5/" itemprop="url" rel="index">
+                    <span itemprop="name">实践</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>具体用法</p>
+<span id="more"></span>
+
+<p>Flutter和Native的通信是通过Channel来完成的。<br>Flutter使用了一个灵活的系统，允许您调用特定平台的API，无论在Android上的Java或Kotlin代码中，还是iOS上的ObjectiveC或Swift代码中均可用。</p>
+<p>Flutter与原生之间的通信依赖灵活的消息传递方式：</p>
+<ul>
+<li>应用的Flutter部分通过平台通道（platform channel）将消息发送到其应用程序的所在的宿主（iOS或Android）应用（原生应用）。</li>
+<li>宿主监听平台通道，并接收该消息。然后它会调用该平台的API，并将响应发送回客户端，即应用程序的Flutter部分。</li>
+</ul>
+<p><img src="https://resource.shangmayuan.com/droxy-blog/2019/11/06/3ba6c6e4f1fe4e0b8e0aabb89a966e53-1.jpg" alt="Flutter通信"></p>
+<p>当在Flutter中调用原生方法时，调用信息通过<strong>平台通道</strong>传递到原生，原生收到调用信息后方可执行指定的操作，如需返回数据，则原生会将数据再通过<strong>平台通道</strong>传递给Flutter。值得注意的是<strong>消息传递是异步的</strong>，这确保了用户界面在消息传递时不会被挂起。</p>
+<p>在客户端，<a target="_blank" rel="noopener" href="https://docs.flutter.io/flutter/services/MethodChannel-class.html">MethodChannel API</a> 可以发送与方法调用相对应的消息。 在宿主平台上，<code>MethodChannel</code> 在<a target="_blank" rel="noopener" href="https://docs.flutter.io/javadoc/io/flutter/plugin/common/MethodChannel.html">Android API</a> 和 <a target="_blank" rel="noopener" href="https://docs.flutter.io/objcdoc/Classes/FlutterMethodChannel.html">FlutterMethodChannel iOS API</a>可以接收方法调用并返回结果。这些类可以帮助我们用很少的代码就能开发平台插件。</p>
+<p>#创建实例</p>
+<ol>
+<li>首先创建一个新的应用程序:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">flutter create batterylevel</span><br><span class="line"></span><br><span class="line">// 默认情况下，模板支持使用Java编写Android代码，或使用Objective-C编写iOS代码。</span><br><span class="line">// 要使用Kotlin或Swift，请使用-i和/或-a标志:</span><br><span class="line">flutter create -i swift -a kotlin batterylevel</span><br></pre></td></tr></table></figure></li>
+<li>构建通道。通过 <code>MethodChannel</code> 来获取<em>电池电量</em>。<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:async&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;package:flutter/material.dart&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;package:flutter/services.dart&#x27;</span>;</span><br><span class="line">...</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">_MyHomePageState</span> <span class="keyword">extends</span> <span class="title">State</span>&lt;<span class="title">MyHomePage</span>&gt; </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">const</span> platform = <span class="keyword">const</span> MethodChannel(<span class="string">&#x27;samples.flutter.io/battery&#x27;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Get battery level.</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+接下来，我们调用通道上的方法，指定通过字符串标识符调用方法<code>getBatteryLevel</code>。 该调用可能失败(平台不支持平台API，例如在模拟器中运行时)，所以我们将invokeMethod调用包装在try-catch语句中。<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Get battery level.</span></span><br><span class="line"> <span class="built_in">String</span> _batteryLevel = <span class="string">&#x27;Unknown battery level.&#x27;</span>;</span><br><span class="line"></span><br><span class="line"> Future&lt;<span class="built_in">Null</span>&gt; _getBatteryLevel() <span class="keyword">async</span> &#123;</span><br><span class="line">   <span class="built_in">String</span> batteryLevel;</span><br><span class="line">   <span class="keyword">try</span> &#123;</span><br><span class="line">     <span class="keyword">final</span> <span class="built_in">int</span> result = <span class="keyword">await</span> platform.invokeMethod(<span class="string">&#x27;getBatteryLevel&#x27;</span>);</span><br><span class="line">     batteryLevel = <span class="string">&#x27;Battery level at <span class="subst">$result</span> % .&#x27;</span>;</span><br><span class="line">   &#125; <span class="keyword">on</span> PlatformException <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">     batteryLevel = <span class="string">&quot;Failed to get battery level: &#x27;<span class="subst">$&#123;e.message&#125;</span>&#x27;.&quot;</span>;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 在setState中来更新用户界面状态batteryLevel。</span></span><br><span class="line">   setState(() &#123;</span><br><span class="line">     _batteryLevel = batteryLevel;</span><br><span class="line">   &#125;);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+最后，我们在build创建包含一个小字体显示电池状态和一个用于刷新值的按钮的用户界面。<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@override</span></span><br><span class="line">Widget build(BuildContext context) &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> Material(</span><br><span class="line">    child: <span class="keyword">new</span> Center(</span><br><span class="line">      child: <span class="keyword">new</span> Column(</span><br><span class="line">        mainAxisAlignment: MainAxisAlignment.spaceEvenly,</span><br><span class="line">        children: [</span><br><span class="line">          <span class="keyword">new</span> RaisedButton(</span><br><span class="line">            child: <span class="keyword">new</span> Text(<span class="string">&#x27;Get Battery Level&#x27;</span>),</span><br><span class="line">            onPressed: _getBatteryLevel,</span><br><span class="line">          ),</span><br><span class="line">          <span class="keyword">new</span> Text(_batteryLevel),</span><br><span class="line">        ],</span><br><span class="line">      ),</span><br><span class="line">    ),</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>android 端接口实现<br>在java目录下打开 MainActivity.java的 <code>onCreate</code>里创建<code>MethodChannel</code>并设置一个<code>MethodCallHandler</code>。确保使用和Flutter客户端中使用的通道名称相同的名称。<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> io.flutter.app.FlutterActivity;</span><br><span class="line"><span class="keyword">import</span> io.flutter.plugin.common.MethodCall;</span><br><span class="line"><span class="keyword">import</span> io.flutter.plugin.common.MethodChannel;</span><br><span class="line"><span class="keyword">import</span> io.flutter.plugin.common.MethodChannel.MethodCallHandler;</span><br><span class="line"><span class="keyword">import</span> io.flutter.plugin.common.MethodChannel.Result;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">FlutterActivity</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String CHANNEL = <span class="string">&quot;samples.flutter.io/battery&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        <span class="keyword">new</span> MethodChannel(getFlutterView(), CHANNEL).setMethodCallHandler(</span><br><span class="line">          <span class="keyword">new</span> MethodCallHandler() &#123;</span><br><span class="line">             <span class="meta">@Override</span></span><br><span class="line">             <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onMethodCall</span><span class="params">(MethodCall call, Result result)</span> </span>&#123;</span><br><span class="line">                 <span class="comment">// TODO</span></span><br><span class="line">             &#125;</span><br><span class="line">          &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onMethodCall</span><span class="params">(MethodCall call, Result result)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (call.method.equals(<span class="string">&quot;getBatteryLevel&quot;</span>)) &#123;</span><br><span class="line">        <span class="keyword">int</span> batteryLevel = getBatteryLevel();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (batteryLevel != -<span class="number">1</span>) &#123;</span><br><span class="line">            result.success(batteryLevel);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            result.error(<span class="string">&quot;UNAVAILABLE&quot;</span>, <span class="string">&quot;Battery level not available.&quot;</span>, <span class="keyword">null</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        result.notImplemented();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">getBatteryLevel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> batteryLevel = -<span class="number">1</span>;</span><br><span class="line">  <span class="keyword">if</span> (VERSION.SDK_INT &gt;= VERSION_CODES.LOLLIPOP) &#123;</span><br><span class="line">    BatteryManager batteryManager = (BatteryManager) getSystemService(BATTERY_SERVICE);</span><br><span class="line">    batteryLevel = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    Intent intent = <span class="keyword">new</span> ContextWrapper(getApplicationContext()).</span><br><span class="line">        registerReceiver(<span class="keyword">null</span>, <span class="keyword">new</span> IntentFilter(Intent.ACTION_BATTERY_CHANGED));</span><br><span class="line">    batteryLevel = (intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -<span class="number">1</span>) * <span class="number">100</span>) /</span><br><span class="line">        intent.getIntExtra(BatteryManager.EXTRA_SCALE, -<span class="number">1</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> batteryLevel;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+#Flutter定义了三种不同类型的Channel：</li>
+</ol>
+<ul>
+<li>BasicMessageChannel：用于传递字符串和半结构化的信息，持续通信，收到消息后可以回复此次消息，如：Native将遍历到的文件信息陆续传递到Dart，在比如：Flutter将从服务端陆陆续获取到信息交个Native加工，Native处理完返回等；<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;package:flutter/services.dart&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> BasicMessageChannel _basicMessageChannel =</span><br><span class="line">      <span class="keyword">const</span> BasicMessageChannel(<span class="string">&#x27;BasicMessageChannelPlugin&#x27;</span>, StringCodec());</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用BasicMessageChannel接受来自Native的消息，并向Native回复</span></span><br><span class="line">_basicMessageChannel</span><br><span class="line">    .setMessageHandler((<span class="built_in">String</span> message) =&gt; Future&lt;<span class="built_in">String</span>&gt;(() &#123;</span><br><span class="line">          setState(() &#123;</span><br><span class="line">            showMessage = message;</span><br><span class="line">          &#125;);</span><br><span class="line">          <span class="keyword">return</span> <span class="string">&quot;收到Native的消息：&quot;</span> + message;</span><br><span class="line">        &#125;));</span><br><span class="line"><span class="comment">//使用BasicMessageChannel向Native发送消息，并接受Native的回复</span></span><br><span class="line"><span class="built_in">String</span> response;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">       response = <span class="keyword">await</span> _basicMessageChannel.send(value);</span><br><span class="line">    &#125; <span class="keyword">on</span> PlatformException <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">      <span class="built_in">print</span>(e);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BasicMessageChannelPlugin</span> <span class="keyword">implements</span> <span class="title">BasicMessageChannel</span>.<span class="title">MessageHandler</span>&lt;<span class="title">String</span>&gt;, <span class="title">BasicMessageChannel</span>.<span class="title">Reply</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Activity activity;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> BasicMessageChannel&lt;String&gt; messageChannel;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> BasicMessageChannelPlugin <span class="title">registerWith</span><span class="params">(FlutterView flutterView)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> BasicMessageChannelPlugin(flutterView);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">BasicMessageChannelPlugin</span><span class="params">(FlutterView flutterView)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.activity = (Activity) flutterView.getContext();</span><br><span class="line">        <span class="keyword">this</span>.messageChannel = <span class="keyword">new</span> BasicMessageChannel&lt;&gt;(flutterView, <span class="string">&quot;BasicMessageChannelPlugin&quot;</span>, StringCodec.INSTANCE);</span><br><span class="line">        <span class="comment">//设置消息处理器，处理来自Dart的消息</span></span><br><span class="line">        messageChannel.setMessageHandler(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onMessage</span><span class="params">(String s, BasicMessageChannel.Reply&lt;String&gt; reply)</span> </span>&#123;<span class="comment">//处理Dart发来的消息</span></span><br><span class="line">        reply.reply(<span class="string">&quot;BasicMessageChannel收到：&quot;</span> + s);<span class="comment">//可以通过reply进行回复</span></span><br><span class="line">        <span class="keyword">if</span> (activity <span class="keyword">instanceof</span> IShowMessage) &#123;</span><br><span class="line">            ((IShowMessage) activity).onShowMessage(s);</span><br><span class="line">        &#125;</span><br><span class="line">        Toast.makeText(activity, s, Toast.LENGTH_SHORT).show();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 向Dart发送消息，并接受Dart的反馈</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> message  要给Dart发送的消息内容</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> callback 来自Dart的反馈</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">send</span><span class="params">(String message, BasicMessageChannel.Reply&lt;String&gt; callback)</span> </span>&#123;</span><br><span class="line">        messageChannel.send(message, callback);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">reply</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>MethodChannel：用于传递方法调用（method invocation）一次性通信：如Flutter调用Native拍照；</li>
+<li>EventChannel: 用于数据流（event streams）的通信，持续通信，收到消息后无法回复此次消息，通常用于Native向Dart的通信，如：手机电量变化，网络连接变化，陀螺仪，传感器等；<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;package:flutter/services.dart&#x27;</span>;</span><br><span class="line">...</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> EventChannel _eventChannelPlugin =</span><br><span class="line">      EventChannel(<span class="string">&#x27;EventChannelPlugin&#x27;</span>);</span><br><span class="line">StreamSubscription _streamSubscription;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="keyword">void</span> initState() &#123;</span><br><span class="line">    _streamSubscription=_eventChannelPlugin</span><br><span class="line">        .receiveBroadcastStream()</span><br><span class="line">        .listen(_onToDart, onError: _onToDartError);</span><br><span class="line">    <span class="keyword">super</span>.initState();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="keyword">void</span> dispose() &#123;</span><br><span class="line">    <span class="keyword">if</span> (_streamSubscription != <span class="keyword">null</span>) &#123;</span><br><span class="line">      _streamSubscription.cancel();</span><br><span class="line">      _streamSubscription = <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">super</span>.dispose();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">void</span> _onToDart(message) &#123;</span><br><span class="line">    setState(() &#123;</span><br><span class="line">      showMessage = message;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">void</span> _onToDartError(error) &#123;</span><br><span class="line">    <span class="built_in">print</span>(error);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">StreamHandler</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">onListen</span><span class="params">(Object args, EventChannel.EventSink eventSink)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">onCancel</span><span class="params">(Object o)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EventChannelPlugin</span> <span class="keyword">implements</span> <span class="title">EventChannel</span>.<span class="title">StreamHandler</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> List&lt;EventChannel.EventSink&gt; eventSinks = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> EventChannelPlugin <span class="title">registerWith</span><span class="params">(FlutterView flutterView)</span> </span>&#123;</span><br><span class="line">        EventChannelPlugin plugin = <span class="keyword">new</span> EventChannelPlugin();</span><br><span class="line">        <span class="keyword">new</span> EventChannel(flutterView, <span class="string">&quot;EventChannelPlugin&quot;</span>).setStreamHandler(plugin);</span><br><span class="line">        <span class="keyword">return</span> plugin;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">sendEvent</span><span class="params">(Object params)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (EventChannel.EventSink eventSink : eventSinks) &#123;</span><br><span class="line">            eventSink.success(params);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onListen</span><span class="params">(Object args, EventChannel.EventSink eventSink)</span> </span>&#123;</span><br><span class="line">        eventSinks.add(eventSink);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCancel</span><span class="params">(Object o)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>这三种类型的类型的Channel都是全双工通信，即A &lt;=&gt; B，Dart可以主动发送消息给platform端，并且platform接收到消息后可以做出回应，同样，platform端可以主动发送消息给Dart端，dart端接收数后返回给platform端。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/flutter/" rel="tag"># Flutter</a>
+          
+            <a href="/tags/%E5%AE%9E%E8%B7%B5/" rel="tag"># 实践</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/04/flutter%E6%A1%86%E6%9E%B6%E6%80%BB%E8%A7%88/" rel="next" title="flutter框架总览">
+                <i class="fa fa-chevron-left"></i> flutter框架总览
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/12/05/Flutter%E4%B8%8E%E5%8E%9F%E7%94%9F%E9%80%9A%E4%BF%A1%E4%B9%8BFlutter-Java/" rel="prev" title="Flutter与原生通信之Flutter->Java">
+                Flutter与原生通信之Flutter->Java <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
 
     <div class="post-spread">
-      {% if theme.jiathis %}
-        {% include '_partials/share/jiathis.swig' %}
-      {% elseif theme.baidushare %}
-        {% include '_partials/share/baidushare.swig' %}
-      {% elseif theme.add_this_id %}
-        {% include '_partials/share/add-this.swig' %}
-      {% elseif theme.duoshuo_shortname and theme.duoshuo_share %}
-        {% include '_partials/share/duoshuo_share.swig' %}
-      {% endif %}
+      
     </div>
   </div>
 
-{% endblock %}
 
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
+          </div>
+          
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar1.jpeg"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20%E5%BD%92%E6%A1%A3">
+              
+                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/pacoblack" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:pacoson.wang@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/pacoblacksee" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="skype:yourname?call|chat" target="_blank" title="Skype">
+                      
+                        <i class="fa fa-fw fa-skype"></i>Skype</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pacoblack</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="[object Object]"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+  <link rel="stylesheet" href="/assets/css/APlayer.min.css" class="aplayer-style-marker">
+  <script src="/assets/js/APlayer.min.js" class="aplayer-script-marker"></script>
+  <script src="/assets/js/Meting.min.js" class="meting-script-marker"></script>
+  <div id="aplayer-AXqIDvNX"
+      class="aplayer aplayer-tag-marker meting-tag-marker aplayer-fixed"
+      data-id="71075946"
+      data-server="netease"
+      data-type="playlist"
+      data-mode="circulation"
+      data-autoplay="false"
+      data-mutex="true"
+      data-listmaxheight="340px"
+      data-preload="auto"
+      data-fixed="true"
+      data-lrctype="0"
+      data-theme="#555"></div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/Epsilon2.1.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>

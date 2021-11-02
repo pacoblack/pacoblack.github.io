@@ -1,37 +1,854 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html>
 
 
-{% block title %}{{ page.title }} | {{ config.title }}{% endblock %}
 
-{% block page_class %}page-post-detail{% endblock %}
+  
 
 
-{% block content %}
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="android中我们经常会需要存储键-值对，而他们的存储方式常见的就有HashMap、ArrayMap和SparseArray，那么他们有什么区别呢">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HashMap与SparseArray区别">
+<meta property="og:url" content="https://pacoblack.github.io/2021/02/18/HashMap%E4%B8%8ESparseArray%E5%8C%BA%E5%88%AB/index.html">
+<meta property="og:site_name" content="我爱学习">
+<meta property="og:description" content="android中我们经常会需要存储键-值对，而他们的存储方式常见的就有HashMap、ArrayMap和SparseArray，那么他们有什么区别呢">
+<meta property="og:locale">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/800/1*lXkll8fb72OFk5NVVbi_wQ.png">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/800/1*v1_3ug_tpscGtYc7JxP2Og.png">
+<meta property="og:image" content="http://gityuan.com/images/arraymap/cache_add.jpg">
+<meta property="og:image" content="http://gityuan.com/images/arraymap/cache_delete.jpg">
+<meta property="article:published_time" content="2021-02-18T08:33:14.000Z">
+<meta property="article:modified_time" content="2021-03-13T06:56:15.506Z">
+<meta property="article:author" content="pacoblack">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn-images-1.medium.com/max/800/1*lXkll8fb72OFk5NVVbi_wQ.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://pacoblack.github.io/2021/02/18/HashMap与SparseArray区别/"/>
+
+
+
+
+
+  <title>HashMap与SparseArray区别 | 我爱学习</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">我爱学习</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">这只是一场演习</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-主页"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-标签"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-分类"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-归档"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-关于"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
 
   <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://pacoblack.github.io/2021/02/18/HashMap%E4%B8%8ESparseArray%E5%8C%BA%E5%88%AB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar1.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="我爱学习">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">HashMap与SparseArray区别</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-02-18T16:33:14+08:00">
+                2021-02-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>android中我们经常会需要存储键-值对，而他们的存储方式常见的就有HashMap、ArrayMap和SparseArray，那么他们有什么区别呢</p>
+<span id="more"></span>
+<h1 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h1><p>HashMap基本上是HashMap.Entry对象的一个数组。 Entry是HashMap的内部类，它用来保存键值对。<br><img src="https://cdn-images-1.medium.com/max/800/1*lXkll8fb72OFk5NVVbi_wQ.png"><br>我们看一下源码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//构造函数没有什么操作，主要是初始化一下capacity和loadFactor，默认值分别为16和0.75</span></span><br><span class="line"><span class="comment">// 主要逻辑还是看putVal</span></span><br><span class="line"><span class="function"><span class="keyword">final</span> V <span class="title">putVal</span><span class="params">(<span class="keyword">int</span> hash, K key, V value, <span class="keyword">boolean</span> onlyIfAbsent,</span></span></span><br><span class="line"><span class="params"><span class="function">               <span class="keyword">boolean</span> evict)</span> </span>&#123;</span><br><span class="line">    Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; <span class="keyword">int</span> n, i;</span><br><span class="line">    <span class="comment">// Step1:初始化table</span></span><br><span class="line">    <span class="keyword">if</span> ((tab = table) == <span class="keyword">null</span> || (n = tab.length) == <span class="number">0</span>)</span><br><span class="line">        n = (tab = resize()).length;</span><br><span class="line">    <span class="comment">// Step2:如果根据hash值计算得到的索引是空的，直接复制</span></span><br><span class="line">    <span class="keyword">if</span> ((p = tab[i = (n - <span class="number">1</span>) &amp; hash]) == <span class="keyword">null</span>)</span><br><span class="line">        tab[i] = newNode(hash, key, value, <span class="keyword">null</span>);</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">//进入这里说明索引不为空</span></span><br><span class="line">      <span class="comment">//Step3:如果hash值相同、key值相同则获取当前node</span></span><br><span class="line">        Node&lt;K,V&gt; e; K k;</span><br><span class="line">        <span class="keyword">if</span> (p.hash == hash &amp;&amp;</span><br><span class="line">            ((k = p.key) == key || (key != <span class="keyword">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">            e = p;</span><br><span class="line">        <span class="comment">//Step4：如果当前节点为TreeNode，就当作二叉树插入</span></span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (p <span class="keyword">instanceof</span> TreeNode)</span><br><span class="line">            e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(<span class="keyword">this</span>, tab, hash, key, value);</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">//Step5:遍历所有节点</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> binCount = <span class="number">0</span>; ; ++binCount) &#123;</span><br><span class="line">                <span class="keyword">if</span> ((e = p.next) == <span class="keyword">null</span>) &#123;</span><br><span class="line">                  <span class="comment">//Step6:如果下一个节点是空则插入</span></span><br><span class="line">                    p.next = newNode(hash, key, value, <span class="keyword">null</span>);</span><br><span class="line">                    <span class="comment">//Step7:如果插入的节点已经超过了8个，就将单向列表转换为二叉树</span></span><br><span class="line">                    <span class="keyword">if</span> (binCount &gt;= TREEIFY_THRESHOLD - <span class="number">1</span>) <span class="comment">// -1 for 1st</span></span><br><span class="line">                        treeifyBin(tab, hash);</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">//Step8:如果找到了节点就结束当前循环</span></span><br><span class="line">                <span class="keyword">if</span> (e.hash == hash &amp;&amp;</span><br><span class="line">                    ((k = e.key) == key || (key != <span class="keyword">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                p = e;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//Step9:如果找到了节点，就返回节点的旧的值，并更新为新的值</span></span><br><span class="line">        <span class="keyword">if</span> (e != <span class="keyword">null</span>) &#123; <span class="comment">// existing mapping for key</span></span><br><span class="line">            V oldValue = e.value;</span><br><span class="line">            <span class="keyword">if</span> (!onlyIfAbsent || oldValue == <span class="keyword">null</span>)</span><br><span class="line">                e.value = value;</span><br><span class="line">            afterNodeAccess(e);</span><br><span class="line">            <span class="keyword">return</span> oldValue;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    ++modCount;</span><br><span class="line">    <span class="comment">//Step10:如果插入后的大小超过了阈值，就对当前列表扩容</span></span><br><span class="line">    <span class="keyword">if</span> (++size &gt; threshold)</span><br><span class="line">        resize();</span><br><span class="line">    afterNodeInsertion(evict);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从数组中检索值的时间效率为恒定时间或O(1)。 这意味着不管数组的大小，拉取数组中的任何元素时间都相同。 这可以通过使用散列函数来生成指定键的数组索引。</p>
+<h1 id="ArrayMap"><a href="#ArrayMap" class="headerlink" title="ArrayMap"></a>ArrayMap</h1><p>ArrayMap中包含了两个小数组。 第一个数组（Hash-Array）按顺序包含指定的哈希键。 第二个数组（Key Value Array）根据第一个数组存储对象的键和值。第二个数组的长度是第一个数组的一倍。<br><img src="https://cdn-images-1.medium.com/max/800/1*v1_3ug_tpscGtYc7JxP2Og.png"><br>在源码的构造函数中，创建了两个空的数组</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//这个的代码看起来很长，但是逻辑很简单</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> V <span class="title">put</span><span class="params">(K key, V value)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> osize = mSize;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> hash;</span><br><span class="line">    <span class="keyword">int</span> index;</span><br><span class="line">    <span class="comment">//Step1:根据key值获取到hash值，以及hash值在列表中的索引</span></span><br><span class="line">    <span class="keyword">if</span> (key == <span class="keyword">null</span>) &#123;</span><br><span class="line">        hash = <span class="number">0</span>;</span><br><span class="line">        index = indexOfNull();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        hash = mIdentityHashCode ? System.identityHashCode(key) : key.hashCode();</span><br><span class="line">        index = indexOf(key, hash);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//Step2:如果找到了这个值，就更新一下</span></span><br><span class="line">    <span class="keyword">if</span> (index &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">        index = (index&lt;&lt;<span class="number">1</span>) + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">final</span> V old = (V)mArray[index];</span><br><span class="line">        mArray[index] = value;</span><br><span class="line">        <span class="keyword">return</span> old;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//Step3:如果没有找到，那么我们就要插入</span></span><br><span class="line">    index = ~index;</span><br><span class="line">    <span class="comment">//Step4:如果已经达到最大长度，我们就要扩容</span></span><br><span class="line">    <span class="keyword">if</span> (osize &gt;= mHashes.length) &#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> n = osize &gt;= (BASE_SIZE*<span class="number">2</span>) ? (osize+(osize&gt;&gt;<span class="number">1</span>))</span><br><span class="line">                : (osize &gt;= BASE_SIZE ? (BASE_SIZE*<span class="number">2</span>) : BASE_SIZE);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (DEBUG) Log.d(TAG, <span class="string">&quot;put: grow from &quot;</span> + mHashes.length + <span class="string">&quot; to &quot;</span> + n);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span>[] ohashes = mHashes;</span><br><span class="line">        <span class="keyword">final</span> Object[] oarray = mArray;</span><br><span class="line">        allocArrays(n);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (CONCURRENT_MODIFICATION_EXCEPTIONS &amp;&amp; osize != mSize) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> ConcurrentModificationException();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (mHashes.length &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (DEBUG) Log.d(TAG, <span class="string">&quot;put: copy 0-&quot;</span> + osize + <span class="string">&quot; to 0&quot;</span>);</span><br><span class="line">            System.arraycopy(ohashes, <span class="number">0</span>, mHashes, <span class="number">0</span>, ohashes.length);</span><br><span class="line">            System.arraycopy(oarray, <span class="number">0</span>, mArray, <span class="number">0</span>, oarray.length);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        freeArrays(ohashes, oarray, osize);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//Step5:如果可以插入，调用native方法来将hash和key-value插入到相应位置</span></span><br><span class="line">    <span class="keyword">if</span> (index &lt; osize) &#123;</span><br><span class="line">        <span class="keyword">if</span> (DEBUG) Log.d(TAG, <span class="string">&quot;put: move &quot;</span> + index + <span class="string">&quot;-&quot;</span> + (osize-index)</span><br><span class="line">                + <span class="string">&quot; to &quot;</span> + (index+<span class="number">1</span>));</span><br><span class="line">        System.arraycopy(mHashes, index, mHashes, index + <span class="number">1</span>, osize - index);</span><br><span class="line">        System.arraycopy(mArray, index &lt;&lt; <span class="number">1</span>, mArray, (index + <span class="number">1</span>) &lt;&lt; <span class="number">1</span>, (mSize - index) &lt;&lt; <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (CONCURRENT_MODIFICATION_EXCEPTIONS) &#123;</span><br><span class="line">        <span class="keyword">if</span> (osize != mSize || index &gt;= mHashes.length) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> ConcurrentModificationException();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    mHashes[index] = hash;</span><br><span class="line">    mArray[index&lt;&lt;<span class="number">1</span>] = key;</span><br><span class="line">    mArray[(index&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>] = value;</span><br><span class="line">    mSize++;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="缓存机制"><a href="#缓存机制" class="headerlink" title="缓存机制"></a>缓存机制</h2><p>ArrayMap是专为Android优化而设计的Map对象，使用场景比较高频，很多场景可能起初都是数据很少，为了减少频繁地创建和回收，特意设计了两个缓存池，分别缓存大小为4和8的ArrayMap对象。</p>
+<h3 id="freeArrays"><a href="#freeArrays" class="headerlink" title="freeArrays"></a>freeArrays</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">freeArrays</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span>[] hashes, <span class="keyword">final</span> Object[] array, <span class="keyword">final</span> <span class="keyword">int</span> size)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (hashes.length == (BASE_SIZE*<span class="number">2</span>)) &#123;  <span class="comment">//当释放的是大小为8的对象</span></span><br><span class="line">        <span class="keyword">synchronized</span> (ArrayMap.class) &#123;</span><br><span class="line">            <span class="comment">// 当大小为8的缓存池的数量小于10个，则将其放入缓存池</span></span><br><span class="line">            <span class="keyword">if</span> (mTwiceBaseCacheSize &lt; CACHE_SIZE) &#123;</span><br><span class="line">                array[<span class="number">0</span>] = mTwiceBaseCache;  <span class="comment">//array[0]指向原来的缓存池</span></span><br><span class="line">                array[<span class="number">1</span>] = hashes;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i=(size&lt;&lt;<span class="number">1</span>)-<span class="number">1</span>; i&gt;=<span class="number">2</span>; i--) &#123;</span><br><span class="line">                    array[i] = <span class="keyword">null</span>;  <span class="comment">//清空其他数据</span></span><br><span class="line">                &#125;</span><br><span class="line">                mTwiceBaseCache = array; <span class="comment">//mTwiceBaseCache指向新加入缓存池的array</span></span><br><span class="line">                mTwiceBaseCacheSize++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (hashes.length == BASE_SIZE) &#123;  <span class="comment">//当释放的是大小为4的对象，原理同上</span></span><br><span class="line">        <span class="keyword">synchronized</span> (ArrayMap.class) &#123;</span><br><span class="line">            <span class="keyword">if</span> (mBaseCacheSize &lt; CACHE_SIZE) &#123;</span><br><span class="line">                array[<span class="number">0</span>] = mBaseCache;</span><br><span class="line">                array[<span class="number">1</span>] = hashes;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i=(size&lt;&lt;<span class="number">1</span>)-<span class="number">1</span>; i&gt;=<span class="number">2</span>; i--) &#123;</span><br><span class="line">                    array[i] = <span class="keyword">null</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                mBaseCache = array;</span><br><span class="line">                mBaseCacheSize++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最初mTwiceBaseCache和mBaseCache缓存池中都没有数据，在freeArrays释放内存时，如果同时满足释放的array大小等于4或者8，且相对应的缓冲池个数未达上限，则会把该arrya加入到缓存池中,缓存池的个数增加。<br>加入的方式是将数组array的第0个元素指向原有的缓存池，第1个元素指向hashes数组的地址，第2个元素以后的数据全部置为null。再把缓存池的头部指向最新的array的位置，并将该缓存池大小执行加1操作。<br>具体如下所示。<br><img src="http://gityuan.com/images/arraymap/cache_add.jpg"><br>而执行过程是不断mBaseCache向上，更新上一个Array的a[0]和a[1]并将其他置空</p>
+<h3 id="allocArrays"><a href="#allocArrays" class="headerlink" title="allocArrays"></a>allocArrays</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">allocArrays</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span> size)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (size == (BASE_SIZE*<span class="number">2</span>)) &#123;  <span class="comment">//当分配大小为8的对象，先查看缓存池</span></span><br><span class="line">        <span class="keyword">synchronized</span> (ArrayMap.class) &#123;</span><br><span class="line">            <span class="keyword">if</span> (mTwiceBaseCache != <span class="keyword">null</span>) &#123; <span class="comment">// 当缓存池不为空时</span></span><br><span class="line">                <span class="keyword">final</span> Object[] array = mTwiceBaseCache;</span><br><span class="line">                mArray = array;         <span class="comment">//从缓存池中取出mArray</span></span><br><span class="line">                mTwiceBaseCache = (Object[])array[<span class="number">0</span>]; <span class="comment">//将缓存池指向上一条缓存地址</span></span><br><span class="line">                mHashes = (<span class="keyword">int</span>[])array[<span class="number">1</span>];  <span class="comment">//从缓存中mHashes</span></span><br><span class="line">                array[<span class="number">0</span>] = array[<span class="number">1</span>] = <span class="keyword">null</span>;</span><br><span class="line">                mTwiceBaseCacheSize--;  <span class="comment">//缓存池大小减1</span></span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (size == BASE_SIZE) &#123; <span class="comment">//当分配大小为4的对象，原理同上</span></span><br><span class="line">        <span class="keyword">synchronized</span> (ArrayMap.class) &#123;</span><br><span class="line">            <span class="keyword">if</span> (mBaseCache != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">final</span> Object[] array = mBaseCache;</span><br><span class="line">                mArray = array;</span><br><span class="line">                mBaseCache = (Object[])array[<span class="number">0</span>];</span><br><span class="line">                mHashes = (<span class="keyword">int</span>[])array[<span class="number">1</span>];</span><br><span class="line">                array[<span class="number">0</span>] = array[<span class="number">1</span>] = <span class="keyword">null</span>;</span><br><span class="line">                mBaseCacheSize--;</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 分配大小除了4和8之外的情况，则直接创建新的数组</span></span><br><span class="line">    mHashes = <span class="keyword">new</span> <span class="keyword">int</span>[size];</span><br><span class="line">    mArray = <span class="keyword">new</span> Object[size&lt;&lt;<span class="number">1</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当调用allocArrays分配内存时，如果所需要分配的大小等于4或者8，且相对应的缓冲池不为空，则会从相应缓存池中取出缓存的mArray和mHashes。<br>从缓存池取出缓存的方式是将当前缓存池赋值给mArray，将缓存池指向上一条缓存地址，将缓存池的第1个元素赋值为mHashes，再把mArray的第0和第1个位置的数据置为null，并将该缓存池大小执行减1操作.<br>如下图所示<br><img src="http://gityuan.com/images/arraymap/cache_delete.jpg"><br>而执行过程是不断mBaseCache向下，并将Array的a[0]和a[1]置空</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><ul>
+<li>ArrayMap和SparseArray采用的都是两个数组，Android专门针对内存优化而设计的</li>
+<li>ArrayMap比HashMap更节省内存，综合性能方面在数据量不大的情况下，推荐使用ArrayMap</li>
+<li>ArrayMap查找时间复杂度O(logN)；</li>
+<li>ArrayMap增加、删除操作需要移动成员，速度相比较慢，对于个数小于1000的情况下，性能基本没有明显差异，适用于插入和产删除不频繁的情况</li>
+</ul>
+<h1 id="SparseArray"><a href="#SparseArray" class="headerlink" title="SparseArray"></a>SparseArray</h1><p>结构式两个相同大小的列表<br>与ArrayMap的主要区别在于，在SparseArray键中始终是原始类型。SparseArray旨在消除自动装箱的问题（ArrayMap不能避免自动装箱问题），而这种方法会影响内存消耗。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(<span class="keyword">int</span> key, E value)</span> </span>&#123;</span><br><span class="line">  <span class="comment">//Step1:先通过二叉查找到索引</span></span><br><span class="line">    <span class="keyword">int</span> i = ContainerHelpers.binarySearch(mKeys, mSize, key);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//Step2:如果找到就更新</span></span><br><span class="line">    <span class="keyword">if</span> (i &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">        mValues[i] = value;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        i = ~i;</span><br><span class="line">        <span class="comment">// Step3:如果没有找到，如果是被删除的也可以更新</span></span><br><span class="line">        <span class="keyword">if</span> (i &lt; mSize &amp;&amp; mValues[i] == DELETED) &#123;</span><br><span class="line">            mKeys[i] = key;</span><br><span class="line">            mValues[i] = value;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//Step4:如果有存在能够回收的，先回收再查找索引</span></span><br><span class="line">        <span class="keyword">if</span> (mGarbage &amp;&amp; mSize &gt;= mKeys.length) &#123;</span><br><span class="line">            gc();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Search again because indices may have changed.</span></span><br><span class="line">            i = ~ContainerHelpers.binarySearch(mKeys, mSize, key);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//Step5:根据查找的结果重新插入，并确定是否需要扩容</span></span><br><span class="line">        mKeys = GrowingArrayUtils.insert(mKeys, mSize, i, key);</span><br><span class="line">        mValues = GrowingArrayUtils.insert(mValues, mSize, i, value);</span><br><span class="line">        mSize++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h2><ul>
+<li>SparseArray比ArrayMap节省1/3的内存，但SparseArray只能用于key为int类型的Map，所以int类型的Map数据推荐使用SparseArray；</li>
+<li>SparseArray适合频繁删除和插入来回执行的场景，性能比较好</li>
+<li>SparseArray有延迟回收机制，提供删除效率，同时减少数组成员来回拷贝的次数</li>
+</ul>
+<h1 id="Hashtable"><a href="#Hashtable" class="headerlink" title="Hashtable"></a>Hashtable</h1><blockquote>
+<p>注意是 <code>Hashtable</code> 不是 <code>HashTable</code> (t为小写)，这不是违背了驼峰定理了嘛？这还得从 <code>Hashtable</code> 的出生说起，<br><code>Hashtable</code> 是在Java1.0的时候创建的，而集合的统一规范命名是在后来的Java2开始约定的，而当时又发布了新的集合代替它，所以这个命名也一直使用到现在。</p>
+</blockquote>
+<h2 id="简单认识"><a href="#简单认识" class="headerlink" title="简单认识"></a>简单认识</h2><ol>
+<li>HashMap是线程不安全的，在多线程环境下会容易产生死循环，但是单线程环境下运行效率高；Hashtable线程安全的，很多方法都有synchronized修饰，但同时因为加锁导致单线程环境下效率较低。</li>
+<li>HashMap允许有一个key为null，允许多个value为null；而Hashtable不允许key或者value为null。</li>
+</ol>
+<h2 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Hashtable</span><span class="params">(<span class="keyword">int</span> initialCapacity, <span class="keyword">float</span> loadFactor)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (initialCapacity &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;Illegal Capacity: &quot;</span>+</span><br><span class="line">                                           initialCapacity);</span><br><span class="line">    <span class="keyword">if</span> (loadFactor &lt;= <span class="number">0</span> || Float.isNaN(loadFactor))</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;Illegal Load: &quot;</span>+loadFactor);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (initialCapacity==<span class="number">0</span>)</span><br><span class="line">        initialCapacity = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">this</span>.loadFactor = loadFactor;</span><br><span class="line">    table = <span class="keyword">new</span> HashtableEntry&lt;?,?&gt;[initialCapacity];</span><br><span class="line">    <span class="comment">// Android-changed: Ignore loadFactor when calculating threshold from initialCapacity</span></span><br><span class="line">    <span class="comment">// threshold = (int)Math.min(initialCapacity * loadFactor, MAX_ARRAY_SIZE + 1);</span></span><br><span class="line">    threshold = (<span class="keyword">int</span>)Math.min(initialCapacity, MAX_ARRAY_SIZE + <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>HashMap的底层数组的长度必须为2^n</li>
+<li>Hashtable底层数组的长度可以为任意值，这就造成了当底层数组长度为合数的时候，Hashtable的hash算法散射不均匀，容易产生hash冲突。所以，可以清楚的看到Hashtable的默认构造函数底层数组长度为11（质数）</li>
+</ul>
+<h2 id="hash算法"><a href="#hash算法" class="headerlink" title="hash算法"></a>hash算法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// HashMap</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">hash</span><span class="params">(Object key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> h;</span><br><span class="line">    <span class="keyword">return</span> (key == <span class="keyword">null</span>) ? <span class="number">0</span> : (h = key.hashCode()) ^ (h &gt;&gt;&gt; <span class="number">16</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>HashMap的hash算法通过非常规的设计，将底层table长度设计为2^n（合数）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> hash = key.hashCode();</span><br><span class="line"><span class="comment">//0x7FFFFFFF转换为10进制之后是Intger.MAX_VALUE,也就是2^31 - 1</span></span><br><span class="line"><span class="keyword">int</span> index = (hash &amp; <span class="number">0x7FFFFFFF</span>) % tab.length;</span><br></pre></td></tr></table></figure>
+<p>Hashtable的hash算法首先使得hash的值小于等于整型数的最大值，再通过%运算实现均匀散射。</p>
+<h2 id="扩容机制"><a href="#扩容机制" class="headerlink" title="扩容机制"></a>扩容机制</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//HashMap</span></span><br><span class="line"><span class="keyword">final</span> Node&lt;K,V&gt;[] resize() &#123;</span><br><span class="line">    Node&lt;K,V&gt;[] oldTab = table;</span><br><span class="line">    <span class="keyword">int</span> oldCap = (oldTab == <span class="keyword">null</span>) ? <span class="number">0</span> : oldTab.length;</span><br><span class="line">    <span class="keyword">int</span> oldThr = threshold;</span><br><span class="line">    <span class="keyword">int</span> newCap, newThr = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (oldCap &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (oldCap &gt;= MAXIMUM_CAPACITY) &#123;</span><br><span class="line">            threshold = Integer.MAX_VALUE;</span><br><span class="line">            <span class="keyword">return</span> oldTab;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> ((newCap = oldCap &lt;&lt; <span class="number">1</span>) &lt; MAXIMUM_CAPACITY &amp;&amp;</span><br><span class="line">                 oldCap &gt;= DEFAULT_INITIAL_CAPACITY)</span><br><span class="line">            newThr = oldThr &lt;&lt; <span class="number">1</span>; <span class="comment">// 将阈值扩大为2倍</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (oldThr &gt; <span class="number">0</span>) <span class="comment">// initial capacity was placed in threshold</span></span><br><span class="line">        newCap = oldThr;</span><br><span class="line">    <span class="keyword">else</span> &#123;               <span class="comment">// 当threshold的为0的使用默认的容量，也就是16</span></span><br><span class="line">        newCap = DEFAULT_INITIAL_CAPACITY;</span><br><span class="line">        newThr = (<span class="keyword">int</span>)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (newThr == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">float</span> ft = (<span class="keyword">float</span>)newCap * loadFactor;</span><br><span class="line">        newThr = (newCap &lt; MAXIMUM_CAPACITY &amp;&amp; ft &lt; (<span class="keyword">float</span>)MAXIMUM_CAPACITY ?</span><br><span class="line">                  (<span class="keyword">int</span>)ft : Integer.MAX_VALUE);</span><br><span class="line">    &#125;</span><br><span class="line">    threshold = newThr;</span><br><span class="line">    <span class="meta">@SuppressWarnings(&#123;&quot;rawtypes&quot;,&quot;unchecked&quot;&#125;)</span></span><br><span class="line">        <span class="comment">//新建一个数组长度为原来2倍的数组</span></span><br><span class="line">        Node&lt;K,V&gt;[] newTab = (Node&lt;K,V&gt;[])<span class="keyword">new</span> Node[newCap];</span><br><span class="line">    table = newTab;</span><br><span class="line">    <span class="keyword">if</span> (oldTab != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; oldCap; ++j) &#123;</span><br><span class="line">            Node&lt;K,V&gt; e;</span><br><span class="line">            <span class="keyword">if</span> ((e = oldTab[j]) != <span class="keyword">null</span>) &#123;</span><br><span class="line">                oldTab[j] = <span class="keyword">null</span>;</span><br><span class="line">                <span class="keyword">if</span> (e.next == <span class="keyword">null</span>)</span><br><span class="line">                    newTab[e.hash &amp; (newCap - <span class="number">1</span>)] = e;</span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (e <span class="keyword">instanceof</span> TreeNode)</span><br><span class="line">                    ((TreeNode&lt;K,V&gt;)e).split(<span class="keyword">this</span>, newTab, j, oldCap);</span><br><span class="line">                <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="comment">//HashMap在JDK1.8的时候改善了扩容机制，原数组索引i上的链表不需要再反转。</span></span><br><span class="line">                    <span class="comment">// 扩容之后的索引位置只能是i或者i+oldCap（原数组的长度）</span></span><br><span class="line">                    <span class="comment">// 所以我们只需要看hashcode新增的bit为0或者1。</span></span><br><span class="line">                   <span class="comment">// 假如是0扩容之后就在新数组索引i位置，新增为1，就在索引i+oldCap位置</span></span><br><span class="line">                    Node&lt;K,V&gt; loHead = <span class="keyword">null</span>, loTail = <span class="keyword">null</span>;</span><br><span class="line">                    Node&lt;K,V&gt; hiHead = <span class="keyword">null</span>, hiTail = <span class="keyword">null</span>;</span><br><span class="line">                    Node&lt;K,V&gt; next;</span><br><span class="line">                    <span class="keyword">do</span> &#123;</span><br><span class="line">                        next = e.next;</span><br><span class="line">                        <span class="comment">// 新增bit为0，扩容之后在新数组的索引不变</span></span><br><span class="line">                        <span class="keyword">if</span> ((e.hash &amp; oldCap) == <span class="number">0</span>) &#123;</span><br><span class="line">                            <span class="keyword">if</span> (loTail == <span class="keyword">null</span>)</span><br><span class="line">                                loHead = e;</span><br><span class="line">                            <span class="keyword">else</span></span><br><span class="line">                                loTail.next = e;</span><br><span class="line">                            loTail = e;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">else</span> &#123;  <span class="comment">//新增bit为1，扩容之后在新数组索引变为i+oldCap（原数组的长度）</span></span><br><span class="line">                            <span class="keyword">if</span> (hiTail == <span class="keyword">null</span>)</span><br><span class="line">                                hiHead = e;</span><br><span class="line">                            <span class="keyword">else</span></span><br><span class="line">                                hiTail.next = e;</span><br><span class="line">                            hiTail = e;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125; <span class="keyword">while</span> ((e = next) != <span class="keyword">null</span>);</span><br><span class="line">                    <span class="keyword">if</span> (loTail != <span class="keyword">null</span>) &#123;</span><br><span class="line">                        loTail.next = <span class="keyword">null</span>;</span><br><span class="line">                        <span class="comment">//数组索引位置不变，插入原索引位置</span></span><br><span class="line">                        newTab[j] = loHead;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span> (hiTail != <span class="keyword">null</span>) &#123;</span><br><span class="line">                        hiTail.next = <span class="keyword">null</span>;</span><br><span class="line">                        <span class="comment">//数组索引位置变化为j + oldCap</span></span><br><span class="line">                        newTab[j + oldCap] = hiHead;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> newTab;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>HashMap数组的扩容的整体思想就是创建一个长度为原先2倍的数组。然后对原数组进行遍历和复制。只不过jdk1.8对扩容进行优化，使得扩容不再需要进行链表的反转，只需要知道hashcode新增的bit位为0还是1。如果是0就在原索引位置，新增索引是1就在oldIndex+oldCap位置。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Hashtable</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">rehash</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> oldCapacity = table.length;</span><br><span class="line">    Entry&lt;?,?&gt;[] oldMap = table;</span><br><span class="line">​</span><br><span class="line">    <span class="comment">// overflow-conscious code</span></span><br><span class="line">    <span class="keyword">int</span> newCapacity = (oldCapacity &lt;&lt; <span class="number">1</span>) + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (newCapacity - MAX_ARRAY_SIZE &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (oldCapacity == MAX_ARRAY_SIZE)</span><br><span class="line">            <span class="comment">// Keep running with MAX_ARRAY_SIZE buckets</span></span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        newCapacity = MAX_ARRAY_SIZE;</span><br><span class="line">    &#125;</span><br><span class="line">    Entry&lt;?,?&gt;[] newMap = <span class="keyword">new</span> Entry&lt;?,?&gt;[newCapacity];</span><br><span class="line">​</span><br><span class="line">    modCount++;</span><br><span class="line">    threshold = (<span class="keyword">int</span>)Math.min(newCapacity * loadFactor, MAX_ARRAY_SIZE + <span class="number">1</span>);</span><br><span class="line">    table = newMap;</span><br><span class="line">​</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = oldCapacity ; i-- &gt; <span class="number">0</span> ;) &#123;</span><br><span class="line">        <span class="keyword">for</span> (Entry&lt;K,V&gt; old = (Entry&lt;K,V&gt;)oldMap[i] ; old != <span class="keyword">null</span> ; ) &#123;</span><br><span class="line">            Entry&lt;K,V&gt; e = old;</span><br><span class="line">            old = old.next;</span><br><span class="line">​</span><br><span class="line">            <span class="keyword">int</span> index = (e.hash &amp; <span class="number">0x7FFFFFFF</span>) % newCapacity;</span><br><span class="line">            <span class="comment">//使用头插法将链表反序</span></span><br><span class="line">            e.next = (Entry&lt;K,V&gt;)newMap[index];</span><br><span class="line">            newMap[index] = e;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Hashtable的扩容将先创建一个长度为原长度2倍的数组，再使用头插法将链表进行反序。</p>
+<h2 id="结构组成"><a href="#结构组成" class="headerlink" title="结构组成"></a>结构组成</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">transient</span> HashtableEntry&lt;?,?&gt;[] table;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">HashtableEntry</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; <span class="keyword">implements</span> <span class="title">Map</span>.<span class="title">Entry</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">   <span class="comment">// END Android-changed: Renamed Entry -&gt; HashtableEntry.</span></span><br><span class="line">   <span class="keyword">final</span> <span class="keyword">int</span> hash;</span><br><span class="line">   <span class="keyword">final</span> K key;</span><br><span class="line">   V value;</span><br><span class="line">   HashtableEntry&lt;K,V&gt; next;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>所以结构是一个 数组+单链表 的组成</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/02/03/android%E6%B3%A8%E8%A7%A3%E5%A4%84%E7%90%86%E5%99%A8%E4%BB%8B%E7%BB%8D/" rel="next" title="android注解处理器介绍">
+                <i class="fa fa-chevron-left"></i> android注解处理器介绍
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/02/19/ConcurrentHahsMap%E5%8E%9F%E7%90%86/" rel="prev" title="ConcurrentHahsMap原理">
+                ConcurrentHahsMap原理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
 
     <div class="post-spread">
-      {% if theme.jiathis %}
-        {% include '_partials/share/jiathis.swig' %}
-      {% elseif theme.baidushare %}
-        {% include '_partials/share/baidushare.swig' %}
-      {% elseif theme.add_this_id %}
-        {% include '_partials/share/add-this.swig' %}
-      {% elseif theme.duoshuo_shortname and theme.duoshuo_share %}
-        {% include '_partials/share/duoshuo_share.swig' %}
-      {% endif %}
+      
     </div>
   </div>
 
-{% endblock %}
 
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
+          </div>
+          
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar1.jpeg"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20%E5%BD%92%E6%A1%A3">
+              
+                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/pacoblack" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:pacoson.wang@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/pacoblacksee" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="skype:yourname?call|chat" target="_blank" title="Skype">
+                      
+                        <i class="fa fa-fw fa-skype"></i>Skype</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#HashMap"><span class="nav-number">1.</span> <span class="nav-text">HashMap</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ArrayMap"><span class="nav-number">2.</span> <span class="nav-text">ArrayMap</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6"><span class="nav-number">2.1.</span> <span class="nav-text">缓存机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#freeArrays"><span class="nav-number">2.1.1.</span> <span class="nav-text">freeArrays</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#allocArrays"><span class="nav-number">2.1.2.</span> <span class="nav-text">allocArrays</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">2.2.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SparseArray"><span class="nav-number">3.</span> <span class="nav-text">SparseArray</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93-1"><span class="nav-number">3.1.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hashtable"><span class="nav-number">4.</span> <span class="nav-text">Hashtable</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E8%AE%A4%E8%AF%86"><span class="nav-number">4.1.</span> <span class="nav-text">简单认识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0"><span class="nav-number">4.2.</span> <span class="nav-text">构造函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hash%E7%AE%97%E6%B3%95"><span class="nav-number">4.3.</span> <span class="nav-text">hash算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A9%E5%AE%B9%E6%9C%BA%E5%88%B6"><span class="nav-number">4.4.</span> <span class="nav-text">扩容机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E7%BB%84%E6%88%90"><span class="nav-number">4.5.</span> <span class="nav-text">结构组成</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pacoblack</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="[object Object]"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+  <link rel="stylesheet" href="/assets/css/APlayer.min.css" class="aplayer-style-marker">
+  <script src="/assets/js/APlayer.min.js" class="aplayer-script-marker"></script>
+  <script src="/assets/js/Meting.min.js" class="meting-script-marker"></script>
+  <div id="aplayer-AXqIDvNX"
+      class="aplayer aplayer-tag-marker meting-tag-marker aplayer-fixed"
+      data-id="71075946"
+      data-server="netease"
+      data-type="playlist"
+      data-mode="circulation"
+      data-autoplay="false"
+      data-mutex="true"
+      data-listmaxheight="340px"
+      data-preload="auto"
+      data-fixed="true"
+      data-lrctype="0"
+      data-theme="#555"></div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/Epsilon2.1.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
