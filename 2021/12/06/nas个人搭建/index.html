@@ -28,7 +28,7 @@
 <meta property="og:description" content="nas可以作为家庭数据库，电脑、平板、手机、电视等设备连入nas可以方便的查看照片、视频、音乐等">
 <meta property="og:locale">
 <meta property="article:published_time" content="2021-12-06T03:06:10.000Z">
-<meta property="article:modified_time" content="2021-12-06T03:41:34.064Z">
+<meta property="article:modified_time" content="2021-12-06T09:26:59.301Z">
 <meta property="article:author" content="pacoblack">
 <meta property="article:tag" content="DIY">
 <meta name="twitter:card" content="summary">
@@ -187,7 +187,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2021-12-06 11:06:10 / Modified: 11:41:34" itemprop="dateCreated datePublished" datetime="2021-12-06T11:06:10+08:00">2021-12-06</time>
+              <time title="Created: 2021-12-06 11:06:10 / Modified: 17:26:59" itemprop="dateCreated datePublished" datetime="2021-12-06T11:06:10+08:00">2021-12-06</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -240,6 +240,35 @@
 <li><p>安全及隐私，对于降低入侵，尽量减少对外网开放的端口。个人建议是只开放端口22做远程管理及80/443做网页访问。其余的如SMB的139/445或FTP的端口20/21尽量关闭。另外，远程管理方面，其他人不需要使用到SSH做远程管理。为了减低被暴力破解的风险，需要去除其他人远程登陆的权限【18】（如果有端口22对外开放的话，可以检测SSH的登陆log（/log/auth.log），会发现不少通过bot来暴力破解的尝试）。另一个方法是改用其他冷门端口，比如自己的生日等。<br>至于SMB或FTP传输，可以搭建VPN加密。这里提供比较容易搭建的PPTP方案。基本上就是在安装pptpd后，在设置文件/etc/ppp/chap-secrects中添加登陆账户及分配IP后，启动pptpd服务就完成了【19】。也可以直接买刷了DD-WRT固件的路由器。DD-WRT下部署PPTP VPN更加简单。客户端除了iOS不支持PPTP之外，其他的操作系统都可以连接PPTP的VPN，而且设置也不难。事实上PPTP协议中的加密算法已经在多年以前被证实是不安全，但至少比完全没有会更安全一些。有精力的话再去折腾L2TP或其他的。（Ubuntu默认的权限是755）。<br>至于隐私方面，除了共享文件夹的权限是777，所有的私人文件权限都改成750（Ubuntu默认的权限是755）。</p>
 </li>
 </ul>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><h2 id="制作引导盘"><a href="#制作引导盘" class="headerlink" title="制作引导盘"></a>制作引导盘</h2><ol>
+<li>准备工作</li>
+</ol>
+<ul>
+<li>U盘</li>
+<li>ChipEasy芯片无忧（查找U盘的的VID和PID）</li>
+<li>DiskGenius</li>
+<li>Win32 Disk Imager（写入镜像）</li>
+</ul>
+<ol start="2">
+<li>选择系统版本<br>黑群辉DSM系统的引导文件，大致有DSM 5.2、1.02b、1.03b、1.04b，都是由国外大神制作。可以根据你的CPU和主板的型号来选择引导版本。</li>
+</ol>
+<blockquote>
+<p>引导版本: 1.04b<br>黑群晖系统: DSM 6.2.0–6.2.2<br>对应机型：DS918+<br>引导方式: 传统BIOS和UEFI</p>
+</blockquote>
+<p>此为目前最新版本，对应机型是群晖目前主力机型DS918+。功能相对最强大，intel酷睿4代以上CPU推荐安装。老主机和AMD机型安装此引导程序有可能会无法引导。（我没在在旧机型上安装成功过，也有可能是个人技术问题）</p>
+<blockquote>
+<p>引导版本: 1.03b<br>黑群晖系统: DSM 6.2.0–6.2.2<br>对应机型：DS3617+ DS3615+<br>引导方式: 传统BIOS</p>
+</blockquote>
+<p>此版本我没有安装过，建议1.04b 安装不成功可以来试试这个。</p>
+<blockquote>
+<p>引导版本: 1.02b<br>黑群晖系统: DSM 6.1.7-15284 Update3<br>对应机型: DS3617+<br>引导方式: UEFI</p>
+</blockquote>
+<p>此版本的兼容性甚佳，只要支持UEFI主板基本都能成功引导。目前我的主力nas正在使用的版本，6.17系统基本上也能实现群晖上80%以上的功能。如果1.04b 安装不成功，推荐来试试这个版本。</p>
+<blockquote>
+<p>引导版本: XPEnoboot for DSM 5.2-5967.1 x64<br>黑群晖系统: DSM 5.2-5967.1<br>对应机型: DS3615+<br>引导方式: 传统BIOS</p>
+</blockquote>
+<p>最初的群晖版本，相对功能最少（但还是具备了大部分基本功能）。因为是传统BIOS引导，所以支持那些不能用UEFI引导的老主板。另外对于一些低功耗低性能的ARM主机，这个版本也是不错的选择。</p>
+<p>引导文件一般是img格式，而另外一个Pat格式文件就是就是群晖系统文件。注意：两个文件的版本必须对应才能安装成功</p>
 
     </div>
 
@@ -261,7 +290,10 @@
     <a href="/2021/11/15/mmkv%E7%AE%80%E5%8D%95%E5%88%86%E6%9E%90/" rel="prev" title="mmkv简单分析">
       <i class="fa fa-chevron-left"></i> mmkv简单分析
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/28/http%E8%AE%A4%E7%9F%A5/" rel="next" title="http认知">
+      http认知 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -320,7 +352,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BB%E6%B5%81%E6%96%B9%E6%A1%88"><span class="nav-number">1.</span> <span class="nav-text">主流方案</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DIY"><span class="nav-number">2.</span> <span class="nav-text">DIY</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E7%A1%AC%E4%BB%B6"><span class="nav-number">2.1.</span> <span class="nav-text">准备硬件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2%E8%BD%AF%E4%BB%B6"><span class="nav-number">2.2.</span> <span class="nav-text">部署软件</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BB%E6%B5%81%E6%96%B9%E6%A1%88"><span class="nav-number">1.</span> <span class="nav-text">主流方案</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DIY"><span class="nav-number">2.</span> <span class="nav-text">DIY</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E7%A1%AC%E4%BB%B6"><span class="nav-number">2.1.</span> <span class="nav-text">准备硬件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2%E8%BD%AF%E4%BB%B6"><span class="nav-number">2.2.</span> <span class="nav-text">部署软件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">3.</span> <span class="nav-text">安装</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%B6%E4%BD%9C%E5%BC%95%E5%AF%BC%E7%9B%98"><span class="nav-number">3.1.</span> <span class="nav-text">制作引导盘</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -336,7 +368,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-count">56</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -388,7 +420,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

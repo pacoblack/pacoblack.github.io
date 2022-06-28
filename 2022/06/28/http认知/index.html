@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"pacoblack.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="http协议目前已更新到3.0">
+<meta property="og:type" content="article">
+<meta property="og:title" content="http认知">
+<meta property="og:url" content="https://pacoblack.github.io/2022/06/28/http%E8%AE%A4%E7%9F%A5/index.html">
+<meta property="og:site_name" content="我爱学习">
+<meta property="og:description" content="http协议目前已更新到3.0">
+<meta property="og:locale">
+<meta property="og:image" content="https://pacoblack.github.io/2022/06/28/http%E8%AE%A4%E7%9F%A5/quic_nat.jpeg">
+<meta property="og:image" content="https://pacoblack.github.io/2022/06/28/http%E8%AE%A4%E7%9F%A5/quic_vs_tcp.webp">
+<meta property="og:image" content="https://pacoblack.github.io/2022/06/28/http%E8%AE%A4%E7%9F%A5/http2_vs_http3.jpeg">
+<meta property="article:published_time" content="2022-06-28T02:31:06.000Z">
+<meta property="article:modified_time" content="2022-06-28T03:35:14.266Z">
+<meta property="article:author" content="pacoblack">
+<meta property="article:tag" content="android">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pacoblack.github.io/2022/06/28/http%E8%AE%A4%E7%9F%A5/quic_nat.jpeg">
+
+<link rel="canonical" href="https://pacoblack.github.io/2022/06/28/http%E8%AE%A4%E7%9F%A5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>http认知 | 我爱学习</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">我爱学习</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">这只是一场演习</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="主页 fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="标签 fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="分类 fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="归档 fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="关于 fa-fw"></i>About</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://pacoblack.github.io/2022/06/28/http%E8%AE%A4%E7%9F%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar1.jpeg">
+      <meta itemprop="name" content="pacoblack">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="我爱学习">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          http认知
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2022-06-28 10:31:06 / Modified: 11:35:14" itemprop="dateCreated datePublished" datetime="2022-06-28T10:31:06+08:00">2022-06-28</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index"><span itemprop="name">android</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>http协议目前已更新到3.0</p>
+<span id="more"></span>
+
+<h1 id="RTT"><a href="#RTT" class="headerlink" title="RTT"></a>RTT</h1><p>RTT是Round Trip Time的缩写，通俗地说，就是通信一来一回的时间。</p>
+<h2 id="TCP的RTT"><a href="#TCP的RTT" class="headerlink" title="TCP的RTT"></a>TCP的RTT</h2><p>TCP需要三次握手，建立TCP的虚拟通道，那么这三次握手需要几个RTT时间？<br>去 （SYN）     —-&gt;<br>回 （SYN+ACK） &lt;—-<br>去 （ACK）     —-&gt;<br>一个半来回，故TCP连接的时间 = 1.5 RTT 。</p>
+<h2 id="HTTP的RTT"><a href="#HTTP的RTT" class="headerlink" title="HTTP的RTT"></a>HTTP的RTT</h2><p>用户在浏览器输入URL，1.5个RTT之后，TCP开始传输HTTP Request，浏览器收到服务器的 Response，又花费了1 RTT<br>HTTP的同心时间 = TCP握手时间 + HTTP交易时间 = 1.5RTT + 1 RTT = 2.5 RTT</p>
+<h2 id="SSL-与-TLS"><a href="#SSL-与-TLS" class="headerlink" title="SSL 与 TLS"></a>SSL 与 TLS</h2><p>为了保证数据安全，发明了SSL（Secure Socket Layer），位于TCP和HTTP之间，负责HTT的安全加密<br>但是最初的SSL只能加密HTTP，为了能更大范围的使用，在协议中增加了 Application Protocol 字段<br>在SSL 3.0版本上，添加了这个协议，更名为TLS 报文格式如下：<br>IP/TCP/TLS/[HTTP]</p>
+<p>当前浏览器支持的TLS版本为 1.0 1.1 1.2<br>通常将TLS保护的HTTP通信，称为HTTPS</p>
+<h2 id="TLS-1-2的RTT"><a href="#TLS-1-2的RTT" class="headerlink" title="TLS 1.2的RTT"></a>TLS 1.2的RTT</h2><ol>
+<li>客户端发送 Client Hello —- ‘我支持1.2版本，加密套件列表1、2、3…，以及我的随机码N1，请出示您的证件。’</li>
+<li>服务端回复 Server Hello —- ‘那就1.2版本通信吧，加密套件我选用1，我的随机码N2，ECDHE密钥交换素材2，这是我的证件。’</li>
+<li>客户端发送 Key Exchange —- ‘验证首长的证件是否伪造的；生成密钥交换素材1；回复我的ECDHE密钥交换素材1，接下来我发给您的消息都要加密了’<br>花费时间总和= TCP链接建立时间+ TLS建立时间 +HTTP交易时间 = 1.5 RTT + 1.5RTT + 1RTT = 4 RTT</li>
+</ol>
+<h1 id="HTTP-1-x"><a href="#HTTP-1-x" class="headerlink" title="HTTP 1.x"></a>HTTP 1.x</h1><p>客户端从服务端获取页面，页面中包含很多资源链接，浏览器去加载链接资源的时候，需要重新建立 TCP、TLS、HTTP<br>完整的页面加载时间 = 4RTT + 4RTT = 8RTT</p>
+<h1 id="HTTP-2-0"><a href="#HTTP-2-0" class="headerlink" title="HTTP 2.0"></a>HTTP 2.0</h1><p>如果第一个页面和第二个页面是同一个服务器，为什么要重新建立 TCP、TLS链接呢，我们可以进行优化<br>用户多个HTTP请求，使用同一个通道进行传输，可以减少很多时间<br>但是副作用是，多个HTTP使用一个TCP连接，需要遵守流量状态控制，如果某个HTTP遇到阻塞，那么后面的HTTP就会无法发送，这就是头部阻塞</p>
+<h2 id="QUIC-Quick-UDP-Internet-Connection"><a href="#QUIC-Quick-UDP-Internet-Connection" class="headerlink" title="QUIC(Quick UDP Internet Connection)"></a>QUIC(Quick UDP Internet Connection)</h2><p>报文格式：<em>IP/UDP/QUIC</em><br>Google开发了QUIC协议，它集成了TCP可靠传输机制、TLS安全机制、HTTP2.0 流量复用机制，其页面加载时间是2.5RTT</p>
+<h3 id="升级困难"><a href="#升级困难" class="headerlink" title="升级困难"></a>升级困难</h3><p>QUIC 的实现在传输层换了协议，从 TCP 换到了 UDP，这个变化可不是说升级就升级的。<br>一个官方的例子：NAT 网关。NAT 网关对 TCP 的映射是根据 source_ip:port 和 destination_ip:port 来做的，经过 NAT 网关的 TCP 流量都通过这个四元组做识别，监听 SYN 和 ACK 可以确定 TCP 链接是否建立是否断开；而 NAT 网关对 UDP 流量的处理却没有这么可靠，对于 UDP 流量，NAT 的端口映射可能在某次传输超时之后就被重新分配了，这本来对 UDP 的不可靠的流量也不那么严重，但 QUIC 基于这种实际情况下做，某个建立好要复用的链接，对 NAT 内部机器来说流量来源的端口是会发生变化的，从而四元组做链接标识的事情就 GG 了。如下图：<br><img src="/2022/06/28/http%E8%AE%A4%E7%9F%A5/quic_nat.jpeg" alt="nat"><br>为了解决上面的问题，QUIC 使用一个通用的 QUIC Connection ID 来解决这个问题，绕过四元组。</p>
+<h1 id="HTTP3-0"><a href="#HTTP3-0" class="headerlink" title="HTTP3.0"></a>HTTP3.0</h1><p>IETF希望QUIC不仅可以传输HTTP，也可以传输其他协议，把QUIC和HTTP分离<br>报文格式： <em>IP /UDP/QUIC/HTTP</em><br>整体的页面加载时间是 2RTT</p>
+<h2 id="TLS-1-3"><a href="#TLS-1-3" class="headerlink" title="TLS 1.3"></a>TLS 1.3</h2><p>建立TLS连接不再需要1.5 RTT，而只需要1 RTT，是因为浏览器第一次就把自己的密钥交换的素材发给服务器，这样就节省了第三次消息，少了0.5个RTT时间。<br>页面的整体加载时间 = TLS 1.3连接时间 + HTTP交易时间 = 1RTT + 1RTT = 2 RTT<br>重连页面的加载时间 = HTTP交易时间 = 1 RTT</p>
+<h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><p>HTTP/2 虽然具有多个流并发传输的能力，但是传输层是 TCP 协议，于是存在以下缺陷：</p>
+<ul>
+<li><em>队头阻塞</em>，HTTP/2 多个请求跑在一个 TCP 连接中，如果序列号较低的 TCP 段在网络传输中丢失了，即使序列号较高的 TCP 段已经被接收了，应用层也无法从内核中读取到这部分数据，从 HTTP 视角看，就是多个请求被阻塞了；</li>
+<li><em>TCP 和 TLS 握手时延</em>，TCL 三次握手和 TLS 四次握手，共有 3-RTT 的时延；</li>
+<li><em>连接迁移需要重新连接</em>，移动设备从 4G 网络环境切换到 WIFI 时，由于 TCP 是基于四元组来确认一条 TCP 连接的，那么网络环境变化后，就会导致 IP 地址或端口变化，于是 TCP 只能断开连接，然后再重新建立连接，切换网络环境的成本高；</li>
+</ul>
+<h1 id="附图"><a href="#附图" class="headerlink" title="附图"></a>附图</h1><p><img src="/2022/06/28/http%E8%AE%A4%E7%9F%A5/quic_vs_tcp.webp" alt="连接demo"><br><img src="http2_vs_http3.jpeg" alt="比较报文"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/12/06/nas%E4%B8%AA%E4%BA%BA%E6%90%AD%E5%BB%BA/" rel="prev" title="nas个人搭建">
+      <i class="fa fa-chevron-left"></i> nas个人搭建
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RTT"><span class="nav-number">1.</span> <span class="nav-text">RTT</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP%E7%9A%84RTT"><span class="nav-number">1.1.</span> <span class="nav-text">TCP的RTT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP%E7%9A%84RTT"><span class="nav-number">1.2.</span> <span class="nav-text">HTTP的RTT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SSL-%E4%B8%8E-TLS"><span class="nav-number">1.3.</span> <span class="nav-text">SSL 与 TLS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TLS-1-2%E7%9A%84RTT"><span class="nav-number">1.4.</span> <span class="nav-text">TLS 1.2的RTT</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTTP-1-x"><span class="nav-number">2.</span> <span class="nav-text">HTTP 1.x</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTTP-2-0"><span class="nav-number">3.</span> <span class="nav-text">HTTP 2.0</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#QUIC-Quick-UDP-Internet-Connection"><span class="nav-number">3.1.</span> <span class="nav-text">QUIC(Quick UDP Internet Connection)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%87%E7%BA%A7%E5%9B%B0%E9%9A%BE"><span class="nav-number">3.1.1.</span> <span class="nav-text">升级困难</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTTP3-0"><span class="nav-number">4.</span> <span class="nav-text">HTTP3.0</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#TLS-1-3"><span class="nav-number">4.1.</span> <span class="nav-text">TLS 1.3</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%99%84%E5%9B%BE"><span class="nav-number">6.</span> <span class="nav-text">附图</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="pacoblack"
+      src="/images/avatar1.jpeg">
+  <p class="site-author-name" itemprop="name">pacoblack</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/pacoblack" title="GitHub → https://github.com/pacoblack" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:pacoson.wang@gmail.com" title="E-Mail → mailto:pacoson.wang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pacoblack</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,0' opacity='0.5' zIndex='-1' count='99' src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css" class="aplayer-style-marker">
+  <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js" class="aplayer-script-marker"></script>
+  <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js" class="meting-script-marker"></script>
+  <div id="aplayer-AXqIDvNX"
+      class="aplayer aplayer-tag-marker meting-tag-marker aplayer-fixed"
+      data-id="71075946"
+      data-server="netease"
+      data-type="playlist"
+      data-mode="circulation"
+      data-autoplay="false"
+      data-mutex="true"
+      data-listmaxheight="340px"
+      data-preload="auto"
+      data-fixed="true"
+      data-lrctype="0"
+      data-theme="#555"></div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/Epsilon2.1.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
