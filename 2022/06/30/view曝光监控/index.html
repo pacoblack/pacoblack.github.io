@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"pacoblack.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="如何检测RecyclerView显示面积超过一半且超过1.5s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="View曝光监控">
+<meta property="og:url" content="https://pacoblack.github.io/2022/06/30/view%E6%9B%9D%E5%85%89%E7%9B%91%E6%8E%A7/index.html">
+<meta property="og:site_name" content="我爱学习">
+<meta property="og:description" content="如何检测RecyclerView显示面积超过一半且超过1.5s">
+<meta property="og:locale">
+<meta property="article:published_time" content="2022-06-30T03:22:13.000Z">
+<meta property="article:modified_time" content="2022-06-30T03:34:20.086Z">
+<meta property="article:author" content="pacoblack">
+<meta property="article:tag" content="android">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://pacoblack.github.io/2022/06/30/view%E6%9B%9D%E5%85%89%E7%9B%91%E6%8E%A7/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>View曝光监控 | 我爱学习</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">我爱学习</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">这只是一场演习</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="主页 fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="标签 fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="分类 fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="归档 fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="关于 fa-fw"></i>About</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://pacoblack.github.io/2022/06/30/view%E6%9B%9D%E5%85%89%E7%9B%91%E6%8E%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar1.jpeg">
+      <meta itemprop="name" content="pacoblack">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="我爱学习">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          View曝光监控
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2022-06-30 11:22:13 / Modified: 11:34:20" itemprop="dateCreated datePublished" datetime="2022-06-30T11:22:13+08:00">2022-06-30</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index"><span itemprop="name">android</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>如何检测RecyclerView显示面积超过一半且超过1.5s</p>
+<span id="more"></span>
+<h1 id="计算时间"><a href="#计算时间" class="headerlink" title="计算时间"></a>计算时间</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">override fun <span class="title">onAttachedToWindow</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onAttachedToWindow()</span><br><span class="line">    exposeChecker.updateStartTime()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">override fun <span class="title">onDetachedFromWindow</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onDetachedFromWindow()</span><br><span class="line">    onExpose()</span><br><span class="line">    exposeChecker.updateStartTime()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><p>上面两个方法会在页面绑定到window的时候被触发，核心源代码在ViewRootimp的  host.dispatchVisibilityAggregated(viewVisibility == View.VISIBLE); 被触发之后，host就是我们的Activity的DecorView。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">mChildHelper = <span class="keyword">new</span> ChildHelper(<span class="keyword">new</span> ChildHelper.Callback()&#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addView</span><span class="params">(View child, <span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">if</span> (VERBOSE_TRACING) &#123;</span><br><span class="line">                    TraceCompat.beginSection(<span class="string">&quot;RV addView&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                RecyclerView.<span class="keyword">this</span>.addView(child, index);</span><br><span class="line">                <span class="keyword">if</span> (VERBOSE_TRACING) &#123;</span><br><span class="line">                    TraceCompat.endSection();</span><br><span class="line">                &#125;</span><br><span class="line">                dispatchChildAttached(child);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">attachViewToParent</span><span class="params">(View child, <span class="keyword">int</span> index,</span></span></span><br><span class="line"><span class="params"><span class="function">                    ViewGroup.LayoutParams layoutParams)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">final</span> ViewHolder vh = getChildViewHolderInt(child);</span><br><span class="line">                <span class="keyword">if</span> (vh != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (!vh.isTmpDetached() &amp;&amp; !vh.shouldIgnore()) &#123;</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;Called attach on a child which is not&quot;</span></span><br><span class="line">                                + <span class="string">&quot; detached: &quot;</span> + vh + exceptionLabel());</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span> (DEBUG) &#123;</span><br><span class="line">                        Log.d(TAG, <span class="string">&quot;reAttach &quot;</span> + vh);</span><br><span class="line">                    &#125;</span><br><span class="line">                    vh.clearTmpDetachFlag();</span><br><span class="line">                &#125;</span><br><span class="line">                RecyclerView.<span class="keyword">this</span>.attachViewToParent(child, index, layoutParams);</span><br><span class="line">            &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ChildHelper是RecyclerView内部负责专门管理所有子View的一个帮助类。其中通过暴露了接口回调的方式让它和RecyclerView可以绑定到一起。其中我们可以看到当child的add，attach都会触发attachViewToParent，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line">protected void removeDetachedView(View child, boolean animate) &#123;</span><br><span class="line">      if (mTransition != null) &#123;</span><br><span class="line">          mTransition.removeChild(this, child);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      if (child == mFocused) &#123;</span><br><span class="line">          child.clearFocus();</span><br><span class="line">      &#125;</span><br><span class="line">      if (child == mDefaultFocus) &#123;</span><br><span class="line">          clearDefaultFocus(child);</span><br><span class="line">      &#125;</span><br><span class="line">      if (child == mFocusedInCluster) &#123;</span><br><span class="line">          clearFocusedInCluster(child);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      child.clearAccessibilityFocus();</span><br><span class="line"></span><br><span class="line">      cancelTouchTarget(child);</span><br><span class="line">      cancelHoverTarget(child);</span><br><span class="line"></span><br><span class="line">      if ((animate &amp;&amp; child.getAnimation() != null) ||</span><br><span class="line">              (mTransitioningViews != null &amp;&amp; mTransitioningViews.contains(child))) &#123;</span><br><span class="line">          addDisappearingView(child);</span><br><span class="line">      &#125; else if (child.mAttachInfo != null) &#123;</span><br><span class="line">          child.dispatchDetachedFromWindow();</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      if (child.hasTransientState()) &#123;</span><br><span class="line">          childHasTransientStateChanged(child, false);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      dispatchViewRemoved(child);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  protected void attachViewToParent(View child, int index, LayoutParams params) &#123;</span><br><span class="line">      child.mLayoutParams = params;</span><br><span class="line"></span><br><span class="line">      if (index &lt; 0) &#123;</span><br><span class="line">          index = mChildrenCount;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      addInArray(child, index);</span><br><span class="line"></span><br><span class="line">      child.mParent = this;</span><br><span class="line">      child.mPrivateFlags = (child.mPrivateFlags &amp; ~PFLAG_DIRTY_MASK</span><br><span class="line">                      &amp; ~PFLAG_DRAWING_CACHE_VALID)</span><br><span class="line">              | PFLAG_DRAWN | PFLAG_INVALIDATED;</span><br><span class="line">      this.mPrivateFlags |= PFLAG_INVALIDATED;</span><br><span class="line"></span><br><span class="line">      if (child.hasFocus()) &#123;</span><br><span class="line">          requestChildFocus(child, child.findFocus());</span><br><span class="line">      &#125;</span><br><span class="line">      dispatchVisibilityAggregated(isAttachedToWindow() &amp;&amp; getWindowVisibility() == VISIBLE</span><br><span class="line">              &amp;&amp; isShown());</span><br><span class="line">      notifySubtreeAccessibilityStateChangedIfNeeded();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  @Override</span><br><span class="line">  boolean dispatchVisibilityAggregated(boolean isVisible) &#123;</span><br><span class="line">      isVisible = super.dispatchVisibilityAggregated(isVisible);</span><br><span class="line">      final int count = mChildrenCount;</span><br><span class="line">      final View[] children = mChildren;</span><br><span class="line">      for (int i = 0; i &lt; count; i++) &#123;</span><br><span class="line">          // Only dispatch to visible children. Not visible children and their subtrees already</span><br><span class="line">          // know that they aren&#x27;t visible and that&#x27;s not going to change as a result of</span><br><span class="line">          // whatever triggered this dispatch.</span><br><span class="line">          if (children[i].getVisibility() == VISIBLE) &#123;</span><br><span class="line">              children[i].dispatchVisibilityAggregated(isVisible);</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      return isVisible;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>其中<code>dispatchVisibilityAggregated</code>就是我们最前面说的ViewRoot所触发的ViewGroup内的方法，会逐层向下view分发View的attach方法。那么也就是当RecyclerView的子控件被添加到RecyclerView上时，就会触发子view的<code>attachToWindow</code>方法。</p>
+<p>View的detch方法是在哪里被触发的呢，这个就是要看recyclerview的另外一个方法了，就是 <code>tryGetViewHolderForPositionByDeadline</code>了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Nullable</span></span><br><span class="line">       <span class="function">ViewHolder <span class="title">tryGetViewHolderForPositionByDeadline</span><span class="params">(<span class="keyword">int</span> position,</span></span></span><br><span class="line"><span class="params"><span class="function">               <span class="keyword">boolean</span> dryRun, <span class="keyword">long</span> deadlineNs)</span> </span>&#123;</span><br><span class="line">           <span class="keyword">if</span> (position &lt; <span class="number">0</span> || position &gt;= mState.getItemCount()) &#123;</span><br><span class="line">               <span class="keyword">throw</span> <span class="keyword">new</span> IndexOutOfBoundsException(<span class="string">&quot;Invalid item position &quot;</span> + position</span><br><span class="line">                       + <span class="string">&quot;(&quot;</span> + position + <span class="string">&quot;). Item count:&quot;</span> + mState.getItemCount()</span><br><span class="line">                       + exceptionLabel());</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">boolean</span> fromScrapOrHiddenOrCache = <span class="keyword">false</span>;</span><br><span class="line">           ViewHolder holder = <span class="keyword">null</span>;</span><br><span class="line">           <span class="comment">// 0) If there is a changed scrap, try to find from there</span></span><br><span class="line">           <span class="keyword">if</span> (mState.isPreLayout()) &#123;</span><br><span class="line">               holder = getChangedScrapViewForPosition(position);</span><br><span class="line">               fromScrapOrHiddenOrCache = holder != <span class="keyword">null</span>;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="comment">// 1) Find by position from scrap/hidden list/cache</span></span><br><span class="line">           <span class="keyword">if</span> (holder == <span class="keyword">null</span>) &#123;</span><br><span class="line">               holder = getScrapOrHiddenOrCachedHolderForPosition(position, dryRun);</span><br><span class="line">               <span class="keyword">if</span> (holder != <span class="keyword">null</span>) &#123;</span><br><span class="line">                   <span class="keyword">if</span> (!validateViewHolderForOffsetPosition(holder)) &#123;</span><br><span class="line">                       <span class="comment">// recycle holder (and unscrap if relevant) since it can&#x27;t be used</span></span><br><span class="line">                       <span class="keyword">if</span> (!dryRun) &#123;</span><br><span class="line">                           <span class="comment">// we would like to recycle this but need to make sure it is not used by</span></span><br><span class="line">                           <span class="comment">// animation logic etc.</span></span><br><span class="line">                           holder.addFlags(ViewHolder.FLAG_INVALID);</span><br><span class="line">                           <span class="keyword">if</span> (holder.isScrap()) &#123;</span><br><span class="line">                               removeDetachedView(holder.itemView, <span class="keyword">false</span>);</span><br><span class="line">                               holder.unScrap();</span><br><span class="line">                           &#125; <span class="keyword">else</span> <span class="keyword">if</span> (holder.wasReturnedFromScrap()) &#123;</span><br><span class="line">                               holder.clearReturnedFromScrapFlag();</span><br><span class="line">                           &#125;</span><br><span class="line">                           recycleViewHolderInternal(holder);</span><br><span class="line">                       &#125;</span><br><span class="line">                       holder = <span class="keyword">null</span>;</span><br><span class="line">                   &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                       fromScrapOrHiddenOrCache = <span class="keyword">true</span>;</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">           ........</span><br><span class="line">           <span class="keyword">return</span> holder;</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+<p>当ViewHolder要被回收的时候就会触发RecyclerView的<code>tryGetViewHolderForPositionByDeadline</code>这个方法，然后我们可以观察到当holder.isScrap()的时候会removeDetachedView(holder.itemView, false);而这个正好触发了子项的viewDetch方法。</p>
+<h1 id="计算面积"><a href="#计算面积" class="headerlink" title="计算面积"></a>计算面积</h1><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> View.<span class="title">isCover</span><span class="params">()</span></span>: <span class="built_in">Boolean</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> view = <span class="keyword">this</span></span><br><span class="line">    <span class="keyword">val</span> currentViewRect = Rect()</span><br><span class="line">    <span class="keyword">val</span> partVisible: <span class="built_in">Boolean</span> = view.getLocalVisibleRect(currentViewRect)</span><br><span class="line">    <span class="keyword">val</span> totalHeightVisible =</span><br><span class="line">        currentViewRect.bottom - currentViewRect.top &gt;= view.measuredHeight</span><br><span class="line">    <span class="keyword">val</span> totalWidthVisible =</span><br><span class="line">        currentViewRect.right - currentViewRect.left &gt;= view.measuredWidth</span><br><span class="line">    <span class="keyword">val</span> totalViewVisible = partVisible &amp;&amp; totalHeightVisible &amp;&amp; totalWidthVisible</span><br><span class="line">    <span class="keyword">if</span> (!totalViewVisible)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    <span class="keyword">while</span> (view.parent <span class="keyword">is</span> ViewGroup) &#123;</span><br><span class="line">        <span class="keyword">val</span> currentParent = view.parent <span class="keyword">as</span> ViewGroup</span><br><span class="line">        <span class="keyword">if</span> (currentParent.visibility != View.VISIBLE) <span class="comment">//if the parent of view is not visible,return true</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">val</span> start = view.indexOfViewInParent(currentParent)</span><br><span class="line">        <span class="keyword">for</span> (i <span class="keyword">in</span> start + <span class="number">1</span> until currentParent.childCount) &#123;</span><br><span class="line">            <span class="keyword">val</span> viewRect = Rect()</span><br><span class="line">            view.getGlobalVisibleRect(viewRect)</span><br><span class="line">            <span class="keyword">val</span> otherView = currentParent.getChildAt(i)</span><br><span class="line">            <span class="keyword">val</span> otherViewRect = Rect()</span><br><span class="line">            otherView.getGlobalVisibleRect(otherViewRect)</span><br><span class="line">            <span class="keyword">if</span> (Rect.intersects(viewRect, otherViewRect)) &#123;</span><br><span class="line">                <span class="comment">//if view intersects its older brother(covered),return true</span></span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        view = currentParent</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> View.<span class="title">indexOfViewInParent</span><span class="params">(parent: <span class="type">ViewGroup</span>)</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> index = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> (index &lt; parent.childCount) &#123;</span><br><span class="line">        <span class="keyword">if</span> (parent.getChildAt(index) === <span class="keyword">this</span>) <span class="keyword">break</span></span><br><span class="line">        index++</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> index</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><p>当页面切换的情况下，会调用viewTree里面的<code>onWindowFocusChanged</code>这个方法<br>核心原理其实也是ViewRootImp的<code>handleWindowFocusChanged</code> 这个方法会向下分发是否脱离window的方法，然后当接受到IWindow.Stub接受到了WMS的信号之后，则会给ViewRootImp发送一个message，然后从ViewRootImp开始向下分发view变化的生命周期。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">override fun onWindowFocusChanged(hasWindowFocus: Boolean) &#123;</span><br><span class="line">      super.onWindowFocusChanged(hasWindowFocus)</span><br><span class="line">      if (hasWindowFocus) &#123;</span><br><span class="line">          exposeChecker.updateStartTime()</span><br><span class="line">      &#125; else &#123;</span><br><span class="line">          onExpose()</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/30/lint%E5%BC%80%E5%8F%91/" rel="prev" title="lint开发">
+      <i class="fa fa-chevron-left"></i> lint开发
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%97%B6%E9%97%B4"><span class="nav-number">1.</span> <span class="nav-text">计算时间</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">1.1.</span> <span class="nav-text">源码分析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E9%9D%A2%E7%A7%AF"><span class="nav-number">2.</span> <span class="nav-text">计算面积</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A1%A5%E5%85%85"><span class="nav-number">3.</span> <span class="nav-text">补充</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="pacoblack"
+      src="/images/avatar1.jpeg">
+  <p class="site-author-name" itemprop="name">pacoblack</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/pacoblack" title="GitHub → https://github.com/pacoblack" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:pacoson.wang@gmail.com" title="E-Mail → mailto:pacoson.wang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pacoblack</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,0' opacity='0.5' zIndex='-1' count='99' src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css" class="aplayer-style-marker">
+  <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js" class="aplayer-script-marker"></script>
+  <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js" class="meting-script-marker"></script>
+  <div id="aplayer-AXqIDvNX"
+      class="aplayer aplayer-tag-marker meting-tag-marker aplayer-fixed"
+      data-id="71075946"
+      data-server="netease"
+      data-type="playlist"
+      data-mode="circulation"
+      data-autoplay="false"
+      data-mutex="true"
+      data-listmaxheight="340px"
+      data-preload="auto"
+      data-fixed="true"
+      data-lrctype="0"
+      data-theme="#555"></div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/Epsilon2.1.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
