@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"pacoblack.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="我们看一下获取android设备ID的方案优缺点">
+  <meta name="description" content="补充一些脚本">
 <meta property="og:type" content="article">
-<meta property="og:title" content="android设备id方案对比">
-<meta property="og:url" content="https://pacoblack.github.io/2020/10/19/android%E8%AE%BE%E5%A4%87id%E6%96%B9%E6%A1%88%E5%AF%B9%E6%AF%94/index.html">
+<meta property="og:title" content="gradle相关">
+<meta property="og:url" content="https://pacoblack.github.io/2022/06/30/gradle%E7%9B%B8%E5%85%B3/index.html">
 <meta property="og:site_name" content="我爱学习">
-<meta property="og:description" content="我们看一下获取android设备ID的方案优缺点">
+<meta property="og:description" content="补充一些脚本">
 <meta property="og:locale">
-<meta property="article:published_time" content="2020-10-19T12:07:25.000Z">
-<meta property="article:modified_time" content="2021-03-13T06:56:15.515Z">
+<meta property="article:published_time" content="2022-06-30T07:46:16.000Z">
+<meta property="article:modified_time" content="2022-06-30T09:14:28.524Z">
 <meta property="article:author" content="pacoblack">
 <meta property="article:tag" content="android">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://pacoblack.github.io/2020/10/19/android%E8%AE%BE%E5%A4%87id%E6%96%B9%E6%A1%88%E5%AF%B9%E6%AF%94/">
+<link rel="canonical" href="https://pacoblack.github.io/2022/06/30/gradle%E7%9B%B8%E5%85%B3/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>android设备id方案对比 | 我爱学习</title>
+  <title>gradle相关 | 我爱学习</title>
   
 
 
@@ -163,7 +163,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="https://pacoblack.github.io/2020/10/19/android%E8%AE%BE%E5%A4%87id%E6%96%B9%E6%A1%88%E5%AF%B9%E6%AF%94/">
+    <link itemprop="mainEntityOfPage" href="https://pacoblack.github.io/2022/06/30/gradle%E7%9B%B8%E5%85%B3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar1.jpeg">
@@ -176,7 +176,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          android设备id方案对比
+          gradle相关
         </h1>
 
         <div class="post-meta">
@@ -185,16 +185,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
+              
 
-              <time title="Created: 2020-10-19 20:07:25" itemprop="dateCreated datePublished" datetime="2020-10-19T20:07:25+08:00">2020-10-19</time>
+              <time title="Created: 2022-06-30 15:46:16 / Modified: 17:14:28" itemprop="dateCreated datePublished" datetime="2022-06-30T15:46:16+08:00">2022-06-30</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-03-13 14:56:15" itemprop="dateModified" datetime="2021-03-13T14:56:15+08:00">2021-03-13</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -216,80 +210,20 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>我们看一下获取android设备ID的方案优缺点</p>
+        <p>补充一些脚本</p>
 <span id="more"></span>
-<h1 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h1><table>
-<thead>
-<tr>
-<th align="left">标识</th>
-<th align="left">描述</th>
-<th align="left">权限</th>
-<th align="left">缺点</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">IMEI(国际移动设备识别码)</td>
-<td align="left">15位数字组成，与每台手机一一对应，且全球唯一，是GSM设备返回的，并且是写在主板上的，重装APP不会改变IMEI</td>
-<td align="left">READ_PHONE_STATE</td>
-<td align="left">需要 READ_PHONE_STATE 权限<br>Android 6.0以后, 这类权限要动态申请<br>Android 10.0 将彻底禁止第三方应用获取设备的IMEI（即使申请了 READ_PHONE_STATE 权限</td>
-</tr>
-<tr>
-<td align="left">MEID(全球唯一的56bit CDMA制式移动终端标识号)</td>
-<td align="left">14位数字，标识号会被烧入终端里，且不能被修改</td>
-<td align="left">READ_PHONE_STATE</td>
-<td align="left">需要付费的。目前的价格是每1M范围的MEID的费用是8000美元</td>
-</tr>
-<tr>
-<td align="left">Serial(序列码)</td>
-<td align="left">是为了验证“产品的合法身份”而引入的，它是用来保障用户的正版权益，享受合法服务的；一套正版的产品只对应一组产品序列号</td>
-<td align="left">READ_PHONE_STATE</td>
-<td align="left">对于定位SDK高于Build.VERSION_CODES.O_MR1的应用，此字段设置为UNKNOWN。26以后被弃用，getSerial ()替代，需要动态申请READ_PHONE_STATE权限</td>
-</tr>
-<tr>
-<td align="left">deviceId</td>
-<td align="left">它根据不同的手机设备返回IMEI，MEID或ESN码；它返回的是设备的真实标识</td>
-<td align="left">READ_PHONE_STATE</td>
-<td align="left">Q上无法正常获取<br>之前的需要动态申请权限</td>
-</tr>
-<tr>
-<td align="left">Advertising ID</td>
-<td align="left">广告id</td>
-<td align="left">android.permission.INTERNET</td>
-<td align="left">没有谷歌服务会抛出异常</td>
-</tr>
-<tr>
-<td align="left">ANDROID_ID</td>
-<td align="left">设备首次启动时，系统会随机生成一个64位的数字，并把这个数字以16进制字符串的形式保存下来。当设备被wipe后该值会被重置</td>
-<td align="left">无</td>
-<td align="left">不同签名的APP，获取到的Android ID不一样<br>刷机、root、恢复出厂设置等会使得 Android ID 改变</td>
-</tr>
-<tr>
-<td align="left">MAC地址</td>
-<td align="left">ip地址</td>
-<td align="left">ACCESS_WIFI_STATE<br>BLUETOOTH</td>
-<td align="left">如果WiFi没有打开过，是无法获取其Mac地址的（高版本获取到的mac将是固定的：02:00:00:00:00:00）<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/chaozhung_no_l/article/details/78329371">高版本好像有方法可以获取到</a><br>蓝牙是只有在打开的时候才能获取到其Mac地址（需要动态申请权限）</td>
-</tr>
-</tbody></table>
-<h1 id="IMEI"><a href="#IMEI" class="headerlink" title="IMEI"></a>IMEI</h1><ul>
-<li>Android 6.0以下：无需申请权限，可以通过 <code>getDeviceId()</code> 方法获取到IMEI码</li>
-<li>Android 6.0-Android 8.0：需要申请READ_PHONE_STATE权限，可以通过 <code>getDeviceId()</code> 方法获取到IMEI码，如果用户拒绝了权限，会抛出java.lang.SecurityException异常</li>
-<li>Android 8.0-Android 10：需要申请READ_PHONE_STATE权限，可以通过 <code>getImei()</code> 方法获取到IMEI码，如果用户拒绝了权限，会抛出java.lang.SecurityException异常</li>
-<li>Android 10及以上：分为以下两种情况：<ul>
-<li>targetSdkVersion&lt;29：没有申请权限的情况，通过 <code>getImei()</code> 方法获取IMEI码时抛出java.lang.SecurityException异常；申请了权限，通过 <code>getImei()</code> 方法获取到IMEI码为null</li>
-<li>targetSdkVersion=29：无论是否申请了权限，通过 <code>getImei()</code> 方法获取IMEI码时都会直接抛出java.lang.SecurityException异常</li>
-</ul>
-</li>
-</ul>
-<p>IMEI码在Android 10之后已经无法获取到了，而且甚至会直接抛出异常导致程序崩溃，在Android 10以下版本虽然可以获取到IMEI码，但是需要在应用获取到 <code>了READ_PHONE_STATE</code> 权限的前提下，我们依然无法保证这一点。</p>
-<h1 id="设备序列号"><a href="#设备序列号" class="headerlink" title="设备序列号"></a>设备序列号</h1><ul>
-<li>Android 8.0以下：无需申请权限，可以通过Build.SERIAL获取到设备序列号</li>
-<li>Android 8.0-Android 10：需要申请READ_PHONE_STATE权限，可以通过Build.getSerial()获取到设备序列号，如果用户拒绝了权限，会抛出java.lang.SecurityException异常</li>
-<li>Android 10及以上：分为以下两种情况：<ul>
-<li>targetSdkVersion&lt;29：没有申请权限的情况，调用Build.getSerial()方法时抛出java.lang.SecurityException异常；申请了权限，通过Build.getSerial()方法获取到的设备序列号为“unknown”</li>
-<li>targetSdkVersion=29：无论是否申请了权限，调用Build.getSerial()方法时都会直接抛出java.lang.SecurityException异常</li>
-</ul>
-</li>
-</ul>
+<h1 id="本地替换远端"><a href="#本地替换远端" class="headerlink" title="本地替换远端"></a>本地替换远端</h1><p>在根build.gradle配置如下代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">allprojects &#123;</span><br><span class="line">  configurations.all &#123;</span><br><span class="line">    resolutionStrategy.dependencySubstitution.all &#123; DependencySubstitution dependency -&gt;</span><br><span class="line">        if (dependency.requested instanceof ModuleComponentSelector) &#123;</span><br><span class="line">            def moduleRequested = dependency.requested as ModuleComponentSelector</span><br><span class="line">            def p = rootProject.allprojects.find &#123; p -&gt;</span><br><span class="line">                (p.group == moduleRequested.group &amp;&amp; p.name == moduleRequested.module)</span><br><span class="line">            &#125;</span><br><span class="line">            if (p != null) &#123;</span><br><span class="line">                useTarget(project(p.path), &quot;selected local project&quot;)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="依赖替换"><a href="#依赖替换" class="headerlink" title="依赖替换"></a>依赖替换</h1><h2 id="替换特定依赖"><a href="#替换特定依赖" class="headerlink" title="替换特定依赖"></a>替换特定依赖</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">//在引入时配置，指定版本为我们引入的版本</span><br><span class="line">implementation(&quot;io.reactivex.rxjava2:rxjava:2.1.6&quot;) &#123;</span><br><span class="line">    force = true</span><br><span class="line">&#125;</span><br><span class="line">//在configuration 级别指定，直接指定版本</span><br><span class="line">configurations.all &#123;</span><br><span class="line">    resolutionStrategy.force &#x27;io.reactivex.rxjava2:rxjava:2.1.6&#x27;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="禁止依赖传递"><a href="#禁止依赖传递" class="headerlink" title="禁止依赖传递"></a>禁止依赖传递</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">//在引入时配置，禁用该库的传递依赖项</span><br><span class="line">    implementation(&quot;io.reactivex.rxjava2:rxkotlin:2.4.0&quot;) &#123;</span><br><span class="line">        transitive = false</span><br><span class="line">    &#125;</span><br><span class="line">    //在configuration 级别指定，一杆子打死，谁也别想使用传递依赖</span><br><span class="line">    configurations.all &#123;</span><br><span class="line">        transitive = false</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="定义解析策略-dependencySubstitution"><a href="#定义解析策略-dependencySubstitution" class="headerlink" title="定义解析策略 dependencySubstitution"></a>定义解析策略 dependencySubstitution</h2><p>仍以rxjava举例，当Rxjava3的groupid与Rxjava2不同时，gradle的默认策略已经无法解决了，force也只能饮恨，唯exclude和transitive可堪一战。于是A库来了exclude，B库来个exclude，场面很混乱，这时我们就用到了<code>dependencySubstitution</code></p>
+<p>dependencySubstitution接收一系列替换规则，允许你通过substitute函数为项目中的依赖替换为你希望的依赖项，例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">configurations.all &#123;</span><br><span class="line">    resolutionStrategy.dependencySubstitution &#123;</span><br><span class="line">        substitute module(&quot;io.reactivex.rxjava2:rxjava&quot;) with module(&quot;io.reactivex.rxjava3:rxjava:3.0.0-RC1&quot;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>substitute的参数不一定是module()，针对外部依赖和内部依赖，你有两种选择：module()和project()，视具体情况自由组合。<br>官方文档示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// add dependency substitution rules</span><br><span class="line">configurations.all &#123;</span><br><span class="line">  resolutionStrategy.dependencySubstitution &#123;</span><br><span class="line">    // Substitute project and module dependencies</span><br><span class="line">    substitute module(&#x27;org.gradle:api&#x27;) with project(&#x27;:api&#x27;)</span><br><span class="line">    substitute project(&#x27;:util&#x27;) with module(&#x27;org.gradle:util:3.0&#x27;)</span><br><span class="line"></span><br><span class="line">    // Substitute one module dependency for another</span><br><span class="line">    substitute module(&#x27;org.gradle:api:2.0&#x27;) with module(&#x27;org.gradle:api:2.1&#x27;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="定义替换规则-eachDependency"><a href="#定义替换规则-eachDependency" class="headerlink" title="定义替换规则 eachDependency"></a>定义替换规则 eachDependency</h2><p>eachDependency允许你在gradle解析配置时为每个依赖项添加一个替换规则，DependencyResolveDetails类型的参数可以让你获取一个requested和使用useVersion()、useTarget()两个函数指定依赖版本和目标依赖。request中存放了依赖项的groupid、module name以及version，你可以通过这些值来筛选你想要替换的依赖项，再通过useVersion或useTarget指定你想要的依赖。咱们还是来看例子吧：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">configurations.all &#123;</span><br><span class="line">    resolutionStrategy.eachDependency &#123; DependencyResolveDetails details -&gt;</span><br><span class="line">        if (details.requested.name == &#x27;rxjava&#x27;) &#123;</span><br><span class="line">            //由于useVersion只能指定版本号，不适用于group不同的情况</span><br><span class="line">            details.useTarget group: &#x27;io.reactivex.rxjava3&#x27;, name: &#x27;rxjava&#x27;, version: &#x27;3.0.0-RC1&#x27;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -308,13 +242,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/10/14/window%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" rel="prev" title="window原理解析">
-      <i class="fa fa-chevron-left"></i> window原理解析
+    <a href="/2022/06/30/view%E6%9B%9D%E5%85%89%E7%9B%91%E6%8E%A7/" rel="prev" title="View曝光监控">
+      <i class="fa fa-chevron-left"></i> View曝光监控
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/11/03/android%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8/" rel="next" title="android单元测试入门">
-      android单元测试入门 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -373,7 +304,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AF%B9%E6%AF%94"><span class="nav-number">1.</span> <span class="nav-text">对比</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#IMEI"><span class="nav-number">2.</span> <span class="nav-text">IMEI</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E5%BA%8F%E5%88%97%E5%8F%B7"><span class="nav-number">3.</span> <span class="nav-text">设备序列号</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E6%9B%BF%E6%8D%A2%E8%BF%9C%E7%AB%AF"><span class="nav-number">1.</span> <span class="nav-text">本地替换远端</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96%E6%9B%BF%E6%8D%A2"><span class="nav-number">2.</span> <span class="nav-text">依赖替换</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%BF%E6%8D%A2%E7%89%B9%E5%AE%9A%E4%BE%9D%E8%B5%96"><span class="nav-number">2.1.</span> <span class="nav-text">替换特定依赖</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A6%81%E6%AD%A2%E4%BE%9D%E8%B5%96%E4%BC%A0%E9%80%92"><span class="nav-number">2.2.</span> <span class="nav-text">禁止依赖传递</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E8%A7%A3%E6%9E%90%E7%AD%96%E7%95%A5-dependencySubstitution"><span class="nav-number">2.3.</span> <span class="nav-text">定义解析策略 dependencySubstitution</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E6%9B%BF%E6%8D%A2%E8%A7%84%E5%88%99-eachDependency"><span class="nav-number">2.4.</span> <span class="nav-text">定义替换规则 eachDependency</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
