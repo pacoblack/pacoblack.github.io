@@ -218,7 +218,7 @@
       
         <p>我们看一下获取android设备ID的方案优缺点</p>
 <span id="more"></span>
-<h1 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h1><table>
+<h1><span id="对比">对比</span></h1><table>
 <thead>
 <tr>
 <th align="left">标识</th>
@@ -270,23 +270,23 @@
 <td align="left">如果WiFi没有打开过，是无法获取其Mac地址的（高版本获取到的mac将是固定的：02:00:00:00:00:00）<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/chaozhung_no_l/article/details/78329371">高版本好像有方法可以获取到</a><br>蓝牙是只有在打开的时候才能获取到其Mac地址（需要动态申请权限）</td>
 </tr>
 </tbody></table>
-<h1 id="IMEI"><a href="#IMEI" class="headerlink" title="IMEI"></a>IMEI</h1><ul>
+<h1><span id="imei">IMEI</span></h1><ul>
 <li>Android 6.0以下：无需申请权限，可以通过 <code>getDeviceId()</code> 方法获取到IMEI码</li>
 <li>Android 6.0-Android 8.0：需要申请READ_PHONE_STATE权限，可以通过 <code>getDeviceId()</code> 方法获取到IMEI码，如果用户拒绝了权限，会抛出java.lang.SecurityException异常</li>
 <li>Android 8.0-Android 10：需要申请READ_PHONE_STATE权限，可以通过 <code>getImei()</code> 方法获取到IMEI码，如果用户拒绝了权限，会抛出java.lang.SecurityException异常</li>
 <li>Android 10及以上：分为以下两种情况：<ul>
 <li>targetSdkVersion&lt;29：没有申请权限的情况，通过 <code>getImei()</code> 方法获取IMEI码时抛出java.lang.SecurityException异常；申请了权限，通过 <code>getImei()</code> 方法获取到IMEI码为null</li>
-<li>targetSdkVersion=29：无论是否申请了权限，通过 <code>getImei()</code> 方法获取IMEI码时都会直接抛出java.lang.SecurityException异常</li>
+<li>targetSdkVersion&#x3D;29：无论是否申请了权限，通过 <code>getImei()</code> 方法获取IMEI码时都会直接抛出java.lang.SecurityException异常</li>
 </ul>
 </li>
 </ul>
 <p>IMEI码在Android 10之后已经无法获取到了，而且甚至会直接抛出异常导致程序崩溃，在Android 10以下版本虽然可以获取到IMEI码，但是需要在应用获取到 <code>了READ_PHONE_STATE</code> 权限的前提下，我们依然无法保证这一点。</p>
-<h1 id="设备序列号"><a href="#设备序列号" class="headerlink" title="设备序列号"></a>设备序列号</h1><ul>
+<h1><span id="设备序列号">设备序列号</span></h1><ul>
 <li>Android 8.0以下：无需申请权限，可以通过Build.SERIAL获取到设备序列号</li>
 <li>Android 8.0-Android 10：需要申请READ_PHONE_STATE权限，可以通过Build.getSerial()获取到设备序列号，如果用户拒绝了权限，会抛出java.lang.SecurityException异常</li>
 <li>Android 10及以上：分为以下两种情况：<ul>
 <li>targetSdkVersion&lt;29：没有申请权限的情况，调用Build.getSerial()方法时抛出java.lang.SecurityException异常；申请了权限，通过Build.getSerial()方法获取到的设备序列号为“unknown”</li>
-<li>targetSdkVersion=29：无论是否申请了权限，调用Build.getSerial()方法时都会直接抛出java.lang.SecurityException异常</li>
+<li>targetSdkVersion&#x3D;29：无论是否申请了权限，调用Build.getSerial()方法时都会直接抛出java.lang.SecurityException异常</li>
 </ul>
 </li>
 </ul>
@@ -373,7 +373,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AF%B9%E6%AF%94"><span class="nav-number">1.</span> <span class="nav-text">对比</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#IMEI"><span class="nav-number">2.</span> <span class="nav-text">IMEI</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E5%BA%8F%E5%88%97%E5%8F%B7"><span class="nav-number">3.</span> <span class="nav-text">设备序列号</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">对比</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">IMEI</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">设备序列号</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

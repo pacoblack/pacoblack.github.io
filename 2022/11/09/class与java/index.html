@@ -212,14 +212,14 @@
       
         <p>现在我们看看class文件怎么转java</p>
 <span id="more"></span>
-<h1 id="修改jar与aar"><a href="#修改jar与aar" class="headerlink" title="修改jar与aar"></a>修改jar与aar</h1><ol>
+<h1><span id="修改jar与aar">修改jar与aar</span></h1><ol>
 <li>解压目标文件 <code> unzip myLib.aar -d tempFolder</code></li>
 <li>下载<a target="_blank" rel="noopener" href="http://java-decompiler.github.io/">http://java-decompiler.github.io/</a>定位要修改的文件 <code>java -jar xxx.jar</code></li>
 <li>解压classes.jar <code>unzip classes.jar -d tempFolderClasses</code></li>
 <li>建立模块，将class中代码复制粘贴，建立新的java文件，并修改重新编译，在build目录中找到目标class</li>
-<li>替换目标class, 使用下面命令重新打包jar/aar<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 注意后面的空格 与 .</span><br><span class="line">jar cvf xxx.aar -C folder/ .</span><br></pre></td></tr></table></figure></li>
+<li>替换目标class, 使用下面命令重新打包jar&#x2F;aar<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 注意后面的空格 与 .</span><br><span class="line">jar cvf xxx.aar -C folder/ .</span><br></pre></td></tr></table></figure></li>
 </ol>
-<h1 id="class转换为java源文件"><a href="#class转换为java源文件" class="headerlink" title="class转换为java源文件"></a>class转换为java源文件</h1><ol>
+<h1><span id="class转换为java源文件">class转换为java源文件</span></h1><ol>
 <li>首先去<a target="_blank" rel="noopener" href="http://varaneckas.com/jad/">http://varaneckas.com/jad/</a> 根据平台下载工具</li>
 <li>解压工具</li>
 <li>输入命令 <code>jad -o -r -s java -d targetFolder/ classFolder/</code></li>
@@ -307,7 +307,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9jar%E4%B8%8Eaar"><span class="nav-number">1.</span> <span class="nav-text">修改jar与aar</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#class%E8%BD%AC%E6%8D%A2%E4%B8%BAjava%E6%BA%90%E6%96%87%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">class转换为java源文件</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">修改jar与aar</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">class转换为java源文件</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

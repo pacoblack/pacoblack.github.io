@@ -232,7 +232,7 @@
 <ol>
 <li>打包资源文件，生成R.java文件 和 resources.ap_文件。处理的包括 res目录、assert目录、 AndroidManifest.xml 以及 Android.jar 文件<br>首先通过aapt源码目录下的<code>frameworks/base/tools/aapt/Resource.cpp</code>文件的<code>buildResources()</code>函数，处理过程如下：<br>1.1. 检查AndroidManifest.xml的合法性<br>1.2. 通过 <code>makeFileResource()</code> 对res目录下的资源目录进行处理，包括资源文件名的合法性检查，向资源表table添加条目等<br>1.3. 调用<code>compileResourceFile()</code>函数编译res与asserts目录下的资源并生成resource.arsc文件<br>1.4. 调用<code>parseAndAddEntry()</code>函数生成R.java文件，完成资源编译<br>1.5. 调用<code>compileXmlfile()</code>函数对res目录的子目录下的xml文件进行编译，这样处理过的xml文件就简单的被”加密”了<br>1.6. 将所有资源与编译生成的resource.arsc文件以及”加密”过的AndroidManifest.xml打包压缩成resources.ap_文件<blockquote>
 <ul>
-<li>除了assets和res/raw资源被原封不动地打包进APK之外，其它的资源都会被编译或者处理，除了assets资源之外，其他的资源都会被赋予一个资源ID。</li>
+<li>除了assets和res&#x2F;raw资源被原封不动地打包进APK之外，其它的资源都会被编译或者处理，除了assets资源之外，其他的资源都会被赋予一个资源ID。</li>
 <li>resources.arsc是清单文件，但是resources.arsc跟R.java区别还是非常大的，R.java里面的只是id列表，并且里面的id值不重复。resources.arsc里面会对所有的资源id进行组装，在apk运行时会<strong>根据设备的情况来采用不同的资源</strong>。resource.arsc文件的作用就是通过一样的ID，根据不同的配置索引到最佳的资源现在UI中。</li>
 <li>R.java 是我们在写代码时候引用的res资源的id表，resources.arsc是程序在运行时候用到的资源表。R.java是给程序员读的，resources.arsc是给机器读的。</li>
 </ul>

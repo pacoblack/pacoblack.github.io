@@ -210,9 +210,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p> Surface 对应了一块屏幕缓冲区，每个Window对应一个Surface，任何View都是画在Surface上的，传统的view共享一块屏幕缓冲区，所有的绘制必须在UI线程中进行我们不能直接操作Surface实例，要通过SurfaceHolder，在SurfaceView中可以通过getHolder()方法获取到SurfaceHolder实例。<br> <span id="more"></span></p>
-<h1 id="SurfaceView简介"><a href="#SurfaceView简介" class="headerlink" title="SurfaceView简介"></a>SurfaceView简介</h1><p><a href="https://pacoblack.github.io/2020/12/28/SurfaceView%E4%B8%8EVsync%E5%8E%9F%E7%90%86/">SurfaceView与Vsync</a><br>SurfaceView就是一个有Surface的View里面内嵌了一个专门用于绘制的Surface,SurfaceView 控制这个 Surface 的格式和尺寸以及绘制位置。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (mWindow == <span class="keyword">null</span>) &#123;  </span><br><span class="line">    mWindow = <span class="keyword">new</span> MyWindow(<span class="keyword">this</span>);  </span><br><span class="line">    mLayout.type = mWindowType;  </span><br><span class="line">    mLayout.gravity = Gravity.LEFT|Gravity.TOP;  </span><br><span class="line">    mSession.addWithoutInputChannel(mWindow, mWindow.mSeq, mLayout,  </span><br><span class="line">    mVisible ? VISIBLE : GONE, mContentInsets);  </span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+        <p>Surface 对应了一块屏幕缓冲区，每个Window对应一个Surface，任何View都是画在Surface上的，传统的view共享一块屏幕缓冲区，所有的绘制必须在UI线程中进行我们不能直接操作Surface实例，要通过SurfaceHolder，在SurfaceView中可以通过getHolder()方法获取到SurfaceHolder实例。<br> <span id="more"></span></p>
+<h1><span id="surfaceview简介">SurfaceView简介</span></h1><p><a href="https://pacoblack.github.io/2020/12/28/SurfaceView%E4%B8%8EVsync%E5%8E%9F%E7%90%86/">SurfaceView与Vsync</a><br>SurfaceView就是一个有Surface的View里面内嵌了一个专门用于绘制的Surface,SurfaceView 控制这个 Surface 的格式和尺寸以及绘制位置。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (mWindow == <span class="literal">null</span>) &#123;  </span><br><span class="line">    mWindow = <span class="keyword">new</span> <span class="title class_">MyWindow</span>(<span class="built_in">this</span>);  </span><br><span class="line">    mLayout.type = mWindowType;  </span><br><span class="line">    mLayout.gravity = Gravity.LEFT|Gravity.TOP;  </span><br><span class="line">    mSession.addWithoutInputChannel(mWindow, mWindow.mSeq, mLayout,  </span><br><span class="line">    mVisible ? VISIBLE : GONE, mContentInsets);  </span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
 <p>每个SurfaceView创建的时候都会创建一个MyWindow，new MyWindow(this)中的this正是SurfaceView自身，因此将SurfaceView和window绑定在一起，而前面提到过每个window对应一个Surface.<br>SurfaceView 的核心在于提供了两个线程：UI线程和渲染线程,两个线程通过“双缓冲”机制来达到高效的界面适时更新。而这个双缓冲可以理解为，SurfaceView在更新视图时用到了两张Canvas，一张frontCanvas和一张backCanvas。<br>每次实际显示的是frontCanvas，backCanvas存储的是上一次更改前的视图，当使用lockCanvas（）获取画布时，得到的实际上是backCanvas而不是正在显示的frontCanvas，之后你在获取到的backCanvas上绘制新视图，再unlockCanvasAndPost（canvas）此视图，那么上传的这张canvas将替换原来的frontCanvas作为新的frontCanvas，原来的frontCanvas将切换到后台作为backCanvas。</p>
 <blockquote>
 <p>例如，如果你已经先后两次绘制了视图A和B，那么你再调用lockCanvas（）获取视图，获得的将是A而不是正在显示的B，之后你将重绘的C视图上传，那么C将取代B作为新的frontCanvas显示在SurfaceView上，原来的B则转换为backCanvas。</p>
@@ -220,18 +220,18 @@
 <p>一般的Activity包含的多个View会组成View hierachy的树形结构，只有最顶层的DectorView才是对WMS可见的，这个DecorView在WMS中有一个对应的WindowState，再SurfaceFlinger中有对应的Layer，而SurfaceView正因为它有自己的Surface，有自己的Window，它在WMS中有对应的WindowState，在SurfaceFlinger中有Layer。</p>
 <p>虽然在App端它仍在View hierachy中，但在SurfaceView的Server端(WMS和SurfaceFlinger)中，它与宿主窗口是分离的。这样的好处是对这个Surface的渲染可以放到单独的线程中去做，渲染时可以有自己的GL context。</p>
 <p>因为它不会影响主线程对时间的响应。所以它的优点就是可以在独立的线程中绘制，不影响主线程，而且使用双缓冲机制，播放视频时画面更顺畅。</p>
-<h1 id="SurfaceHolder-简介"><a href="#SurfaceHolder-简介" class="headerlink" title="SurfaceHolder 简介"></a>SurfaceHolder 简介</h1><p>我们无法直接操作Surface只能通过SurfaceHolder这个接口来获取和操作Surface。</p>
+<h1><span id="surfaceholder-简介">SurfaceHolder 简介</span></h1><p>我们无法直接操作Surface只能通过SurfaceHolder这个接口来获取和操作Surface。</p>
 <p>SurfaceHolder中提供了一些lockCanvas():获取一个Canvas对象，并锁定之。</p>
 <p>所得到的Canvas对象，其实就是 Surface 中一个成员。加锁的目的其实就是为了在绘制的过程中，Surface 中的数据不会被改变。lockCanvas 是为了防止同一时刻多个线程对同一 canvas写入。</p>
 <p>从设计模式的角度来看,Surface、SurfaceView、SurfaceHolder实质上就是MVC(Model-View-Controller)，Model就是模型或者说是数据模型，更简单的可以理解成数据，在这里也就是Surface，View就是视图，代表用户交互界面，这里就是 SurfaceView, SurfaceHolder 就是 Controller.</p>
-<h1 id="TextureView简介"><a href="#TextureView简介" class="headerlink" title="TextureView简介"></a>TextureView简介</h1><p>因为SurfaceView不在主窗口中，它没法做动画没法使用一些View的特性方法，所以在Android 4.0中引入了TextureView，它是一个结合了View和SurfaceTexture的View对象。<br>它不会在WMS中单独创建窗口，而是作为View hierachy中的一个普通view，因此它可以和其他普通View一样进行平移、旋转等动画。但是TextureView必须在硬件加速的窗口中，它显示的内容流数据可以来自App进程或者远程进程。<br>TextureView 重载了 draw() 方法，其中主要 SurfaceTexture 中收到的图像数据作为纹理更新到对应的 HardwareLayer 中。<br>urfaceTexture.OnFrameAvailableListener用于通知TextureView内容流有新图像到来。SurfaceTextureListener接口用于让TextureView的使用者知道SurfaceTexture已准备好，这样就可以把SurfaceTexture交给相应的内容源。</p>
+<h1><span id="textureview简介">TextureView简介</span></h1><p>因为SurfaceView不在主窗口中，它没法做动画没法使用一些View的特性方法，所以在Android 4.0中引入了TextureView，它是一个结合了View和SurfaceTexture的View对象。<br>它不会在WMS中单独创建窗口，而是作为View hierachy中的一个普通view，因此它可以和其他普通View一样进行平移、旋转等动画。但是TextureView必须在硬件加速的窗口中，它显示的内容流数据可以来自App进程或者远程进程。<br>TextureView 重载了 draw() 方法，其中主要 SurfaceTexture 中收到的图像数据作为纹理更新到对应的 HardwareLayer 中。<br>urfaceTexture.OnFrameAvailableListener用于通知TextureView内容流有新图像到来。SurfaceTextureListener接口用于让TextureView的使用者知道SurfaceTexture已准备好，这样就可以把SurfaceTexture交给相应的内容源。</p>
 <p>Surface为BufferQueue的Producer接口实现类，使生产者可以通过它的软件或硬件渲染接口为SurfaceTexture内部的BufferQueue提供graphic buffer。</p>
 <p>SurfaceTexture 可以用作非直接输出的内容流，这样就提供二次处理的机会。与SurfaceView直接输出相比，这样会有若干帧的延迟。同时，由于它本身管理BufferQueue，因此内存消耗也会稍微大一些。</p>
 <p>TextureView 是一个可以把内容流作为外部纹理输出在上面的 View, 它本身需要是一个硬件加速层。</p>
-<h1 id="SurfaceTexture"><a href="#SurfaceTexture" class="headerlink" title="SurfaceTexture"></a>SurfaceTexture</h1><p>urfaceTexture 是从Android 3.0开始加入，与SurfaceView不同的是，它对图像流的处理并不直接显示，而是转为GL外部纹理，因此用于图像流数据的二次处理。</p>
+<h1><span id="surfacetexture">SurfaceTexture</span></h1><p>urfaceTexture 是从Android 3.0开始加入，与SurfaceView不同的是，它对图像流的处理并不直接显示，而是转为GL外部纹理，因此用于图像流数据的二次处理。</p>
 <p>比如 Camera 的预览数据，变成纹理后可以交给 GLSurfaceView 直接显示，也可以通过SurfaceTexture 交给TextureView 作为 View heirachy 中的一个硬件加速层来显示。<br>首先，SurfaceTexture从图像流 (来自Camera预览、视频解码、GL绘制场景等) 中获得帧数据，当调用updateTexImage()时，根据内容流中最近的图像更新 SurfaceTexture 对应的GL纹理对象。</p>
 <p>SurfaceTexture 包含一个应用是其使用方的BufferQueue。当生产方将新的缓冲区排入队列时，onFrameAvailable() 回调会通知应用。然后，应用调用updateTexImage()，这会释放先前占有的缓冲区，从队列中获取新缓冲区并执行EGL调用，从而使GLES可将此缓冲区作为外部纹理使用。</p>
-<h1 id="SurfaceView-vs-TextureView"><a href="#SurfaceView-vs-TextureView" class="headerlink" title="SurfaceView vs TextureView"></a>SurfaceView vs TextureView</h1><ul>
+<h1><span id="surfaceview-vs-textureview">SurfaceView vs TextureView</span></h1><ul>
 <li>SurfaceView 是一个有自己Surface的View。<ol>
 <li>它的渲染可以放在单独线程而不是主线程中。</li>
 <li>不能做变形和动画。</li>
@@ -250,7 +250,7 @@
 </ol>
 </li>
 </ul>
-<h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><ol>
+<h1><span id="小结">小结</span></h1><ol>
 <li>在Android 7.0上系统 Surfaceview 的性能比 TextureView 更有优势，支持对象的内容位置和包含的应用内容同步更新，平移、缩放不会产生黑边。 在7.0以下系统如果使用场景有动画效果，可以选择性使用TextureView。</li>
 <li>由于失效(invalidation)和缓冲的特性，TextureView增加了额外1~3帧的延迟显示画面更新。</li>
 <li>TextureView总是使用GL合成，而SurfaceView可以使用硬件overlay后端，可以占用更少的内存。</li>
@@ -341,7 +341,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SurfaceView%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">SurfaceView简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SurfaceHolder-%E7%AE%80%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">SurfaceHolder 简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TextureView%E7%AE%80%E4%BB%8B"><span class="nav-number">3.</span> <span class="nav-text">TextureView简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SurfaceTexture"><span class="nav-number">4.</span> <span class="nav-text">SurfaceTexture</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SurfaceView-vs-TextureView"><span class="nav-number">5.</span> <span class="nav-text">SurfaceView vs TextureView</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">小结</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">SurfaceView简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">SurfaceHolder 简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">TextureView简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">SurfaceTexture</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">SurfaceView vs TextureView</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">小结</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
