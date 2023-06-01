@@ -28,7 +28,7 @@
 <meta property="og:description" content="先规划下nas 都能搭建哪些服务">
 <meta property="og:locale">
 <meta property="article:published_time" content="2023-05-26T02:20:44.000Z">
-<meta property="article:modified_time" content="2023-05-26T08:27:34.233Z">
+<meta property="article:modified_time" content="2023-06-01T06:31:51.850Z">
 <meta property="article:author" content="pacoblack">
 <meta property="article:tag" content="DIY">
 <meta name="twitter:card" content="summary">
@@ -185,10 +185,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2023-05-26 10:20:44 / Modified: 16:27:34" itemprop="dateCreated datePublished" datetime="2023-05-26T10:20:44+08:00">2023-05-26</time>
+              <time title="Created: 2023-05-26 10:20:44" itemprop="dateCreated datePublished" datetime="2023-05-26T10:20:44+08:00">2023-05-26</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-06-01 14:31:51" itemprop="dateModified" datetime="2023-06-01T14:31:51+08:00">2023-06-01</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -331,7 +337,50 @@
 <h2><span id="插件安装">插件安装</span></h2><p>控制台-插件-目录，找到对应的插件即可</p>
 <h1><span id="磁性链接">磁性链接</span></h1><p>软件使用 Download Station</p>
 <h1><span id="直播与在线语音">直播与在线语音</span></h1><p>Docker 中搜索 nibrev&#x2F;ant-media-server 或者 bytelang&#x2F;kplayer<br><a href>https://post.smzdm.com/p/apv56l97/</a><br><a href>https://juejin.cn/post/7206226905309446202</a></p>
-<h1><span id="软路由">软路由</span></h1>
+<h1><span id="软路由">软路由</span></h1><h1><span id="旁路由">旁路由</span></h1><h2><span id="docker方案">Docker方案</span></h2><ol>
+<li>安装docker，在商店安装</li>
+<li>开启ssh，<code>终端机和SNMP</code>-<code>开启SSH功能</code></li>
+<li>安装openwrt<ul>
+<li>windows 端下载SSH工具，<code>Hosts</code>-<code>New Host</code><ul>
+<li>配置需要连接的nas的 Label Address Port Username password</li>
+<li>通过ssh查看nas对应的网卡 <code>ifconfig</code></li>
+<li><code>sudo -i</code>开始管理员模式</li>
+<li><code>ip link set etch0 promisc on</code> 开启混杂模式</li>
+<li><code>docker network create -d macvlan --subnet=192.168.1.0/24 --gateway 192.168.1.1 -o parent=eth0 mac-net</code> 注意“192.168.1.1”为主路由地址，“eth0”为网卡， “192.168.1.0&#x2F;24”为路由器的子网地址</li>
+<li>上面执行完就可以在<code>docker</code>-<code>网络</code> 下看到对应的设置</li>
+<li><code>docker pull esirpg/buddha:latst</code> 拉去openWrt容器</li>
+<li><code>docker run -d --restart always --name esirpg-buddha --privileged --network mac-net --ip=192.168.1.13 esirpg/buddha:latest  /sbin/init</code>,启动容器，其中“192.168.1.13” 为旁路由ip，需要保证这个ip没有被占用</li>
+<li><code>bash docker exec -it esirpg-buddha ash</code> 进入容器</li>
+<li><code>bash vi /etc/config/network</code> 修改网络设置，将 config interface ‘lan’ 下面的 option ipaddr 修改为上面的 “192.168.1.13”</li>
+<li><code>bash /etc/init.d/network restart</code> 重启网络配置，使配置生效，<code>bash exit</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3><span id="配置openwrt">配置openwrt</span></h3><p>此时，浏览器打开“192.168.1.13” 进入openwrt登录页，账号 “root”，没有密码，进入后会提示修改密码</p>
+<ul>
+<li><code>网络</code>-<code>接口</code>,修改LAN口 <code>IpV4地址</code>修改为<code>192.168.1.13</code>,也就是openWrt的地址， <code>IPV4网关</code>和<code>自定义DNS服务</code>修改为主路由地址</li>
+<li>勾选最下面的<code>忽略此接口</code>，保存&amp;退出。</li>
+<li><code>网络</code>-<code>防火墙</code>，<code>入站数据</code> <code>出站数据</code> <code>转发</code>包括 区域中的全部选择<code>接受</code>，Lan的<code>MSS钳制</code>不勾选，其余全部勾选,保存&amp;退出</li>
+</ul>
+<h3><span id="配置clash">配置clash</span></h3><ul>
+<li>下载<a target="_blank" rel="noopener" href="https://github.com/Dreamacro/clash/releases">clash</a>,选择linux amd64，解压并改名为 clash</li>
+<li><code>服务</code>-<code>clash</code>-<code>更新</code>，上传并安装</li>
+<li>在<code>配置</code>- <code>导入配置</code>中配置服务即可</li>
+<li>保存应用 ，启动配置</li>
+</ul>
+<p>这个方案相对于 VM 安装简单，但坑的地方在于，不支持 udp 转发，在某些模式上甚至连不了网。推测是这些功能依赖于 kmod ，虽然在容器中安装了，但实际上用的还是 host kernel ，而 host 并未安装。一种可行的方法是给群晖的 kernel 编个 kmod ，但需要安装群晖一堆的构建套件，以前为了编 Wireguard 试过一次，非常痛苦，建议不要折腾。</p>
+<h2><span id="vm方案">VM方案</span></h2><p>vm 方案的缺点在于，guest 存在虚拟化开销，并且由于群晖对虚拟机的支持非常有限（没 vt-d），网卡只能通过 virtio 或者模拟设备的方式给 vm 用。但鉴于 docker 方案不支持 UDP，只能将就用了。类似于 docker 方案，起一个 openwrt vm，装 openclash 。</p>
+<ol>
+<li>下载 openwrt image <a target="_blank" rel="noopener" href="https://downloads.openwrt.org/releases/19.07.7/targets/x86/64/combined-squashfs.img.gz">https://downloads.openwrt.org/releases/19.07.7/targets/x86/64/combined-squashfs.img.gz</a></li>
+<li>群晖在 Virtual Machine Manage - 映像 - 硬盘映像 导入该镜像，并在 虚拟机 - 导入 - 从硬盘映像导入 ，给个 1C1G ，硬盘选择刚刚导入的镜像，网络选择默认的即可</li>
+<li>启动虚拟机，通过 虚拟机 - 连接拿到 shell ，同样修改 &#x2F;etc&#x2F;config&#x2F;network 配置，手动指定 ip 和 dns 并重新加载配置。这时候 ping 测试会发现虽然能解析到 ip 但连接不上。这是因为缺少一条路由指令，建议加入到 &#x2F;etc&#x2F;config&#x2F;network 持久化：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">config route &#x27;external&#x27;</span><br><span class="line">    option interface &#x27;lan&#x27;</span><br><span class="line">    option target &#x27;0.0.0.0&#x27;</span><br><span class="line">    option netmask &#x27;0.0.0.0&#x27;</span><br><span class="line">    option gateway &#x27;192.168.10.1&#x27;</span><br></pre></td></tr></table></figure>
+重新加载配置即可</li>
+</ol>
+<p>同 docker 方案，安装 openclash</p>
+<h2><span id="接入">接入</span></h2><p>在需要科学上网的设备上，手动指定 ip ，并将网关和 dns 指定为旁路由的 ip ，我这里为 192.168.10.2 ，即可让旁路由接管流量。</p>
+
     </div>
 
     
@@ -352,7 +401,10 @@
     <a href="/2023/01/06/mac%E4%B8%8B%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0maven%E4%BB%93%E5%BA%93/" rel="prev" title="Mac下配置本地Maven仓库">
       <i class="fa fa-chevron-left"></i> Mac下配置本地Maven仓库
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2023/06/01/ddns%E4%B8%8E%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/" rel="next" title="DDNS与内网穿透">
+      DDNS与内网穿透 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -411,7 +463,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">搭建</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">随时访问</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">QuickConnect</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">公网IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">花生壳</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.4.</span> <span class="nav-text">DDNSTO</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.5.</span> <span class="nav-text">Cloudflare</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.6.</span> <span class="nav-text">Zerotier Moon</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.6.1.</span> <span class="nav-text">自建方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.6.2.</span> <span class="nav-text">客户机连接到moon节点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.7.</span> <span class="nav-text">FRP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.8.</span> <span class="nav-text">TailScale</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.8.1.</span> <span class="nav-text">子路由设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.8.2.</span> <span class="nav-text">优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.8.3.</span> <span class="nav-text">搭建</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">照片与文件自动备份</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">个人影音</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">插件安装</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">磁性链接</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">直播与在线语音</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">软路由</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">搭建</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">随时访问</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">QuickConnect</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">公网IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">花生壳</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.4.</span> <span class="nav-text">DDNSTO</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.5.</span> <span class="nav-text">Cloudflare</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.6.</span> <span class="nav-text">Zerotier Moon</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.6.1.</span> <span class="nav-text">自建方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.6.2.</span> <span class="nav-text">客户机连接到moon节点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.7.</span> <span class="nav-text">FRP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.8.</span> <span class="nav-text">TailScale</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.8.1.</span> <span class="nav-text">子路由设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.8.2.</span> <span class="nav-text">优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.8.3.</span> <span class="nav-text">搭建</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">照片与文件自动备份</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">个人影音</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">插件安装</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">磁性链接</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">直播与在线语音</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">软路由</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">8.</span> <span class="nav-text">旁路由</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">8.1.</span> <span class="nav-text">Docker方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">8.1.1.</span> <span class="nav-text">配置openwrt</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">8.1.2.</span> <span class="nav-text">配置clash</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">8.2.</span> <span class="nav-text">VM方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">8.3.</span> <span class="nav-text">接入</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -427,7 +479,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">66</span>
+          <span class="site-state-item-count">67</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -440,7 +492,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-count">21</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
