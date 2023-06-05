@@ -28,7 +28,7 @@
 <meta property="og:description" content="先规划下nas 都能搭建哪些服务">
 <meta property="og:locale">
 <meta property="article:published_time" content="2023-05-26T02:20:44.000Z">
-<meta property="article:modified_time" content="2023-06-01T06:31:51.850Z">
+<meta property="article:modified_time" content="2023-06-05T10:51:18.436Z">
 <meta property="article:author" content="pacoblack">
 <meta property="article:tag" content="DIY">
 <meta name="twitter:card" content="summary">
@@ -193,7 +193,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-06-01 14:31:51" itemprop="dateModified" datetime="2023-06-01T14:31:51+08:00">2023-06-01</time>
+                <time title="Modified: 2023-06-05 18:51:18" itemprop="dateModified" datetime="2023-06-05T18:51:18+08:00">2023-06-05</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -258,7 +258,7 @@
 <h2><span id="zerotier-moon">Zerotier Moon</span></h2><ol>
 <li>注册账号<a href>https://www.zerotier.com</a></li>
 <li>Network 中创建【Network ID】，内部选择【private】则连接的时候需要确认，【public】则不需要</li>
-<li>安装客户端,配置 【Network ID】即可</li>
+<li>安装客户端,配置 【Network ID】即可<br>在 <strong>基本设置</strong> 中选择zerotier创建的接口<br><strong>防火墙</strong>中选择zerotier的lan口<br><strong>自定义规则</strong>中配置如下<br>勾选 <strong>Allow Ethernet Bridging</strong><br>在<strong>Managed Routes</strong>中配置<strong>Destination</strong>为内网ip,<strong>Via</strong>为zerotier分配给路由系统的虚拟ip<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># zt7nnmu3yd换成自己系统分配的接口名字</span><br><span class="line">iptables -I FORWARD -i zt7nnmu3yd -j ACCEPT</span><br><span class="line">iptables -I FORWARD -o zt7nnmu3yd -j ACCEPT</span><br><span class="line">iptables -t nat -I POSTROUTING -o zt7nnmu3yd -j MASQUERADE</span><br></pre></td></tr></table></figure></li>
 <li>返回网页端，勾选允许接入网络，【Do not Auto-Assign IPs】勾选会使用设置ip，否则会自动分配 IP</li>
 </ol>
 <h3><span id="自建方案">自建方案</span></h3><p>由于zerotier官方服务器主要是在国外，在国内高峰时期经常会出现连接不上官方服务器的情况。<br>因此需要在国内服务器搭建一个moon服务器<br>Zerotier 定义了几个专业名词：</p>
@@ -269,12 +269,14 @@
 <li>购买阿里云服务器，抢占式，centOS</li>
 <li>配置</li>
 </ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">//1. 搭建</span><br><span class="line">curl -s https://install.zerotier.com | sudo bash</span><br><span class="line"></span><br><span class="line">//systemctl enable zerotier-one //配置为开机启动</span><br><span class="line"></span><br><span class="line">//2. 搭建的moon服务器加入到创建的网络中</span><br><span class="line">zerotier-cli join &lt;network-id&gt;</span><br><span class="line"></span><br><span class="line">//3. 生成moon.json 模版</span><br><span class="line">cd /var/lib/zerotier-one</span><br><span class="line">zerotier-idtool initmoon identity.public &gt; moon.json</span><br><span class="line"></span><br><span class="line">//4.修改json文件</span><br><span class="line">sudo vi /var/lib/zerotier-one/moon.json</span><br><span class="line">#通过vim修改下面选项的内容并保存</span><br><span class="line">&quot;stableEndpoints&quot;: [ &quot;你的公网IP地址/端口(9993)&quot; ]</span><br><span class="line"></span><br><span class="line">//5. 生成签名文件 xxx.moon</span><br><span class="line">zerotier-idtool genmoon moon.json</span><br><span class="line"></span><br><span class="line">//6. 建立 /var/lib/zerotier-one/moons.d 文件夹，将 xxx.moon 文件拷贝进去</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#1. 搭建</span></span><br><span class="line">curl -s https://install.zerotier.com | sudo bash</span><br><span class="line"></span><br><span class="line">//systemctl <span class="built_in">enable</span> zerotier-one //配置为开机启动</span><br><span class="line"></span><br><span class="line"><span class="comment">#2. 搭建的moon服务器加入到创建的网络中</span></span><br><span class="line">zerotier-cli <span class="built_in">join</span> &lt;network-id&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">#3. 生成moon.json 模版</span></span><br><span class="line"><span class="built_in">cd</span> /var/lib/zerotier-one</span><br><span class="line">zerotier-idtool initmoon identity.public &gt; moon.json</span><br><span class="line"></span><br><span class="line"><span class="comment">#4.修改json文件</span></span><br><span class="line">sudo vi /var/lib/zerotier-one/moon.json</span><br><span class="line"><span class="comment">#通过vim修改下面选项的内容并保存</span></span><br><span class="line"><span class="string">&quot;stableEndpoints&quot;</span>: [ <span class="string">&quot;你的公网IP地址/端口(9993)&quot;</span> ]</span><br><span class="line"><span class="comment">#切记饿进入阿里云后台开启9993端口，协议类型为udp</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#5. 生成签名文件 xxx.moon</span></span><br><span class="line">zerotier-idtool genmoon moon.json</span><br><span class="line"></span><br><span class="line"><span class="comment">#6. 建立 /var/lib/zerotier-one/moons.d 文件夹，将 xxx.moon 文件拷贝进去</span></span><br></pre></td></tr></table></figure>
 <ol start="3">
 <li>重启 zerotier.</li>
+<li>openWrt连接moon服务器,修改配置文件<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/config/zerotier</span><br><span class="line"></span><br><span class="line"><span class="comment"># /etc/config/zerotier</span></span><br><span class="line">option enabled <span class="string">&#x27;1&#x27;</span></span><br><span class="line">option config_path <span class="string">&#x27;/etc/zerotier&#x27;</span></span><br><span class="line">list <span class="built_in">join</span> <span class="string">&#x27;your Network ID&#x27;</span></span><br><span class="line">option nat <span class="string">&#x27;1&#x27;</span></span><br></pre></td></tr></table></figure>
+在&#x2F;etc中创建zerotier文件夹，将moons.d文件夹复制到&#x2F;etc&#x2F;zerotier下，重启zerotier服务 <code>/etc/init.d/zerotier restart</code><br>执行命令<code>zerotier-cli listpeers | grep MOON</code>，如果有自己服务器公网ip显示表示配置成功</li>
 </ol>
 <h3><span id="客户机连接到moon节点">客户机连接到moon节点</span></h3><ol>
-<li><code>zerotier-cli orbit &lt;id&gt; &lt;id&gt;</code>  id为之前的moon.json中的id，两个id是一样的</li>
+<li><code>zerotier-cli orbit &lt;id&gt; &lt;id&gt;</code>  id就是000000xxxx.moon，两个id是一样的</li>
 <li>需要在 &#x2F;var&#x2F;lib&#x2F;zerotier-one 目录下新建 moons.d 文件夹和 moon 节点一样，将 000000xxxx.moon 文件放到其中，并重启 zerotier。</li>
 </ol>
 <h2><span id="frp">FRP</span></h2><p>frp就是一个反向代理软件，它体积轻量但功能很强大，可以使处于内网或防火墙后的设备对外界提供服务，它支持HTTP、TCP、UDP等众多协议。我们今天仅讨论TCP和UDP相关的内容。</p>
