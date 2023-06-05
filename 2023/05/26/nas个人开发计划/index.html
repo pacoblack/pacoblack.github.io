@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"pacoblack.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="先规划下nas 都能搭建哪些服务">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NAS个人开发计划">
+<meta property="og:url" content="https://pacoblack.github.io/2023/05/26/nas%E4%B8%AA%E4%BA%BA%E5%BC%80%E5%8F%91%E8%AE%A1%E5%88%92/index.html">
+<meta property="og:site_name" content="我爱学习">
+<meta property="og:description" content="先规划下nas 都能搭建哪些服务">
+<meta property="og:locale">
+<meta property="article:published_time" content="2023-05-26T02:20:44.000Z">
+<meta property="article:modified_time" content="2023-06-05T10:51:18.436Z">
+<meta property="article:author" content="pacoblack">
+<meta property="article:tag" content="DIY">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://pacoblack.github.io/2023/05/26/nas%E4%B8%AA%E4%BA%BA%E5%BC%80%E5%8F%91%E8%AE%A1%E5%88%92/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>NAS个人开发计划 | 我爱学习</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">我爱学习</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">这只是一场演习</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="主页 fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="标签 fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="分类 fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="归档 fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="关于 fa-fw"></i>About</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://pacoblack.github.io/2023/05/26/nas%E4%B8%AA%E4%BA%BA%E5%BC%80%E5%8F%91%E8%AE%A1%E5%88%92/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar1.jpeg">
+      <meta itemprop="name" content="pacoblack">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="我爱学习">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          NAS个人开发计划
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2023-05-26 10:20:44" itemprop="dateCreated datePublished" datetime="2023-05-26T10:20:44+08:00">2023-05-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-06-05 18:51:18" itemprop="dateModified" datetime="2023-06-05T18:51:18+08:00">2023-06-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%85%B6%E4%BB%96/" itemprop="url" rel="index"><span itemprop="name">其他</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>先规划下nas 都能搭建哪些服务</p>
+<span id="more"></span>
+<h1><span id="搭建">搭建</span></h1><h1><span id="随时访问">随时访问</span></h1><h2><span id="quickconnect">QuickConnect</span></h2><ol>
+<li>控制面板 &gt; 网络 &gt; 常规，勾选手动配置DNS服务器，并更改 首选的 DNS 为 223.5.5.5 或者是  180.76.76.76，并保存。（为了排除dns故障导致的无法访问）。</li>
+<li>控制面板 &gt; 网络 &gt; 网络界面 &gt; 编辑 &gt; IPv4，关闭“手动设置 MTU 值”选项，并保存。（排除 MTU 值导致的网络数据传输问题）。</li>
+<li>控制面板 &gt; 网络 &gt; 网络界面 &gt; 编辑 &gt; IPv6，关闭 IPv6，并保存。（排除 IPv6 导致的网络问题）。</li>
+<li>控制面板 &gt; 区域选项，选择“与 NTP 服务器同步”，服务器地址选择  pool.ntp.org，并保存。（排除 DSM 系统时间故障导致的访问异常）。</li>
+</ol>
+<p>这个方法会出现传输速度慢，偶尔不稳定的情况。</p>
+<h2><span id="公网ip">公网IP</span></h2><ol>
+<li>申请一个公网IP（联系营业厅即可）</li>
+<li>在群晖系统中设置 DDNS。点击新增，服务供应商可以选择群晖（Synology），起个主机名字就可以了</li>
+<li>路由器配置，设置端口转发。群晖系统可以点击自动配置路由器。</li>
+</ol>
+<h2><span id="花生壳">花生壳</span></h2><p><a href>https://service.oray.com/question/4615.html</a><br>按照官方教程即可</p>
+<h2><span id="ddnsto">DDNSTO</span></h2><ol>
+<li>安装docker</li>
+<li>搜索 linkease&#x2F;ddnsto</li>
+<li>官网<a href>https://www.ddnsto.com</a>注册账号</li>
+<li>回到docker，将令牌配置到 TOKEN中去</li>
+<li>在DDNSTO中查看设备是否已同步到控制台</li>
+<li>添加域名和地址映射，最多5个</li>
+<li>七天试用，1年套餐26元</li>
+</ol>
+<h2><span id="cloudflare">Cloudflare</span></h2><ol>
+<li>首先是注册一个CloudFlare账号 <a href>https://www.cloudflare-cn.com/</a></li>
+<li>阿里云注册一个域名<a href>https://www.alibabacloud.com/zh/domain</a>，注册成功后</li>
+<li>添加站点，输入刚注册的域名，一路确认，直到出现两个 CloudFlare nameserver</li>
+<li>回到阿里云搜索域名控制台，选择我们的<code>域名</code>-<code>DNS管理</code>-<code>DNS修改</code>-<code>修改DNS服务器</code>，将两个nameserver添加进去，点击确定</li>
+<li>回到cloudFlare，点击完成，后面一路点击完成</li>
+<li>cloudFlare中选择 <code>Zero Trust</code>-<code>Access</code>-<code>Tunnels</code>-<code>Create a tunel</code>,选择免费计划，给tunel命名，保存</li>
+<li>复制tunel右侧的ID，选择 <code>configure</code> -<code>Docker</code> ，复制这个Token</li>
+<li><code>Public Hostname Page</code>， <code>Subdomain</code> 填写“www”，<code>Domain</code> 填写 “之前注册的域名”，<code>Service</code> 选择 “HTTP”，ip和端口号</li>
+<li>进入nas，打开Docker，搜索 cloudflare&#x2F;cloudflared，并下载</li>
+<li>装载路径 配置 <code>/etc/cloudflared</code></li>
+<li>修改网络为<code>host</code></li>
+<li>命令在自定义处添加<code> &#39;tunnel&#39; &#39;--config&#39; &#39;/etc/cloudflared/config.yaml&#39; &#39;--no-autoupdate&#39; &#39;run&#39; &#39;--token&#39; &#39;刚刚Docker中复制的Token&#39;</code></li>
+<li>如果想穿透多个端口，，打开<code>Cloudflare Zero Trust</code> - <code>Access-Tunels</code>，再创建一遍即可</li>
+</ol>
+<h2><span id="zerotier-moon">Zerotier Moon</span></h2><ol>
+<li>注册账号<a href>https://www.zerotier.com</a></li>
+<li>Network 中创建【Network ID】，内部选择【private】则连接的时候需要确认，【public】则不需要</li>
+<li>安装客户端,配置 【Network ID】即可<br>在 <strong>基本设置</strong> 中选择zerotier创建的接口<br><strong>防火墙</strong>中选择zerotier的lan口<br><strong>自定义规则</strong>中配置如下<br>勾选 <strong>Allow Ethernet Bridging</strong><br>在<strong>Managed Routes</strong>中配置<strong>Destination</strong>为内网ip,<strong>Via</strong>为zerotier分配给路由系统的虚拟ip<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># zt7nnmu3yd换成自己系统分配的接口名字</span><br><span class="line">iptables -I FORWARD -i zt7nnmu3yd -j ACCEPT</span><br><span class="line">iptables -I FORWARD -o zt7nnmu3yd -j ACCEPT</span><br><span class="line">iptables -t nat -I POSTROUTING -o zt7nnmu3yd -j MASQUERADE</span><br></pre></td></tr></table></figure></li>
+<li>返回网页端，勾选允许接入网络，【Do not Auto-Assign IPs】勾选会使用设置ip，否则会自动分配 IP</li>
+</ol>
+<h3><span id="自建方案">自建方案</span></h3><p>由于zerotier官方服务器主要是在国外，在国内高峰时期经常会出现连接不上官方服务器的情况。<br>因此需要在国内服务器搭建一个moon服务器<br>Zerotier 定义了几个专业名词：</p>
+<blockquote>
+<p>PLANET 行星服务器，Zerotier 各地的根服务器，有日本、新加坡等地<br>moon 卫星级服务器，用户自建的私有根服务器，起到中转加速的作用<br>LEAF 相当于各个枝叶，就是每台连接到该网络的机器节点。</p>
+</blockquote>
+<ol>
+<li>购买阿里云服务器，抢占式，centOS</li>
+<li>配置</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#1. 搭建</span></span><br><span class="line">curl -s https://install.zerotier.com | sudo bash</span><br><span class="line"></span><br><span class="line">//systemctl <span class="built_in">enable</span> zerotier-one //配置为开机启动</span><br><span class="line"></span><br><span class="line"><span class="comment">#2. 搭建的moon服务器加入到创建的网络中</span></span><br><span class="line">zerotier-cli <span class="built_in">join</span> &lt;network-id&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">#3. 生成moon.json 模版</span></span><br><span class="line"><span class="built_in">cd</span> /var/lib/zerotier-one</span><br><span class="line">zerotier-idtool initmoon identity.public &gt; moon.json</span><br><span class="line"></span><br><span class="line"><span class="comment">#4.修改json文件</span></span><br><span class="line">sudo vi /var/lib/zerotier-one/moon.json</span><br><span class="line"><span class="comment">#通过vim修改下面选项的内容并保存</span></span><br><span class="line"><span class="string">&quot;stableEndpoints&quot;</span>: [ <span class="string">&quot;你的公网IP地址/端口(9993)&quot;</span> ]</span><br><span class="line"><span class="comment">#切记饿进入阿里云后台开启9993端口，协议类型为udp</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#5. 生成签名文件 xxx.moon</span></span><br><span class="line">zerotier-idtool genmoon moon.json</span><br><span class="line"></span><br><span class="line"><span class="comment">#6. 建立 /var/lib/zerotier-one/moons.d 文件夹，将 xxx.moon 文件拷贝进去</span></span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>重启 zerotier.</li>
+<li>openWrt连接moon服务器,修改配置文件<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/config/zerotier</span><br><span class="line"></span><br><span class="line"><span class="comment"># /etc/config/zerotier</span></span><br><span class="line">option enabled <span class="string">&#x27;1&#x27;</span></span><br><span class="line">option config_path <span class="string">&#x27;/etc/zerotier&#x27;</span></span><br><span class="line">list <span class="built_in">join</span> <span class="string">&#x27;your Network ID&#x27;</span></span><br><span class="line">option nat <span class="string">&#x27;1&#x27;</span></span><br></pre></td></tr></table></figure>
+在&#x2F;etc中创建zerotier文件夹，将moons.d文件夹复制到&#x2F;etc&#x2F;zerotier下，重启zerotier服务 <code>/etc/init.d/zerotier restart</code><br>执行命令<code>zerotier-cli listpeers | grep MOON</code>，如果有自己服务器公网ip显示表示配置成功</li>
+</ol>
+<h3><span id="客户机连接到moon节点">客户机连接到moon节点</span></h3><ol>
+<li><code>zerotier-cli orbit &lt;id&gt; &lt;id&gt;</code>  id就是000000xxxx.moon，两个id是一样的</li>
+<li>需要在 &#x2F;var&#x2F;lib&#x2F;zerotier-one 目录下新建 moons.d 文件夹和 moon 节点一样，将 000000xxxx.moon 文件放到其中，并重启 zerotier。</li>
+</ol>
+<h2><span id="frp">FRP</span></h2><p>frp就是一个反向代理软件，它体积轻量但功能很强大，可以使处于内网或防火墙后的设备对外界提供服务，它支持HTTP、TCP、UDP等众多协议。我们今天仅讨论TCP和UDP相关的内容。</p>
+<ol>
+<li><p>搭建</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/fatedier/frp/releases/download/v0.22.0/frp_0.22.0_linux_amd64.tar.gz</span><br><span class="line">tar -zxvf frp_0.22.0_linux_amd64.tar.gz</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">文件夹改个名，方便使用</span></span><br><span class="line">cp -r frp_0.22.0_linux_amd64 frp</span><br><span class="line">cd frp</span><br><span class="line"></span><br><span class="line">rm frpc | rm frpc.ini</span><br><span class="line">vim frps.ini</span><br><span class="line"></span><br><span class="line">./frps -c frps.ini</span><br><span class="line">nohup .frps -c frps.ini &amp; #至后台运行</span><br></pre></td></tr></table></figure>
+<p>frps.ini 文件说明</p>
+<blockquote>
+<p><strong>如果没有必要，端口均可使用默认值，token、user和password项请自行设置。</strong><br>“bind_port”表示用于客户端和服务端连接的端口，这个端口号我们之后在配置客户端的时候要用到。<br>“dashboard_port”是服务端仪表板的端口，若使用7500端口，在配置完成服务启动后可以通过浏览器访问 x.x.x.x:7500 （其中x.x.x.x为VPS的IP）查看frp服务运行信息。<br>“token”是用于客户端和服务端连接的口令，请自行设置并记录，稍后会用到。<br>“dashboard_user”和“dashboard_pwd”表示打开仪表板页面登录的用户名和密码，自行设置即可。<br>“vhost_http_port”和“vhost_https_port”用于反向代理HTTP主机时使用，本文不涉及HTTP协议，因而照抄或者删除这两条均可。</p>
+</blockquote>
+</li>
+<li><p>客户端修改frpc.ini 修改其中的server_addr、server_port、token</p>
+</li>
+</ol>
+<h2><span id="tailscale">TailScale</span></h2><p>tailscale的一个重要的功能是可以借助局域网中安装了tailscale客户端的机器做为网关，并添加子网路由，来实现直接在外通过内网原生IP实现远程访问，也就是说，这个内网地址除了可以在局域网中连接外，在局域网外也能无缝连接，也可以让不能安装tailscale的机器实现远程访问，非常好用。</p>
+<ol>
+<li>官网注册账号<a href>https://tailscale.com/</a></li>
+<li>设备中安装客户端</li>
+<li>在客户端中登录账号</li>
+<li>在官网中找到【Machines】,将自己常用的设备设置为【disable key expiry】,即不过期</li>
+<li>记住这台机器的ip，以及端口号，通过浏览器输入 ip：端口号，即可访问</li>
+<li>如果机器中部署了其他服务，修改端口号即可</li>
+<li>访问路由器，即设置反向代理服务器，如目的地址为路由器地址 <a target="_blank" rel="noopener" href="http://192.168.2.1/">http://192.168.2.1</a>, 来源就是机器的端口号如 http:&#x2F;&#x2F;*:5088, 必须保证这个端口不被占用</li>
+</ol>
+<h3><span id="子路由设置">子路由设置</span></h3><ol>
+<li>打开 终端机-启动SSH功能</li>
+<li>使用命令 <code>sudo tailscale up --advertise-routes 192.168.1.0/24 --advertise-xit-node --reset</code></li>
+<li>回到 官网-machines， 找到这台机器 【Edit route settings】，enable 即可</li>
+</ol>
+<h3><span id="优化">优化</span></h3><ol>
+<li>开启IPv6</li>
+<li>关闭 IPv6Spi</li>
+</ol>
+<h3><span id="搭建">搭建</span></h3><ol>
+<li>首先我们需要准备一台服务器</li>
+<li><a href>https://github.com/juanfont/headscale/releases</a>寻找最新的版本<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">下载</span></span><br><span class="line">wget https://github.com/juanfont/headscale/releases/download/v0.16.4/headscale_0.16.4_linux_amd64 -O /usr/local/bin/headscale</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">增加可执行权限</span></span><br><span class="line">chmod +x /usr/local/bin/headscale</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">配置目录</span></span><br><span class="line">mkdir -p /etc/headscale</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">创建用户</span></span><br><span class="line">useradd \</span><br><span class="line">	--create-home \</span><br><span class="line">	--home-dir /var/lib/headscale/ \</span><br><span class="line">	--system \</span><br><span class="line">	--user-group \</span><br><span class="line">	--shell /usr/sbin/nologin \</span><br><span class="line">	headscale</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">创建文件 /lib/systemd/system/headscale.service</span></span><br><span class="line">[Unit]</span><br><span class="line">Description=headscale controller</span><br><span class="line">After=syslog.target</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">User=headscale</span><br><span class="line">Group=headscale</span><br><span class="line">ExecStart=/usr/local/bin/headscale serve</span><br><span class="line">Restart=always</span><br><span class="line">RestartSec=5</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Optional security enhancements</span></span><br><span class="line">NoNewPrivileges=yes</span><br><span class="line">PrivateTmp=yes</span><br><span class="line">ProtectSystem=strict</span><br><span class="line">ProtectHome=yes</span><br><span class="line">ReadWritePaths=/var/lib/headscale /var/run/headscale</span><br><span class="line">AmbientCapabilities=CAP_NET_BIND_SERVICE</span><br><span class="line">RuntimeDirectory=headscale</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">在 /etc/headscale/config.yaml 中配置 Headscale 的启动配置</span></span><br><span class="line">---</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Headscale 服务器的访问地址</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"></span></span><br><span class="line"><span class="language-bash"><span class="comment"># 这个地址是告诉客户端需要访问的地址, 即使你需要在跑在</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">负载均衡器之后这个地址也必须写成负载均衡器的访问地址</span></span><br><span class="line">server_url: https://your.domain.com</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Headscale 实际监听的地址</span></span><br><span class="line">listen_addr: 0.0.0.0:8080</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">监控地址</span></span><br><span class="line">metrics_listen_addr: 127.0.0.1:9090</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">grpc 监听地址</span></span><br><span class="line">grpc_listen_addr: 0.0.0.0:50443</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">是否允许不安全的 grpc 连接(非 TLS)</span></span><br><span class="line">grpc_allow_insecure: false</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">客户端分配的内网网段</span></span><br><span class="line">ip_prefixes:</span><br><span class="line">  - fd7a:115c:a1e0::/48</span><br><span class="line">  - 100.64.0.0/10</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">中继服务器相关配置</span></span><br><span class="line">derp:</span><br><span class="line">  server:</span><br><span class="line">    # 关闭内嵌的 derper 中继服务(可能不安全, 还没去看代码)</span><br><span class="line">    enabled: false</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">下发给客户端的中继服务器列表(默认走官方的中继节点)</span></span><br><span class="line">  urls:</span><br><span class="line">    - https://controlplane.tailscale.com/derpmap/default</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">可以在本地通过 yaml 配置定义自己的中继接待你</span></span><br><span class="line">  paths: []</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">SQLite config</span></span><br><span class="line">db_type: sqlite3</span><br><span class="line">db_path: /var/lib/headscale/db.sqlite</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使用自动签发证书是的域名</span></span><br><span class="line">tls_letsencrypt_hostname: &quot;&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使用自定义证书时的证书路径</span></span><br><span class="line">tls_cert_path: &quot;&quot;</span><br><span class="line">tls_key_path: &quot;&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">是否让客户端使用随机端口, 默认使用 41641/UDP</span></span><br><span class="line">randomize_client_port: false</span><br></pre></td></tr></table></figure></li>
+<li>证书及反向代理<br>可能很多人和我一样, 希望使用 ACME 自动证书, 又不想占用 80&#x2F;443 端口, 又想通过负载均衡器负载, 配置又看的一头雾水; 所以这里详细说明一下 Headscale 证书相关配置和工作逻辑:</li>
+</ol>
+<blockquote>
+<p>1、Headscale 的 ACME 只支持 HTTP&#x2F;TLS 挑战, 所以使用后必定占用 80&#x2F;443<br>2、当配置了 tls_letsencrypt_hostname 时一定会进行 ACME 申请<br>3、在不配置 tls_letsencrypt_hostname 时如果配置了 tls_cert_path 则使用自定义证书<br>4、两者都不配置则不使用任何证书, 服务端监听 HTTP 请求<br>5、三种情况下(ACME 证书、自定义证书、无证书)主服务都只监听 listen_addr 地址, 与 server_url 没半毛钱关系<br>6、只有在有证书(ACME 证书或自定义证书)的情况下或者手动开启了 grpc_allow_insecure 才会监听 grpc 远程调用服务</p>
+</blockquote>
+<p>综上所述, 如果你想通过 Nginx、Caddy 反向代理 Headscale, 则你需要满足以下配置:</p>
+<blockquote>
+<p>1、删除掉 tls_letsencrypt_hostname 或留空, 防止 ACME 启动<br>2、删除掉 tls_cert_path 或留空, 防止加载自定义证书<br>3、server_url 填写 Nginx 或 Caddy 被访问的 HTTPS 地址<br>4、在你的 Nginx 或 Caddy 中反向代理填写 listen_addr 的 HTTP 地址<br>Nginx 配置参考 官方 Wiki, Caddy 只需要一行 reverse_proxy headscale:8080 即可(地址自行替换).</p>
+</blockquote>
+<p>至于 ACME 证书你可以通过使用 acme.sh 自动配置 Nginx 或者使用 Caddy 自动申请等方式, 这些已经与 Headscale 无关了, 不在本文探讨范围内.</p>
+<ol start="4">
+<li><p>内网地址分配<br>请尽量不要将 ip_prefixes 配置为默认的 100.64.0.0&#x2F;10 网段, 如果你有兴趣查询了该地址段, 那么你应该明白它叫 CGNAT; 很不幸的是例如 Aliyun 底层的 apt 源等都在这个范围内, 可能会有一些奇怪问题.</p>
+</li>
+<li><p><code>systemctl enable headscale --now</code> 开机自启动 并 立即启动<br>其他的请参考连接 <a href>https://www.hi-linux.com/posts/33684.html</a></p>
+</li>
+</ol>
+<h1><span id="照片与文件自动备份">照片与文件自动备份</span></h1><p>软件 Synology Photos<br>软件 Cloud Sync</p>
+<h1><span id="个人影音">个人影音</span></h1><p>搭建 Jellyfin</p>
+<ol>
+<li>创建账户</li>
+<li>添加影音路径</li>
+<li>配置【刮削器】，影音使用插件TMDb，动漫使用插件Bangumi，书籍使用插件 Bookshelf，同步使用InfuseSync， 或者使用kodi播放器就需要插件 【Kodi Sync Queue】</li>
+</ol>
+<h2><span id="插件安装">插件安装</span></h2><p>控制台-插件-目录，找到对应的插件即可</p>
+<h1><span id="磁性链接">磁性链接</span></h1><p>软件使用 Download Station</p>
+<h1><span id="直播与在线语音">直播与在线语音</span></h1><p>Docker 中搜索 nibrev&#x2F;ant-media-server 或者 bytelang&#x2F;kplayer<br><a href>https://post.smzdm.com/p/apv56l97/</a><br><a href>https://juejin.cn/post/7206226905309446202</a></p>
+<h1><span id="软路由">软路由</span></h1><h1><span id="旁路由">旁路由</span></h1><h2><span id="docker方案">Docker方案</span></h2><ol>
+<li>安装docker，在商店安装</li>
+<li>开启ssh，<code>终端机和SNMP</code>-<code>开启SSH功能</code></li>
+<li>安装openwrt<ul>
+<li>windows 端下载SSH工具，<code>Hosts</code>-<code>New Host</code><ul>
+<li>配置需要连接的nas的 Label Address Port Username password</li>
+<li>通过ssh查看nas对应的网卡 <code>ifconfig</code></li>
+<li><code>sudo -i</code>开始管理员模式</li>
+<li><code>ip link set etch0 promisc on</code> 开启混杂模式</li>
+<li><code>docker network create -d macvlan --subnet=192.168.1.0/24 --gateway 192.168.1.1 -o parent=eth0 mac-net</code> 注意“192.168.1.1”为主路由地址，“eth0”为网卡， “192.168.1.0&#x2F;24”为路由器的子网地址</li>
+<li>上面执行完就可以在<code>docker</code>-<code>网络</code> 下看到对应的设置</li>
+<li><code>docker pull esirpg/buddha:latst</code> 拉去openWrt容器</li>
+<li><code>docker run -d --restart always --name esirpg-buddha --privileged --network mac-net --ip=192.168.1.13 esirpg/buddha:latest  /sbin/init</code>,启动容器，其中“192.168.1.13” 为旁路由ip，需要保证这个ip没有被占用</li>
+<li><code>bash docker exec -it esirpg-buddha ash</code> 进入容器</li>
+<li><code>bash vi /etc/config/network</code> 修改网络设置，将 config interface ‘lan’ 下面的 option ipaddr 修改为上面的 “192.168.1.13”</li>
+<li><code>bash /etc/init.d/network restart</code> 重启网络配置，使配置生效，<code>bash exit</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3><span id="配置openwrt">配置openwrt</span></h3><p>此时，浏览器打开“192.168.1.13” 进入openwrt登录页，账号 “root”，没有密码，进入后会提示修改密码</p>
+<ul>
+<li><code>网络</code>-<code>接口</code>,修改LAN口 <code>IpV4地址</code>修改为<code>192.168.1.13</code>,也就是openWrt的地址， <code>IPV4网关</code>和<code>自定义DNS服务</code>修改为主路由地址</li>
+<li>勾选最下面的<code>忽略此接口</code>，保存&amp;退出。</li>
+<li><code>网络</code>-<code>防火墙</code>，<code>入站数据</code> <code>出站数据</code> <code>转发</code>包括 区域中的全部选择<code>接受</code>，Lan的<code>MSS钳制</code>不勾选，其余全部勾选,保存&amp;退出</li>
+</ul>
+<h3><span id="配置clash">配置clash</span></h3><ul>
+<li>下载<a target="_blank" rel="noopener" href="https://github.com/Dreamacro/clash/releases">clash</a>,选择linux amd64，解压并改名为 clash</li>
+<li><code>服务</code>-<code>clash</code>-<code>更新</code>，上传并安装</li>
+<li>在<code>配置</code>- <code>导入配置</code>中配置服务即可</li>
+<li>保存应用 ，启动配置</li>
+</ul>
+<p>这个方案相对于 VM 安装简单，但坑的地方在于，不支持 udp 转发，在某些模式上甚至连不了网。推测是这些功能依赖于 kmod ，虽然在容器中安装了，但实际上用的还是 host kernel ，而 host 并未安装。一种可行的方法是给群晖的 kernel 编个 kmod ，但需要安装群晖一堆的构建套件，以前为了编 Wireguard 试过一次，非常痛苦，建议不要折腾。</p>
+<h2><span id="vm方案">VM方案</span></h2><p>vm 方案的缺点在于，guest 存在虚拟化开销，并且由于群晖对虚拟机的支持非常有限（没 vt-d），网卡只能通过 virtio 或者模拟设备的方式给 vm 用。但鉴于 docker 方案不支持 UDP，只能将就用了。类似于 docker 方案，起一个 openwrt vm，装 openclash 。</p>
+<ol>
+<li>下载 openwrt image <a target="_blank" rel="noopener" href="https://downloads.openwrt.org/releases/19.07.7/targets/x86/64/combined-squashfs.img.gz">https://downloads.openwrt.org/releases/19.07.7/targets/x86/64/combined-squashfs.img.gz</a></li>
+<li>群晖在 Virtual Machine Manage - 映像 - 硬盘映像 导入该镜像，并在 虚拟机 - 导入 - 从硬盘映像导入 ，给个 1C1G ，硬盘选择刚刚导入的镜像，网络选择默认的即可</li>
+<li>启动虚拟机，通过 虚拟机 - 连接拿到 shell ，同样修改 &#x2F;etc&#x2F;config&#x2F;network 配置，手动指定 ip 和 dns 并重新加载配置。这时候 ping 测试会发现虽然能解析到 ip 但连接不上。这是因为缺少一条路由指令，建议加入到 &#x2F;etc&#x2F;config&#x2F;network 持久化：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">config route &#x27;external&#x27;</span><br><span class="line">    option interface &#x27;lan&#x27;</span><br><span class="line">    option target &#x27;0.0.0.0&#x27;</span><br><span class="line">    option netmask &#x27;0.0.0.0&#x27;</span><br><span class="line">    option gateway &#x27;192.168.10.1&#x27;</span><br></pre></td></tr></table></figure>
+重新加载配置即可</li>
+</ol>
+<p>同 docker 方案，安装 openclash</p>
+<h2><span id="接入">接入</span></h2><p>在需要科学上网的设备上，手动指定 ip ，并将网关和 dns 指定为旁路由的 ip ，我这里为 192.168.10.2 ，即可让旁路由接管流量。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/diy/" rel="tag"># DIY</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/01/06/mac%E4%B8%8B%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0maven%E4%BB%93%E5%BA%93/" rel="prev" title="Mac下配置本地Maven仓库">
+      <i class="fa fa-chevron-left"></i> Mac下配置本地Maven仓库
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/06/01/ddns%E4%B8%8E%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/" rel="next" title="DDNS与内网穿透">
+      DDNS与内网穿透 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">搭建</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">随时访问</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">QuickConnect</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">公网IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">花生壳</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.4.</span> <span class="nav-text">DDNSTO</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.5.</span> <span class="nav-text">Cloudflare</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.6.</span> <span class="nav-text">Zerotier Moon</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.6.1.</span> <span class="nav-text">自建方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.6.2.</span> <span class="nav-text">客户机连接到moon节点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.7.</span> <span class="nav-text">FRP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.8.</span> <span class="nav-text">TailScale</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.8.1.</span> <span class="nav-text">子路由设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.8.2.</span> <span class="nav-text">优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.8.3.</span> <span class="nav-text">搭建</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">照片与文件自动备份</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">个人影音</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">插件安装</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">磁性链接</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">直播与在线语音</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">软路由</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">8.</span> <span class="nav-text">旁路由</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">8.1.</span> <span class="nav-text">Docker方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">8.1.1.</span> <span class="nav-text">配置openwrt</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">8.1.2.</span> <span class="nav-text">配置clash</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">8.2.</span> <span class="nav-text">VM方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">8.3.</span> <span class="nav-text">接入</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="pacoblack"
+      src="/images/avatar1.jpeg">
+  <p class="site-author-name" itemprop="name">pacoblack</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">67</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/pacoblack" title="GitHub → https://github.com/pacoblack" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:pacoson.wang@gmail.com" title="E-Mail → mailto:pacoson.wang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pacoblack</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,0' opacity='0.5' zIndex='-1' count='99' src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css" class="aplayer-style-marker">
+  <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js" class="aplayer-script-marker"></script>
+  <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js" class="meting-script-marker"></script>
+  <div id="aplayer-AXqIDvNX"
+      class="aplayer aplayer-tag-marker meting-tag-marker aplayer-fixed"
+      data-id="71075946"
+      data-server="netease"
+      data-type="playlist"
+      data-mode="circulation"
+      data-autoplay="false"
+      data-mutex="true"
+      data-listmaxheight="340px"
+      data-preload="auto"
+      data-fixed="true"
+      data-lrctype="0"
+      data-theme="#555"></div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/Epsilon2.1.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>

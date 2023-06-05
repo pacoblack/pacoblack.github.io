@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"pacoblack.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="关于内存的一些原理和优化方式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="android内存优化">
+<meta property="og:url" content="https://pacoblack.github.io/2021/10/28/android%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/index.html">
+<meta property="og:site_name" content="我爱学习">
+<meta property="og:description" content="关于内存的一些原理和优化方式">
+<meta property="og:locale">
+<meta property="article:published_time" content="2021-10-28T07:31:58.000Z">
+<meta property="article:modified_time" content="2021-10-29T10:56:45.595Z">
+<meta property="article:author" content="pacoblack">
+<meta property="article:tag" content="android">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://pacoblack.github.io/2021/10/28/android%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>android内存优化 | 我爱学习</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">我爱学习</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">这只是一场演习</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="主页 fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="标签 fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="分类 fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="归档 fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="关于 fa-fw"></i>About</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://pacoblack.github.io/2021/10/28/android%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar1.jpeg">
+      <meta itemprop="name" content="pacoblack">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="我爱学习">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          android内存优化
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-10-28 15:31:58" itemprop="dateCreated datePublished" datetime="2021-10-28T15:31:58+08:00">2021-10-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-10-29 18:56:45" itemprop="dateModified" datetime="2021-10-29T18:56:45+08:00">2021-10-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index"><span itemprop="name">android</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>关于内存的一些原理和优化方式</p>
+<span id="more"></span>
+
+<h1><span id="内存管理机制">内存管理机制</span></h1><p>应用程序的内存分配和垃圾回收都是由Android虚拟机完成的，<strong>在Android 5.0以下，使用的是Dalvik虚拟机，5.0及以上，则使用的是ART虚拟机。</strong></p>
+<h2><span id="java对象生命周期">Java对象生命周期</span></h2><ol>
+<li><p>Created（创建）<br>Java对象的创建分为如下几步：<br>  1、为对象分配存储空间。<br>  2、构造对象。<br>  3、从超类到子类对static成员进行初始化，类的static成员的初始化在ClassLoader加载该类时进行。<br>  4、超类成员变量按顺序初始化，递归调用超类的构造方法。<br>  5、子类成员变量按顺序初始化，一旦对象被创建，子类构造方法就调用该对象并为某些变量赋值。</p>
+</li>
+<li><p>InUse（应用）<br>此时对象至少被一个强引用持有。</p>
+</li>
+<li><p>Invisible（不可见）<br>当一个对象处于不可见阶段时，说明程序本身不再持有该对象的任何强引用，虽然该对象仍然是存在的。简单的例子就是程序的执行已经超出了该对象的作用域了。但是，该对象仍可能被虚拟机下的某些已装载的静态变量线程或JNI等强引用持有，这些特殊的强引用称为“GC Root”。被这些GC Root强引用的对象会导致该对象的内存泄漏，因而无法被GC回收。</p>
+</li>
+<li><p>Unreachable（不可达）<br>该对象不再被任何强引用持有。</p>
+</li>
+<li><p>Collected（收集）<br>当GC已经对该对象的内存空间重新分配做好准备时，对象进入收集阶段，如果该对象重写了finalize()方法，则执行它。</p>
+</li>
+<li><p>Finalized（终结）<br>等待垃圾回收器回收该对象空间。</p>
+</li>
+<li><p>Deallocated（对象空间重新分配）<br>GC对该对象所占用的内存空间进行回收或者再分配，则该对象彻底消失</p>
+</li>
+</ol>
+<h2><span id="android-内存分配模型">Android 内存分配模型</span></h2><p>在Android系统中，堆实际上就是一块匿名共享内存。Android虚拟机仅仅只是把它封装成一个 mSpace，由底层C库来管理，并且仍然使用libc提供的函数malloc和free来分配和释放内存。</p>
+<p>在大多数情况下，Android通过显示分配共享内存区域（如Ashmem或者Gralloc）来实现动态RAM区域能够在不同进程之间共享的机制。例如，Window Surface在App和Screen Compositor之间使用共享的内存，Cursor Buffers在Content Provider和Clients之间共享内存。</p>
+<p>对于Android Runtime有两种虚拟机，Dalvik 和 ART，它们分配的内存区域块是不同的，下面我们就来简单了解下。<br>Dalvik:</p>
+<ul>
+<li>Linear Alloc</li>
+<li>Zygote Space</li>
+<li>Alloc Space</li>
+</ul>
+<p>ART:</p>
+<ul>
+<li>Non Moving Space</li>
+<li>Zygote Space</li>
+<li>Alloc Space</li>
+<li>Image Space</li>
+<li>Large Obj Space</li>
+</ul>
+<p>不管是Dlavik还是ART，运行时堆都分为 LinearAlloc（类似于ART的Non Moving Space）、Zygote Space 和 Alloc Space。<br>Dalvik中的Linear Alloc是一个线性内存空间，是一个只读区域，主要用来存储虚拟机中的类，因为类加载后只需要只读的属性，并且不会改变它。把这些只读属性以及在整个进程的生命周期都不能结束的永久数据放到线性分配器中管理，能很好地减少堆混乱和GC扫描，提升内存管理的性能。<br>Zygote Space在Zygote进程和应用程序进程之间共享，<br>Allocation Space则是每个进程独占。</p>
+<p>Android系统的第一个虚拟机由Zygote进程创建并且只有一个Zygote Space。但是当Zygote进程在fork第一个应用程序进程之前，会将已经使用的那部分堆内存划分为一部分，还没有使用的堆内存划分为另一部分，也就是Allocation Space。但无论是应用程序进程，还是Zygote进程，当他们需要分配对象时，都是在各自的Allocation Space堆上进行。</p>
+<p>当在ART运行时，还有另外两个区块，即 ImageSpace和Large Object Space。</p>
+<ul>
+<li>Image Space：存放一些预加载类，类似于Dalvik中的Linear Alloc。与Zygote Space一样，在Zygote进程和应用程序进程之间共享。</li>
+<li>Large Object Space：离散地址的集合，分配一些大对象，用于提高GC的管理效率和整体性能。</li>
+</ul>
+<p>Dalvik 与 ART 回收的区别<br>1）Dalivk 仅固定一种回收算法。<br>2）ART 回收算法可运行期选择。<br>3）ART 具备内存整理能力，减少内存空洞。</p>
+<h1><span id="检查方法">检查方法</span></h1><h2><span id="profiler">Profiler</span></h2><p>1）启动Memory Profiler，观察内存变化曲线，触发内存泄漏可能所在的流程<br>2）dump内存泄漏阶段的内存快照<br>3）根据工具中的Class Name、Allocations、Shallow Size、Retained Size分析出可能存在内存泄漏的地方</p>
+<h2><span id="mat分析">MAT分析</span></h2><p>1）从Android Studio进入Profile的Memory视图，选择需要分析的应用进程，对应用进行怀疑有内存问题的操作，结束操作后，主动GC几次，最后export dump文件。<br>2）因为Android Studio保存的是Android Dalvik&#x2F;ART格式的.hprof文件，所以需要转换成J2SE HPROF格式才能被MAT识别和分析。Android SDK自带了一个转换工具在SDK的platform-tools下，其中转换语句为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./hprof-conv file.hprof converted.hprof</span><br></pre></td></tr></table></figure>
+<p>3）通过其中的Histogram类似Profiler对内存进行分析，或对两个文件进行对比<br>4）通过Leak Suspects分析其提示可能存在内存泄漏的地方</p>
+<h2><span id="常用的检测方式">常用的检测方式</span></h2><p>1、shell命令 + LeakCanary + MAT：运行程序，所有功能跑一遍，确保没有改出问题，完全退出程序，手动触发GC，然后使用<code>adb shell dumpsys meminfo packagename -d</code> 命令查看退出界面后Objects下的Views和Activities数目是否为0，如果不是则通过LeakCanary检查可能存在内存泄露的地方，最后通过MAT分析，如此反复，改善满意为止。</p>
+<p>2、Profile MEMORY：运行程序，对每一个页面进行内存分析检查。首先，反复打开关闭页面5次，然后收到GC（点击Profile MEMORY左上角的垃圾桶图标），如果此时total内存还没有恢复到之前的数值，则可能发生了内存泄露。此时，再点击Profile MEMORY左上角的垃圾桶图标旁的heap dump按钮查看当前的内存堆栈情况，选择按包名查找，找到当前测试的Activity，如果引用了多个实例，则表明发生了内存泄露。</p>
+<p>3、从首页开始用依次dump出每个页面的内存快照文件，然后利用MAT的对比功能，找出每个页面相对于上个页面内存里主要增加了哪些东西，做针对性优化。</p>
+<p>4、利用Android Memory Profiler实时观察进入每个页面后的内存变化情况，然后对产生的内存较大波峰做分析。</p>
+<h2><span id="查找tip">查找tip</span></h2><p>MAT的关键使用细节：<br>1）、善于使用 Regex 查找对应泄漏类。<br>2）、使用 group by package 查找对应包下的具体类。<br>3）、明白 with outgoing references 和 with incoming references 的区别。<br>with outgoing references：它引用了哪些对象。<br>with incoming references：哪些对象引用了它。<br>4）、了解 Shallow Heap 和 Retained Heap 的区别。<br>Shallow Heap：表示对象自身占用的内存。<br>Retained Heap：对象自身占用的内存 + 对象引用的对象所占用的内存。</p>
+<p>MAT的 5个关键组件：<br>1、Dominator（支配者）：<br>如果从GC Root到达对象A的路径上必须经过对象B，那么B就是A的支配者。<br>2、Histogram和dominator_tree的区别：<br>1）、Histogram 显示 Shallow Heap、Retained Heap、Objects，而 dominator_tree 显示的是 Shallow Heap、Retained Heap、Percentage。<br>2）、Histogram 基于 类 的角度，dominator_tree是基于 实例 的角度。Histogram 不会具体显示每一个泄漏的对象，而dominator_tree会。</p>
+<p>3、thread_overview<br>查看 线程数量 和 线程的 Shallow Heap、Retained Heap、Context Class Loader 与 is Daemon。<br>4、Top Consumers<br>通过 图形 的形式列出 占用内存比较多的对象。<br>在下方的 Biggest Objects 还可以查看其 相对比较详细的信息，例如 Shallow Heap、Retained Heap。<br>5、Leak Suspects<br>列出有内存泄漏的地方，点击 Details 可以查看其产生内存泄漏的引用链。</p>
+<h1><span id="bitmap内存分配的历史变化">Bitmap内存分配的历史变化</span></h1><p>在Android 3.0之前<br>  1）、Bitmap 对象存放在 Java Heap，而像素数据是存放在 Native 内存中的。<br>  2）、如果不手动调用 recycle，Bitmap Native 内存的回收完全依赖 finalize 函数回调，但是回调时机是不可控的。</p>
+<p>Android 3.0 ~ Android 7.0<br>将 Bitmap对象 和 像素数据 统一放到 Java Heap 中，即使不调用 recycle，Bitmap 像素数据也会随着对象一起被回收。<br>但是，Bitmap 全部放在 Java Heap 中的缺点很明显，大致有如下两点：<br>1）、Bitmap是内存消耗的大户，而 Max Java Heap 一般限制为 256、512MB，Bitmap 过大过多容易导致 OOM。<br>2）、容易引起大量 GC，没有充分利用系统的可用内存。</p>
+<p>Android 8.0及以后<br>1）、使用了能够辅助回收 Native 内存的 NativeAllocationRegistry，以实现将像素数据放到 Native 内存中，并且可以和 Bitmap 对象一起快速释放，最后，在 GC 的时候还可以考虑到这些 Bitmap 内存以防止被滥用。<br>2）、Android 8.0 为了 解决图片内存占用过多和图像绘制效率过慢 的问题新增了 硬件位图 Hardware Bitmap。</p>
+<p>将图片内存存放在Native中的步骤有 四步，如下所示：</p>
+<p>1）、调用 libandroid_runtime.so 中的 Bitmap 构造函数，申请一张空的 Native Bitmap。对于不同 Android 版本而言，这里的获取过程都有一些差异需要适配。<br>2）、申请一张普通的 Java Bitmap。<br>3）、将 Java Bitmap 的内容绘制到 Native Bitmap 中。<br>4）、释放 Java Bitmap 内存。</p>
+<p>当 系统内存不足 的时候，LMK 会根据 OOM_adj 开始杀进程，从 后台、桌面、服务、前台，直到手机重启。并且，如果频繁申请释放 Java Bitmap 也很容易导致内存抖动。</p>
+<h1><span id="检测大图方法">检测大图方法</span></h1><p>使用 Epic 来进行 Hook<br>Epic通常的使用步骤为如下三个步骤：<br>1、在项目 moudle 的 build.gradle 中添加</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compile &#x27;me.weishu:epic:0.6.0&#x27;</span><br></pre></td></tr></table></figure>
+<p>2、继承 XC_MethodHook，实现 Hook 方法前后的逻辑。如 监控Java线程的创建和销毁：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ThreadMethodHook</span> <span class="keyword">extends</span> <span class="title class_">XC_MethodHook</span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">beforeHookedMethod</span><span class="params">(MethodHookParam param)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">        <span class="built_in">super</span>.beforeHookedMethod(param);</span><br><span class="line">        <span class="type">Thread</span> <span class="variable">t</span> <span class="operator">=</span> (Thread) param.thisObject;</span><br><span class="line">        Log.i(TAG, <span class="string">&quot;thread:&quot;</span> + t + <span class="string">&quot;, started..&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">afterHookedMethod</span><span class="params">(MethodHookParam param)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">        <span class="built_in">super</span>.afterHookedMethod(param);</span><br><span class="line">        <span class="type">Thread</span> <span class="variable">t</span> <span class="operator">=</span> (Thread) param.thisObject;</span><br><span class="line">        Log.i(TAG, <span class="string">&quot;thread:&quot;</span> + t + <span class="string">&quot;, exit..&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3、注入 Hook 好的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DexposedBridge.findAndHookMethod(Thread.class, <span class="string">&quot;run&quot;</span>, <span class="keyword">new</span> <span class="title class_">ThreadMethodHook</span>());</span><br></pre></td></tr></table></figure>
+<p>知道了 Epic 的基本使用方法之后，我们便可以利用它来实现大图片的监控报警了。</p>
+<h2><span id="实战">实战</span></h2><p>在 Application 的 onCreate 方法中添加如下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">DexposedBridge.hookAllConstructors(ImageView.class, <span class="keyword">new</span> <span class="title class_">XC_MethodHook</span>() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">afterHookedMethod</span><span class="params">(MethodHookParam param)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">            <span class="built_in">super</span>.afterHookedMethod(param);</span><br><span class="line">        <span class="comment">// 1</span></span><br><span class="line">        DexposedBridge.findAndHookMethod(ImageView.class, <span class="string">&quot;setImageBitmap&quot;</span>, Bitmap.class, <span class="keyword">new</span> <span class="title class_">ImageHook</span>());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
+<p>在注释1处，我们 通过调用 DexposedBridge 的 findAndHookMethod 方法找到所有通过 ImageView 的 setImageBitmap 方法设置的切入点，其中最后一个参数 ImageHook 对象是继承了 XC_MethodHook 类，其目的是为了 重写 afterHookedMethod 方法拿到相应的参数进行监控逻辑的判断。<br>接下来，我们来实现我们的 ImageHook 类，代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ImageHook</span> <span class="keyword">extends</span> <span class="title class_">XC_MethodHook</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">afterHookedMethod</span><span class="params">(MethodHookParam param)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">        <span class="built_in">super</span>.afterHookedMethod(param);</span><br><span class="line">        <span class="comment">// 1</span></span><br><span class="line">        <span class="type">ImageView</span> <span class="variable">imageView</span> <span class="operator">=</span> (ImageView) param.thisObject;</span><br><span class="line">        checkBitmap(imageView,((ImageView) param.thisObject).getDrawable());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">checkBitmap</span><span class="params">(Object thiz, Drawable drawable)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (drawable <span class="keyword">instanceof</span> BitmapDrawable &amp;&amp; thiz <span class="keyword">instanceof</span> View) &#123;</span><br><span class="line">            <span class="keyword">final</span> <span class="type">Bitmap</span> <span class="variable">bitmap</span> <span class="operator">=</span> ((BitmapDrawable) drawable).getBitmap();</span><br><span class="line">            <span class="keyword">if</span> (bitmap != <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="keyword">final</span> <span class="type">View</span> <span class="variable">view</span> <span class="operator">=</span> (View) thiz;</span><br><span class="line">                <span class="type">int</span> <span class="variable">width</span> <span class="operator">=</span> view.getWidth();</span><br><span class="line">                <span class="type">int</span> <span class="variable">height</span> <span class="operator">=</span> view.getHeight();</span><br><span class="line">                <span class="keyword">if</span> (width &gt; <span class="number">0</span> &amp;&amp; height &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="comment">// 2、图标宽高都大于view的2倍以上，则警告</span></span><br><span class="line">                    <span class="keyword">if</span> (bitmap.getWidth() &gt;= (width &lt;&lt; <span class="number">1</span>)</span><br><span class="line">                        &amp;&amp;  bitmap.getHeight() &gt;= (height &lt;&lt; <span class="number">1</span>)) &#123;</span><br><span class="line">                    warn(bitmap.getWidth(), bitmap.getHeight(), width, height, <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;Bitmap size too large&quot;</span>));</span><br><span class="line">                &#125;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="comment">// 3、当宽高度等于0时，说明ImageView还没有进行绘制，使用ViewTreeObserver进行大图检测的处理。</span></span><br><span class="line">                    <span class="keyword">final</span> <span class="type">Throwable</span> <span class="variable">stackTrace</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>();</span><br><span class="line">                    view.getViewTreeObserver().addOnPreDrawListener(<span class="keyword">new</span> <span class="title class_">ViewTreeObserver</span>.OnPreDrawListener() &#123;</span><br><span class="line">                        <span class="meta">@Override</span></span><br><span class="line">                        <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">onPreDraw</span><span class="params">()</span> &#123;</span><br><span class="line">                            <span class="type">int</span> <span class="variable">w</span> <span class="operator">=</span> view.getWidth();</span><br><span class="line">                            <span class="type">int</span> <span class="variable">h</span> <span class="operator">=</span> view.getHeight();</span><br><span class="line">                            <span class="keyword">if</span> (w &gt; <span class="number">0</span> &amp;&amp; h &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                                <span class="keyword">if</span> (bitmap.getWidth() &gt;= (w &lt;&lt; <span class="number">1</span>)</span><br><span class="line">                                    &amp;&amp; bitmap.getHeight() &gt;= (h &lt;&lt; <span class="number">1</span>)) &#123;</span><br><span class="line">                                    warn(bitmap.getWidth(), bitmap.getHeight(), w, h, stackTrace);</span><br><span class="line">                                &#125;</span><br><span class="line">                                view.getViewTreeObserver().removeOnPreDrawListener(<span class="built_in">this</span>);</span><br><span class="line">                            &#125;</span><br><span class="line">                            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">warn</span><span class="params">(<span class="type">int</span> bitmapWidth, <span class="type">int</span> bitmapHeight, <span class="type">int</span> viewWidth, <span class="type">int</span> viewHeight, Throwable t)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">warnInfo</span> <span class="operator">=</span> <span class="string">&quot;Bitmap size too large: &quot;</span> +</span><br><span class="line">            <span class="string">&quot;\n real size: (&quot;</span> + bitmapWidth + <span class="string">&#x27;,&#x27;</span> + bitmapHeight + <span class="string">&#x27;)&#x27;</span> +</span><br><span class="line">            <span class="string">&quot;\n desired size: (&quot;</span> + viewWidth + <span class="string">&#x27;,&#x27;</span> + viewHeight + <span class="string">&#x27;)&#x27;</span> +</span><br><span class="line">            <span class="string">&quot;\n call stack trace: \n&quot;</span> + Log.getStackTraceString(t) + <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"></span><br><span class="line">        LogHelper.i(warnInfo);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先，在注释1处，我们重写了 ImageHook 的 afterHookedMethod 方法，拿到了当前的 ImageView 和要设置的 Bitmap 对象。然后，在注释2处，如果当前 ImageView 的宽高大于0，我们便进行大图检测的处理：ImageView 的宽高都大于 View 的2倍以上，则警告。接着，在注释3处，如果当前 ImageView 的宽高等于0，则说明 ImageView 还没有进行绘制，则使用 ImageView 的 ViewTreeObserver 获取其宽高进行大图检测的处理。至此，我们的大图检测检测组件就已经实现了。</p>
+<h1><span id="线上内存监控">线上内存监控</span></h1><p>要建立线上应用的内存监控体系，我们需要 先获取 App 的 DalvikHeap 与 NativeHeap，它们的获取方式可归结为如下四个步骤：</p>
+<p>1、首先，通过 ActivityManager 的 getProcessMemoryInfo &#x3D;&gt; Debug.MemoryInfo 获取内存信息数据。<br>2、然后，通过 hook Debug.MemoryInfo 的 getMemoryStat 方法（os v23 及以上）可以获得 Memory Profiler 中的多项数据，进而获得细分内存的使用情况。<br>3、接着，通过 Runtime 获取 DalvikHeap。<br>4、最后，通过 Debug.getNativeHeapAllocatedSize 获取 NativeHeap</p>
+<h2><span id="常规内存监控">常规内存监控</span></h2><p>根据 斐波那契数列 每隔一段时间（max：30min）获取内存的使用情况。</p>
+<p>项目早期：针对场景进行线上 Dump 内存的方式<br>具体使用 Debug.dumpHprofData() 实现。<br>其实现的流程为如下四个步骤：<br>1）、超过最大内存的 80%。<br>2）、内存 Dump。<br>3）、回传文件至服务器。<br>4）、MAT 手动分析。</p>
+<p>但是，这种方式有如下几个缺点：<br>1）、Dump文件太大，和对象数正相关，可以进行裁剪。<br>2）、上传失败率高，分析困难。</p>
+<p>项目中期：LeakCanary带到线上的方式<br>在使用 LeakCanary 的时候我们需要 预设泄漏怀疑点，一旦发现泄漏进行回传。但这种实现方式缺点比较明显，如下所示：<br>1）、不适合所有情况，需要预设怀疑点。<br>2）、分析比较耗时，容易导致 OOM。</p>
+<p>项目成熟期：定制 LeakCanary 方式<br>定制 LeakCanary 其实就是对 haha组件 来进行 定制<br>对于haha库，它的 基本用法 一般遵循为如下四个步骤：<br>1、导出堆栈文件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">File</span> <span class="variable">heapDumpFile</span> <span class="operator">=</span> ...</span><br><span class="line">Debug.dumpHprofData(heapDumpFile.getAbsolutePath());</span><br></pre></td></tr></table></figure>
+<p>2、根据堆栈文件创建出内存映射文件缓冲区</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">DataBuffer</span> <span class="variable">buffer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MemoryMappedFileBuffer</span>(heapDumpFile);</span><br></pre></td></tr></table></figure>
+<p>3、根据文件缓存区创建出对应的快照</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Snapshot</span> <span class="variable">snapshot</span> <span class="operator">=</span> Snapshot.createSnapshot(buffer);</span><br></pre></td></tr></table></figure>
+<p>4、从快照中获取指定的类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ClassObj</span> <span class="variable">someClass</span> <span class="operator">=</span> snapshot.findClass(<span class="string">&quot;com.example.SomeClass&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>我们在实现线上版的LeakCanary的时候主要要解决的问题有三个，如下所示：<br>1）、解决 预设怀疑点 时不准确的问题 &#x3D;&gt; 自动找怀疑点。<br>2）、解决掉将 hprof 文件映射到内存中的时候可能导致内存暴涨甚至发生 OOM 的问题 &#x3D;&gt; 对象裁剪，不全部加载到内存。即对生成的 Hprof 内存快照文件做一些优化：裁剪大部分图片对应的 byte 数据 以减少文件开销，最后，使用 7zip 压缩，一般可 节省 90% 大小。<br>3）、分析泄漏链路慢而导致分析时间过长 &#x3D;&gt; 分析 Retain size 大的对象。</p>
+<h1><span id="gc-监控组件搭建">GC 监控组件搭建</span></h1><p>通过 Debug.startAllocCounting 来监控 GC 情况，注意有一定 性能影响。<br>在 Android 6.0 之前 可以拿到 内存分配次数和大小以及 GC 次数，其对应的代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">long</span> <span class="variable">allocCount</span> <span class="operator">=</span> Debug.getGlobalAllocCount();</span><br><span class="line"><span class="type">long</span> <span class="variable">allocSize</span> <span class="operator">=</span> Debug.getGlobalAllocSize();</span><br><span class="line"><span class="type">long</span> <span class="variable">gcCount</span> <span class="operator">=</span> Debug.getGlobalGcInvocationCount();</span><br></pre></td></tr></table></figure>
+<p>并且，在 Android 6.0 及之后 可以拿到 更精准 的 GC 信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Debug.getRuntimeStat(&quot;art.gc.gc-count&quot;);</span><br><span class="line">Debug.getRuntimeStat(&quot;art.gc.gc-time&quot;);</span><br><span class="line">Debug.getRuntimeStat(&quot;art.gc.blocking-gc-count&quot;);</span><br><span class="line">Debug.getRuntimeStat(&quot;art.gc.blocking-gc-time&quot;);</span><br></pre></td></tr></table></figure>
+<p>对于 GC 信息的排查，我们一般关注 阻塞式GC的次数和耗时，因为它会 暂停线程，可能导致应用发生 卡顿。建议 仅对重度场景使用。</p>
+<h1><span id="使用基于-leakcannary-的改进版-resourcecanary">使用基于 LeakCannary 的改进版 ResourceCanary</span></h1><p><a target="_blank" rel="noopener" href="https://github.com/Tencent/matrix/wiki/Matrix-Android-ResourceCanary">https://github.com/Tencent/matrix/wiki/Matrix-Android-ResourceCanary</a></p>
+<p>目前，它的主要功能有 三个部分：<br>1、分离 检测和分析 两部分流程：自动化测试由测试平台进行，分析则由监控平台的服务端离线完成，最后再通知相关开发解决问题。<br>2、裁剪 Hprof文件，以降低 传输 Hprof 文件与后台存储 Hprof 文件的开销：获取 需要的类和对象相关的字符串 信息即可，其它数据都可以在客户端裁剪，一般能 Hprof 大小会减小至原来的 1&#x2F;10 左右。<br>3、增加重复 Bitmap 对象检测：方便通过减少冗余 Bitmap 的数量，以降低内存消耗。</p>
+<p>参考资料：<a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904099998089230#heading-14">https://juejin.cn/post/6844904099998089230#heading-14</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/05/26/android-native%E4%BB%A3%E7%A0%81%E5%B4%A9%E6%BA%83%E6%8D%95%E8%8E%B7/" rel="prev" title="android native代码崩溃捕获">
+      <i class="fa fa-chevron-left"></i> android native代码崩溃捕获
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/10/28/android%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/" rel="next" title="android启动优化">
+      android启动优化 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">内存管理机制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">Java对象生命周期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">Android 内存分配模型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">检查方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">Profiler</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">MAT分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">常用的检测方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.4.</span> <span class="nav-text">查找tip</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">Bitmap内存分配的历史变化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">检测大图方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">实战</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">线上内存监控</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.1.</span> <span class="nav-text">常规内存监控</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">GC 监控组件搭建</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">使用基于 LeakCannary 的改进版 ResourceCanary</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="pacoblack"
+      src="/images/avatar1.jpeg">
+  <p class="site-author-name" itemprop="name">pacoblack</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">67</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/pacoblack" title="GitHub → https://github.com/pacoblack" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:pacoson.wang@gmail.com" title="E-Mail → mailto:pacoson.wang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pacoblack</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,0' opacity='0.5' zIndex='-1' count='99' src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css" class="aplayer-style-marker">
+  <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js" class="aplayer-script-marker"></script>
+  <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js" class="meting-script-marker"></script>
+  <div id="aplayer-AXqIDvNX"
+      class="aplayer aplayer-tag-marker meting-tag-marker aplayer-fixed"
+      data-id="71075946"
+      data-server="netease"
+      data-type="playlist"
+      data-mode="circulation"
+      data-autoplay="false"
+      data-mutex="true"
+      data-listmaxheight="340px"
+      data-preload="auto"
+      data-fixed="true"
+      data-lrctype="0"
+      data-theme="#555"></div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/Epsilon2.1.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>

@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"pacoblack.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="简单介绍下">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ok&#x2F;IO分析">
+<meta property="og:url" content="https://pacoblack.github.io/2021/03/14/ok-io%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="我爱学习">
+<meta property="og:description" content="简单介绍下">
+<meta property="og:locale">
+<meta property="og:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/http/http1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/http/http2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/http/http3.png">
+<meta property="article:published_time" content="2021-03-14T03:05:34.000Z">
+<meta property="article:modified_time" content="2021-03-14T04:59:36.275Z">
+<meta property="article:author" content="pacoblack">
+<meta property="article:tag" content="android">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/pacoblack/BlogImages/master/http/http1.png">
+
+<link rel="canonical" href="https://pacoblack.github.io/2021/03/14/ok-io%E5%88%86%E6%9E%90/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>ok/IO分析 | 我爱学习</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">我爱学习</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">这只是一场演习</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="主页 fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="标签 fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="分类 fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="归档 fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="关于 fa-fw"></i>About</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://pacoblack.github.io/2021/03/14/ok-io%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar1.jpeg">
+      <meta itemprop="name" content="pacoblack">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="我爱学习">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ok/IO分析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-03-14 11:05:34 / Modified: 12:59:36" itemprop="dateCreated datePublished" datetime="2021-03-14T11:05:34+08:00">2021-03-14</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index"><span itemprop="name">android</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>简单介绍下</p>
+<span id="more"></span>
+<h1><span id="http20">http2.0</span></h1><p><img src="https://raw.githubusercontent.com/pacoblack/BlogImages/master/http/http1.png"></p>
+<ul>
+<li>新的二进制格式。HTTP 1.x的解析是基于文本。</li>
+<li>多路复用。一个request对应一个id，这样一个连接上可以有多个requst，每个连接的request可以随机的混杂在一起，接受方可以根据request的id将request再归属到各自不同的服务端请求里面</li>
+<li>请求优先级。把HTTP消息分解为很多独立的帧后，就可以通过优化这些帧的交错和传输顺序，进一步提供性能。</li>
+<li>header压缩。HTTP1.x的header带有大量的信息，而且每次都要重复发送，HTTP2.0使用encoder来减少需要传输的header大小，通讯双方各自cache一个header field表，既避免了重复的header传输，又减少了需要传输的大小。</li>
+<li>服务端推送</li>
+<li>新增的二进制分帧层。它定义了如何封装HTTP消息并在客户端与服务器之间传输<br><img src="https://raw.githubusercontent.com/pacoblack/BlogImages/master/http/http2.png"></li>
+</ul>
+<p>所有HTTP 2.0通信都在一个连接上完成，这个连接可以承载任意数量的双向数据流。每个数据流以消息的形式发送。而消息由一或多个帧组成，而这些帧可以乱序发送，然后再根据每个帧首部流标识符重新组装。</p>
+<h1><span id="ok-ix2fo">ok I&#x2F;O</span></h1><p>ok I&#x2F;O是用的NIO的通信方式</p>
+<p>有Source和Sink两个接口，类似于InputStream和OutputStream，是io操作的顶级接口类,这两个接口均实现了Closeable接口。所以可以把Source简单的看成InputStream，Sink简单看成OutputStream。</p>
+<h2><span id="segment">Segment</span></h2><p>okio将数据分割成一块块的片段，内部维护者固定长度的byte[]数组，同时segment拥有前面节点和后面节点，构成一个双向循环链表<br><img src="https://raw.githubusercontent.com/pacoblack/BlogImages/master/http/http3.png"></p>
+<p>分片中使用数组存储，兼具读的连续性，以及写的可插入性，对比单一使用链表或者数组，是一种折中的方案，读写更快，而且有个好处根据需求改动分片的大小来权衡读写的业务操作，另外，segment也有一些内置的优化操作</p>
+<ul>
+<li><p>compact 压缩<br>这是segment的一个优化技巧，写入数据后，因为每个segment的片段size是固定的，为了防止经过长时间的使用后，每个segment中的数据被分割的十分严重，可能一个很小的数据却占据了整个segment，所以有了一个压缩机制。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">compact</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">//上一个节点就是自己，意味着就一个节点，无法压缩，抛异常</span></span><br><span class="line">  <span class="keyword">if</span> (prev == <span class="built_in">this</span>) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalStateException</span>();</span><br><span class="line">   <span class="comment">//如果上一个节点不是自己的，所以你是没有权利压缩的</span></span><br><span class="line">  <span class="keyword">if</span> (!prev.owner) <span class="keyword">return</span>; <span class="comment">// Cannot compact: prev isn&#x27;t writable.</span></span><br><span class="line">  <span class="comment">//能进来说明，存在上一个节点，且上一个节点是自己的，可以压缩</span></span><br><span class="line">  <span class="comment">//记录当前Segment具有的数据，数据大小为limit-pos</span></span><br><span class="line">  <span class="type">int</span> <span class="variable">byteCount</span> <span class="operator">=</span> limit - pos;</span><br><span class="line">  <span class="comment">// 统计前结点是否被共享，如果共享则只记录Size-limit大小，</span></span><br><span class="line">  <span class="comment">// 如果没有被共享，则加上pre.pos之前的空位置；</span></span><br><span class="line">  <span class="comment">//本行代码主要是获取前一个segment的可用空间。</span></span><br><span class="line">  <span class="comment">// 先判断prev是否是共享的，如果是共享的，则只记录SIZE-limit,</span></span><br><span class="line">  <span class="comment">// 如果没有共享则记录SIZE-limit加上prev.pos之前的空位置</span></span><br><span class="line">  <span class="type">int</span> <span class="variable">availableByteCount</span> <span class="operator">=</span> SIZE - prev.limit + (prev.shared ? <span class="number">0</span> : prev.pos);</span><br><span class="line"> <span class="comment">//判断prev的空余空间是否能够容纳Segment的全部数据，不能容纳则返回</span></span><br><span class="line">  <span class="keyword">if</span> (byteCount &gt; availableByteCount) <span class="keyword">return</span>;</span><br><span class="line">  <span class="comment">//能容纳则将自己的这个部分数据写入上一个Segment</span></span><br><span class="line">  writeTo(prev, byteCount);</span><br><span class="line">  <span class="comment">//讲当前Segment从Segment链表中移除</span></span><br><span class="line">  pop();</span><br><span class="line">  <span class="comment">//回收该Segment</span></span><br><span class="line">  SegmentPool.recycle(<span class="built_in">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>如果前面的Segment是共享的，那么不可写，也不能压缩，接着判断前一个的剩余大小是否比当前空间大，如果有足够的空间来容纳数据，调用前面的writeTo方法写入数据，写完以后，移除当前segment，并回收segment。</p>
+</blockquote>
+</li>
+<li><p>共享 split()方法<br>为了减少数据复制带来的性能开销。先把Segment一分为二，将(pos + 1, pos + btyeCount - 1)的内容给新的Segment,将(pos + byteCount, limit - 1)的内容留给自己.</p>
+</li>
+</ul>
+<h2><span id="segemtnpool">SegemtnPool</span></h2><p>SegmentPool是一个Segment池，由一个单项链表构成。该池负责Segment的回收和闲置Segment管理，也就是说Buffer使用的Segment是从Segment单项链表中取出的，这样有效的避免了GC频率.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//一个Segment记录的最大长度是8192，因此SegmentPool只能存储8个Segment</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="type">long</span> <span class="variable">MAX_SIZE</span> <span class="operator">=</span> <span class="number">64</span> * <span class="number">1024</span>;</span><br><span class="line"><span class="comment">//该SegmentPool存储了一个回收Segment的链表</span></span><br><span class="line"><span class="keyword">static</span> Segment next;</span><br><span class="line"><span class="comment">//该值记录了当前所有Segment的总大小，最大值是为MAX_SIZE</span></span><br><span class="line"><span class="keyword">static</span> <span class="type">long</span> byteCount;  </span><br><span class="line">它的两个重要的方法 take(), recycle()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> Segment <span class="title function_">take</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">synchronized</span> (SegmentPool.class) &#123;</span><br><span class="line">      <span class="keyword">if</span> (next != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="type">Segment</span> <span class="variable">result</span> <span class="operator">=</span> next;</span><br><span class="line">        next = result.next;</span><br><span class="line">        result.next = <span class="literal">null</span>;</span><br><span class="line">        byteCount -= Segment.SIZE;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Segment</span>(); <span class="comment">// Pool is empty. Don&#x27;t zero-fill while holding a lock.</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">recycle</span><span class="params">(Segment segment)</span> &#123;</span><br><span class="line">    <span class="comment">//如果这个要回收的Segment被前后引用，则无法回收</span></span><br><span class="line">    <span class="keyword">if</span> (segment.next != <span class="literal">null</span> || segment.prev != <span class="literal">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>();</span><br><span class="line">    <span class="comment">//如果这个要回收的Segment的数据是分享的，则无法回收</span></span><br><span class="line">    <span class="keyword">if</span> (segment.shared) <span class="keyword">return</span>; <span class="comment">// This segment cannot be recycled.</span></span><br><span class="line">    <span class="comment">//加锁</span></span><br><span class="line">    <span class="keyword">synchronized</span> (SegmentPool.class) &#123;</span><br><span class="line">      <span class="comment">//如果 这个空间已经不足以再放入一个空的Segment，则不回收</span></span><br><span class="line">      <span class="keyword">if</span> (byteCount + Segment.SIZE &gt; MAX_SIZE) <span class="keyword">return</span>; <span class="comment">// Pool is full.</span></span><br><span class="line">      <span class="comment">//设置SegmentPool的池大小</span></span><br><span class="line">      byteCount += Segment.SIZE;</span><br><span class="line">      <span class="comment">//segment的下一个指向头</span></span><br><span class="line">      segment.next = next;</span><br><span class="line">      <span class="comment">//设置segment的可读写位置为0</span></span><br><span class="line">      segment.pos = segment.limit = <span class="number">0</span>;</span><br><span class="line">      <span class="comment">//设置当前segment为头</span></span><br><span class="line">      next = segment;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>超时</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">Watchdog</span> <span class="keyword">extends</span> <span class="title class_">Thread</span> &#123;</span><br><span class="line">   <span class="keyword">public</span> <span class="title function_">Watchdog</span><span class="params">()</span> &#123;</span><br><span class="line">     <span class="built_in">super</span>(<span class="string">&quot;Okio Watchdog&quot;</span>);</span><br><span class="line">     setDaemon(<span class="literal">true</span>);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">     <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">         AsyncTimeout timedOut;</span><br><span class="line">         <span class="keyword">synchronized</span> (AsyncTimeout.class) &#123;</span><br><span class="line">           timedOut = awaitTimeout();</span><br><span class="line"></span><br><span class="line">           <span class="comment">// Didn&#x27;t find a node to interrupt. Try again.</span></span><br><span class="line">           <span class="keyword">if</span> (timedOut == <span class="literal">null</span>) <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">           <span class="comment">// The queue is completely empty. Let this thread exit and let another watchdog thread</span></span><br><span class="line">           <span class="comment">// get created on the next call to scheduleTimeout().</span></span><br><span class="line">           <span class="keyword">if</span> (timedOut == head) &#123;</span><br><span class="line">             head = <span class="literal">null</span>;</span><br><span class="line">             <span class="keyword">return</span>;</span><br><span class="line">           &#125;</span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">         <span class="comment">// Close the timed out node.</span></span><br><span class="line">         timedOut.timedOut();</span><br><span class="line">       &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;</span><br><span class="line">       &#125;</span><br><span class="line">     &#125;</span><br><span class="line">   &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>这里的WatchDog只是一个继承于Thread的一类，里面的run方法执行的就是超时的判断，之所以在socket写时采取异步超时，这完全是由socket自身的性质决定的，socket经常会阻塞自己，导致下面的事情执行不了。</p>
+<h2><span id="enter-exit">enter、exit</span></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">public</span> <span class="keyword">final</span> Source <span class="title function_">source</span><span class="params">(<span class="keyword">final</span> Source source)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Source</span>() &#123;</span><br><span class="line">      <span class="meta">@Override</span> <span class="keyword">public</span> <span class="type">long</span> <span class="title function_">read</span><span class="params">(Buffer sink, <span class="type">long</span> byteCount)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">boolean</span> <span class="variable">throwOnTimeout</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line">        enter();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          <span class="type">long</span> <span class="variable">result</span> <span class="operator">=</span> source.read(sink, byteCount);</span><br><span class="line">          throwOnTimeout = <span class="literal">true</span>;</span><br><span class="line">          <span class="keyword">return</span> result;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">          <span class="keyword">throw</span> exit(e);</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">          exit(throwOnTimeout);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">scheduleTimeout</span><span class="params">(</span></span><br><span class="line"><span class="params">      AsyncTimeout node, <span class="type">long</span> timeoutNanos, <span class="type">boolean</span> hasDeadline)</span> &#123;</span><br><span class="line">    <span class="comment">//head==null，表明之前没有，本次是第一次操作，开启Watchdog守护线程</span></span><br><span class="line">    <span class="keyword">if</span> (head == <span class="literal">null</span>) &#123;</span><br><span class="line">      head = <span class="keyword">new</span> <span class="title class_">AsyncTimeout</span>();</span><br><span class="line">      <span class="keyword">new</span> <span class="title class_">Watchdog</span>().start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">long</span> <span class="variable">now</span> <span class="operator">=</span> System.nanoTime();</span><br><span class="line">    <span class="comment">//如果有 deadLine，并且超时时长不为0</span></span><br><span class="line">    <span class="keyword">if</span> (timeoutNanos != <span class="number">0</span> &amp;&amp; hasDeadline) &#123;</span><br><span class="line">      <span class="comment">//对比最长限制和超时时长，选择最小的那个值</span></span><br><span class="line">      node.timeoutAt = now + Math.min(timeoutNanos, node.deadlineNanoTime() - now);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (timeoutNanos != <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="comment">//如果没有最长限制，但是超时时长不为0，则使用超时时长</span></span><br><span class="line">      node.timeoutAt = now + timeoutNanos;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (hasDeadline) &#123;</span><br><span class="line">      <span class="comment">//如果有最长限制，但是超时时长为0，则使用最长限制</span></span><br><span class="line">      node.timeoutAt = node.deadlineNanoTime();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">     <span class="comment">//如果既没有最长限制，和超时时长，则抛异常</span></span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">AssertionError</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 按照排序顺序插入</span></span><br><span class="line">    <span class="type">long</span> <span class="variable">remainingNanos</span> <span class="operator">=</span> node.remainingNanos(now);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">AsyncTimeout</span> <span class="variable">prev</span> <span class="operator">=</span> head; <span class="literal">true</span>; prev = prev.next) &#123;</span><br><span class="line">      <span class="comment">//如果下一个为null或者剩余时间比下一个短 就插入node</span></span><br><span class="line">      <span class="keyword">if</span> (prev.next == <span class="literal">null</span> || remainingNanos &lt; prev.next.remainingNanos(now)) &#123;</span><br><span class="line">        node.next = prev.next;</span><br><span class="line">        prev.next = node;</span><br><span class="line">        <span class="keyword">if</span> (prev == head) &#123;</span><br><span class="line">          <span class="comment">// 唤醒 watchdog</span></span><br><span class="line">          AsyncTimeout.class.notify();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<h1><span id="okio的特点">Okio的特点</span></h1><ul>
+<li>分块处理(Segment)，这样在大数据IO的时候可以以块为单位进行IO，这可以提高IO的吞吐率</li>
+<li>数据块使用链表来进行管理，这可以仅通过移动指针就进行数据的管理，而不用真正的处理数据，而且对扩容来说十分方便.</li>
+<li>闲置的块进行管理，通过一个块池(SegmentPool)的管理，避免系统GC和申请byte时的zero-fill。</li>
+<li>为所有的Source、Sink提供了超时操作，这是在Java原生IO操作是没有的。</li>
+<li>okio它对数据的读写都进行了封装，调用者可以十分方便的进行各种值(Stringg,short,int,hex,utf-8,base64等)的转化。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/13/%E5%9B%BE%E7%89%87%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/" rel="prev" title="图片内存优化">
+      <i class="fa fa-chevron-left"></i> 图片内存优化
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/04/17/%E5%9C%A8%E7%BA%BF%E5%BD%B1%E9%99%A2/" rel="next" title="在线影院">
+      在线影院 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">http2.0</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">ok I&#x2F;O</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">Segment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">SegemtnPool</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">enter、exit</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">Okio的特点</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="pacoblack"
+      src="/images/avatar1.jpeg">
+  <p class="site-author-name" itemprop="name">pacoblack</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">67</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/pacoblack" title="GitHub → https://github.com/pacoblack" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:pacoson.wang@gmail.com" title="E-Mail → mailto:pacoson.wang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pacoblack</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,0' opacity='0.5' zIndex='-1' count='99' src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css" class="aplayer-style-marker">
+  <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js" class="aplayer-script-marker"></script>
+  <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js" class="meting-script-marker"></script>
+  <div id="aplayer-AXqIDvNX"
+      class="aplayer aplayer-tag-marker meting-tag-marker aplayer-fixed"
+      data-id="71075946"
+      data-server="netease"
+      data-type="playlist"
+      data-mode="circulation"
+      data-autoplay="false"
+      data-mutex="true"
+      data-listmaxheight="340px"
+      data-preload="auto"
+      data-fixed="true"
+      data-lrctype="0"
+      data-theme="#555"></div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/Epsilon2.1.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
