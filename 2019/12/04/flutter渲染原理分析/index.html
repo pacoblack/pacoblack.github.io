@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"pacoblack.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="flutter UI 渲染原理   控件库（Widgets）Flutter的控件库提供了非常丰富的控件，包括最基本的文本、图片、容器、输入框和动画等等。在Flutter中“一切皆是控件”，通过组合、嵌套不同类型的控件，就可以构建出任意功能、任意复杂度的界面。它包含的最主要的几个类有： 12345678910111213141516171819202122&#x2F;&#x2F; WidgetsFlutterBindi">
+  <meta name="description" content="flutter UI 渲染原理">
 <meta property="og:type" content="article">
 <meta property="og:title" content="flutter渲染原理分析">
 <meta property="og:url" content="https://pacoblack.github.io/2019/12/04/flutter%E6%B8%B2%E6%9F%93%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/index.html">
 <meta property="og:site_name" content="我爱学习">
-<meta property="og:description" content="flutter UI 渲染原理   控件库（Widgets）Flutter的控件库提供了非常丰富的控件，包括最基本的文本、图片、容器、输入框和动画等等。在Flutter中“一切皆是控件”，通过组合、嵌套不同类型的控件，就可以构建出任意功能、任意复杂度的界面。它包含的最主要的几个类有： 12345678910111213141516171819202122&#x2F;&#x2F; WidgetsFlutterBindi">
+<meta property="og:description" content="flutter UI 渲染原理">
 <meta property="og:locale">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/16327616-940826fdfb956056?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/16327616-d75ff50bb1f286dd?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
@@ -33,7 +33,7 @@
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/16327616-31e69abd95ec9efb?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/16327616-fb0d37e3a5f34b12?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="article:published_time" content="2019-12-04T11:00:41.000Z">
-<meta property="article:modified_time" content="2021-03-13T06:56:15.539Z">
+<meta property="article:modified_time" content="2025-05-30T03:24:16.129Z">
 <meta property="article:author" content="pacoblack">
 <meta property="article:tag" content="Flutter">
 <meta property="article:tag" content="原理分析">
@@ -200,7 +200,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-03-13 14:56:15" itemprop="dateModified" datetime="2021-03-13T14:56:15+08:00">2021-03-13</time>
+                <time title="Modified: 2025-05-30 11:24:16" itemprop="dateModified" datetime="2025-05-30T11:24:16+08:00">2025-05-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -228,7 +228,7 @@
 
       
         <p>flutter UI 渲染原理</p>
-<!---more-->
+<span id="more"></span>
 
 <h1><span id="控件库widgets">控件库（Widgets）</span></h1><p>Flutter的控件库提供了非常丰富的控件，包括最基本的文本、图片、容器、输入框和动画等等。在Flutter中“一切皆是控件”，通过组合、嵌套不同类型的控件，就可以构建出任意功能、任意复杂度的界面。它包含的最主要的几个类有：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">// WidgetsFlutterBinding 是Flutter的控件框架和Flutter引擎的胶水层, 基于Flutter控件系统开发的程序都需要使用</span><br><span class="line">class WidgetsFlutterBinding extends BindingBase with GestureBinding, ServicesBinding, SchedulerBinding,</span><br><span class="line">            PaintingBinding, RendererBinding, WidgetsBinding &#123; ... &#125;</span><br><span class="line"></span><br><span class="line">// Widget就是所有控件的基类，它本身所有的属性都是只读的。</span><br><span class="line">abstract class Widget extends DiagnosticableTree &#123; ... &#125;</span><br><span class="line"></span><br><span class="line">// StatelessWidget和StatefulWidget并不会直接影响RenderObject的创建，它们只负责创建对应的RenderObjectWidget</span><br><span class="line">// StatelessElement和StatefulElement也是类似的功能。</span><br><span class="line">abstract class StatelessWidget extends Widget &#123; ... &#125;</span><br><span class="line">abstract class StatefulWidget extends Widget &#123; ... &#125;</span><br><span class="line"></span><br><span class="line">// RenderObjectWidget所有的实现类则负责提供配置信息并创建具体的RenderObjectElement。</span><br><span class="line">abstract class RenderObjectWidget extends Widget &#123; ... &#125;</span><br><span class="line"></span><br><span class="line">// Element是Flutter用来分离控件树和真正的渲染对象的中间层，控件用来描述对应的element属性，控件重建后可能会复用同一个element。</span><br><span class="line">abstract class Element extends DiagnosticableTree implements BuildContext &#123; ... &#125;</span><br><span class="line">class StatelessElement extends ComponentElement &#123; ... &#125;</span><br><span class="line">class StatefulElement extends ComponentElement &#123; ... &#125;</span><br><span class="line"></span><br><span class="line">// RenderObjectElement持有真正负责布局、绘制和碰撞测试（hit test）的RenderObject对象。</span><br><span class="line">abstract class RenderObjectElement extends Element &#123; ... &#125;</span><br></pre></td></tr></table></figure>

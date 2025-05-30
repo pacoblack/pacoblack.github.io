@@ -573,10 +573,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2023-01-06 10:15:34 / Modified: 10:45:39" itemprop="dateCreated datePublished" datetime="2023-01-06T10:15:34+08:00">2023-01-06</time>
+              <time title="Created: 2023-01-06 10:15:34" itemprop="dateCreated datePublished" datetime="2023-01-06T10:15:34+08:00">2023-01-06</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2025-05-30 11:23:05" itemprop="dateModified" datetime="2025-05-30T11:23:05+08:00">2025-05-30</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -599,33 +605,14 @@
 
       
           <p>有时需要配置本地maven仓库</p>
-<!---more-->
-<h1><span id="安装">安装</span></h1><h2><span id="手动安装">手动安装</span></h2><p>(官网)[<a target="_blank" rel="noopener" href="https://maven.apache.org/download.cgi]%E4%B8%8B%E8%BD%BD%E5%9C%B0%E5%9D%80">https://maven.apache.org/download.cgi]下载地址</a> 解压到对应的目录<br>或者</p>
-<h2><span id="brew-安装">brew 安装</span></h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//下载</span><br><span class="line">$ /usr/bin/ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;</span><br><span class="line"></span><br><span class="line">//安装</span><br><span class="line">$ brew install gradle</span><br></pre></td></tr></table></figure>
-
-<h1><span id="配置">配置</span></h1><ol>
-<li>打开～&#x2F;.bash_profile</li>
-<li>添加配置<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#maven</span></span><br><span class="line"><span class="built_in">export</span> M2_HOME=/Users/xlh/Applications/apache-maven-3.5.3</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$M2_HOME</span>/bin:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
-<em>要注意是否配置了Java环境变量，没有的需要配置下</em><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> JAVA_HOME=/xxx</span><br></pre></td></tr></table></figure></li>
-<li>检查环境是否成功<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">source</span> ~/.bash_profile</span><br><span class="line">$ mvn -v</span><br></pre></td></tr></table></figure></li>
-<li>maven默认安装在 ～&#x2F;.m2&#x2F;repository 目录下，如果要修改仓库目录的话，需要在<code>&#123;grade&#125;/conf/settings.xml</code>  添加如下代码<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">localRepository</span>&gt;</span>/目标目录<span class="tag">&lt;/<span class="name">localRepository</span>&gt;</span></span><br></pre></td></tr></table></figure>
-还可以添加其他中央仓的镜像<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mirror</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">id</span>&gt;</span>mirrorId<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">mirrorOf</span>&gt;</span>repositoryId<span class="tag">&lt;/<span class="name">mirrorOf</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>Human Readable Name for this Mirror.<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">url</span>&gt;</span>http://my.repository.com/repo/path<span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mirror</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
-</ol>
-<h1><span id="使用">使用</span></h1><h2><span id="配置">配置</span></h2><p>自定义本地路径</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">repositories &#123;</span><br><span class="line">    maven &#123; url &#x27;/Users/xlh/.m2/repository&#x27; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>默认路径</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">repositories &#123;</span><br><span class="line">    mavenLocal()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2><span id="上传">上传</span></h2><p>方式一：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: &#x27;maven&#x27;</span><br><span class="line">uploadArchives&#123;</span><br><span class="line">    repositories.mavenDeployer&#123;</span><br><span class="line">        // 本地仓库路径</span><br><span class="line">        repository(url:&quot;file:///本地目录&quot;)</span><br><span class="line">        // 唯一标识</span><br><span class="line">        pom.groupId = &quot;groupId&quot;</span><br><span class="line">        // 项目名称</span><br><span class="line">        pom.artifactId = &quot;artifactId&quot;</span><br><span class="line">        // 版本号</span><br><span class="line">        pom.version = &quot;version&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gradlew  uploadArchives</span><br></pre></td></tr></table></figure>
-
-<p>方式二：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: &#x27;maven-publish&#x27;</span><br><span class="line">publishing &#123;</span><br><span class="line">    publications &#123;</span><br><span class="line">        maven(MavenPublication) &#123;</span><br><span class="line">            artifact &quot;aar所在目录&quot;</span><br><span class="line">            groupId &quot;groupId&quot;</span><br><span class="line">            artifactId &quot;artifactId&quot;</span><br><span class="line">            version &quot;version&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gradlew  publishToMavenLocal</span><br></pre></td></tr></table></figure>
-
-<h2><span id="引用">引用</span></h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">implementation &#x27;groupId:artifactId:version&#x27;</span><br></pre></td></tr></table></figure>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/01/06/mac%E4%B8%8B%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0maven%E4%BB%93%E5%BA%93/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
