@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"pacoblack.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="ffmpeg命令的简单用法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ffmpeg命令介绍">
+<meta property="og:url" content="https://pacoblack.github.io/2025/06/10/ffmpeg%E5%91%BD%E4%BB%A4%E4%BB%8B%E7%BB%8D/index.html">
+<meta property="og:site_name" content="我爱学习">
+<meta property="og:description" content="ffmpeg命令的简单用法">
+<meta property="og:locale">
+<meta property="article:published_time" content="2025-06-10T08:09:18.000Z">
+<meta property="article:modified_time" content="2025-06-10T08:42:50.822Z">
+<meta property="article:author" content="pacoblack">
+<meta property="article:tag" content="ffmpeg">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://pacoblack.github.io/2025/06/10/ffmpeg%E5%91%BD%E4%BB%A4%E4%BB%8B%E7%BB%8D/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>ffmpeg命令介绍 | 我爱学习</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">我爱学习</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">这只是一场演习</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="主页 fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="标签 fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="分类 fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="归档 fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="关于 fa-fw"></i>About</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://pacoblack.github.io/2025/06/10/ffmpeg%E5%91%BD%E4%BB%A4%E4%BB%8B%E7%BB%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar1.jpeg">
+      <meta itemprop="name" content="pacoblack">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="我爱学习">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ffmpeg命令介绍
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2025-06-10 16:09:18 / Modified: 16:42:50" itemprop="dateCreated datePublished" datetime="2025-06-10T16:09:18+08:00">2025-06-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ffmpeg/" itemprop="url" rel="index"><span itemprop="name">ffmpeg</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>ffmpeg命令的简单用法 </p>
+<span id="more"></span>
+<h2><span id="-map">-Map</span></h2><h3><span id="基本语法"><strong>基本语法</strong></span></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input1 -i input2 -map [输入文件索引]:[流类型]:[流索引] output</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>输入文件索引</strong>：从 <code>0</code> 开始计数（如第一个输入文件为 <code>0</code>，第二个为 <code>1</code>）。</li>
+<li><strong>流索引</strong>：从 <code>0</code> 开始计数（如第一个视频流为 <code>0:v:0</code>，第一个音频流为 <code>0:a:0</code>）。</li>
+<li><strong>流类型指定符</strong>：<ul>
+<li><code>v</code>：视频流（video）</li>
+<li><code>a</code>：音频流（audio）</li>
+<li><code>s</code>：字幕流（subtitle）</li>
+<li><code>d</code>：数据流（data）</li>
+<li><code>t</code>：时间戳流（attachment）</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3><span id="常见使用场景"><strong>常见使用场景</strong></span></h3><h4><span id="1提取特定流"><strong>1提取特定流</strong></span></h4><p>从输入文件中提取特定的视频或音频流。</p>
+<ul>
+<li><p><strong>提取音频流</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -map 0:a:0 output.mp3</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>0:a:0</code>：表示第一个输入文件（<code>0</code>）的第一个音频流（<code>a:0</code>）。</li>
+</ul>
+</li>
+<li><p><strong>提取视频流</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -map 0:v:0 output.yuv</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>0:v:0</code>：表示第一个输入文件的第一个视频流。</li>
+</ul>
+</li>
+</ul>
+<h4><span id="合并多个输入流"><strong>合并多个输入流</strong></span></h4><p>将多个输入文件中的流合并到一个输出文件中。</p>
+<ul>
+<li><p><strong>合并视频和音频</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i video.mp4 -i audio.mp3 -map 0:v -map 1:a output.mp4</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>0:v</code>：选择第一个输入文件的所有视频流。</li>
+<li><code>1:a</code>：选择第二个输入文件的所有音频流。</li>
+</ul>
+</li>
+<li><p><strong>合并多个视频流</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input1.mp4 -i input2.mp4 -map 0:v -map 1:v output.mp4</span><br></pre></td></tr></table></figure>
+<ul>
+<li>输出文件将包含两个视频流（分别来自 <code>input1.mp4</code> 和 <code>input2.mp4</code>）。</li>
+</ul>
+</li>
+</ul>
+<h4><span id="选择特定流并重新编码"><strong>选择特定流并重新编码</strong></span></h4><p>结合 <code>-c</code> 参数指定编码器，对选中的流进行重新编码。</p>
+<ul>
+<li><p><strong>提取音频并转码为 AAC</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -map 0:a:0 -c:a aac output.mp4</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>调整视频分辨率</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -map 0:v -vf scale=1280:720 output.mp4</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4><span id="排除特定流"><strong>排除特定流</strong></span></h4><p>使用负号 <code>-</code> 排除不需要的流。</p>
+<ul>
+<li><strong>排除第一个音频流</strong>：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -map 0 -map -0:a:0 output.mp4</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>0</code>：选择第一个输入文件的所有流。</li>
+<li><code>-0:a:0</code>：排除第一个音频流。</li>
+</ul>
+</li>
+</ul>
+<h4><span id="复杂映射多输入多输出"><strong>复杂映射（多输入多输出）</strong></span></h4><p>从多个输入文件中选择不同流并组合到输出文件中。</p>
+<ul>
+<li><strong>合并视频、音频和字幕</strong>：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i video.mp4 -i audio.mp3 -i subtitle.srt \</span><br><span class="line">  -map 0:v -map 1:a -map 2:s \</span><br><span class="line">  -c:v copy -c:a copy -c:s mov_text \</span><br><span class="line">  output.mp4</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h3><span id="示例详解"><strong>示例详解</strong></span></h3><h4><span id="提取所有音频流"><strong>提取所有音频流</strong></span></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -map 0:a -c:a copy output.mp3</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>-map 0:a</code>：选择所有音频流。</li>
+<li><code>-c:a copy</code>：直接复制音频流（不重新编码）。</li>
+</ul>
+<h4><span id="选择特定视频流并添加水印"><strong>选择特定视频流并添加水印</strong></span></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -map 0:v -i watermark.png \</span><br><span class="line">  -filter_complex <span class="string">&quot;overlay=10:10&quot;</span> \</span><br><span class="line">  output.mp4</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>-map 0:v</code>：选择第一个输入文件的视频流。</li>
+<li><code>overlay=10:10</code>：将水印叠加到视频左上角。</li>
+</ul>
+<h4><span id="合并多个音轨"><strong>合并多个音轨</strong></span></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i video.mp4 -i audio1.mp3 -i audio2.mp3 \</span><br><span class="line">  -map 0:v -map 1:a -map 2:a \</span><br><span class="line">  -c:v copy -c:a aac \</span><br><span class="line">  output.mp4</span><br></pre></td></tr></table></figure>
+<ul>
+<li>输出文件将包含视频流、第一个音频流和第二个音频流。</li>
+</ul>
+<hr>
+<h3><span id="注意事项"><strong>注意事项</strong></span></h3><ol>
+<li><p><strong>流索引从 0 开始</strong>：</p>
+<ul>
+<li>使用 <code>ffprobe -i input.mp4</code> 查看输入文件的流信息。</li>
+<li>例如：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffprobe -i input.mp4 -show_streams</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>默认行为</strong>：</p>
+<ul>
+<li>不使用 <code>-map</code> 时，FFmpeg 会自动选择默认的视频流、音频流和字幕流。</li>
+</ul>
+</li>
+<li><p><strong>流类型匹配</strong>：</p>
+<ul>
+<li>确保映射的流类型与输出格式兼容（例如，某些格式不支持多音轨）。</li>
+</ul>
+</li>
+<li><p><strong>重新编码 vs 直接复制</strong>：</p>
+<ul>
+<li>使用 <code>-c copy</code> 可以直接复制流（无需重新编码），但需确保编码器兼容。</li>
+<li>如果需要调整参数（如分辨率、比特率），需使用对应的编码器（如 <code>-c:v libx264</code>）。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3><span id="进阶技巧"><strong>进阶技巧</strong></span></h3><h4><span id="使用通配符选择流"><strong>使用通配符选择流</strong></span></h4><ul>
+<li><p><strong>选择所有视频流</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -map 0:v output.mp4</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>选择所有音频流</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -map 0:a output.mp3</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4><span id="按流属性选择"><strong>按流属性选择</strong></span></h4><ul>
+<li><strong>选择特定编码的流</strong>：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -map 0:v:0? -c:v h264 output.mp4</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>?</code> 表示流存在时才选择。</li>
+</ul>
+</li>
+</ul>
+<h4><span id="调整流顺序"><strong>调整流顺序</strong></span></h4><ul>
+<li><strong>优先选择某个流</strong>：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -map 0:a:1 -map 0:a:0 output.mp4</span><br></pre></td></tr></table></figure>
+<ul>
+<li>输出文件的音频流顺序为 <code>a:1</code> 在前，<code>a:0</code> 在后。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3><span id="总结"><strong>总结</strong></span></h3><ul>
+<li><strong><code>-map</code> 的核心作用</strong>：精确控制输入流到输出文件的映射，适用于复杂场景（如多音轨、多视频流合并、排除特定流等）。</li>
+<li><strong>实际应用</strong>：结合 <code>-c</code>、<code>-vf</code>、<code>-af</code> 等参数，实现流的重新编码、过滤和处理。</li>
+<li><strong>调试工具</strong>：使用 <code>ffprobe</code> 查看流信息，确保映射正确。</li>
+</ul>
+<h2><span id="-c">-c</span></h2><p><code>ffmpeg -c</code>（或 <code>--codec</code>）是 FFmpeg 中非常重要的一个参数，用于<strong>指定编码器&#x2F;解码器</strong>，控制输入流或输出流的编解码方式。</p>
+<hr>
+<h3><span id="基本语法">基本语法</span></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -c[:&lt;stream_specifier&gt;][:流索引] &lt;codec_name&gt; output.mp4</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>&lt;stream_specifier&gt;</code>：可选，表示作用于哪种类型的流（如视频、音频、字幕等）</li>
+<li><code>&lt;codec_name&gt;</code>：具体的编码器或解码器名称（如 <code>libx264</code>, <code>aac</code>, <code>copy</code> 等）</li>
+</ul>
+<hr>
+<h3><span id="常用用法详解">常用用法详解</span></h3><ol>
+<li>全局设置编码器（不推荐）</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -c libx264 output.mp4</span><br></pre></td></tr></table></figure>
+<p>⚠️ 这会尝试对所有流使用 <code>libx264</code> 编码器，可能导致错误。通常应结合流类型使用。</p>
+<hr>
+<ol start="2">
+<li>指定特定流的编解码器（推荐）</li>
+</ol>
+<h4><span id="视频流-cv-或-vcodec">视频流：<code>-c:v</code> 或 <code>-vcodec</code></span></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -c:v libx264 output.mp4</span><br></pre></td></tr></table></figure>
+<p>将视频流重新编码为 H.264 格式。</p>
+<h4><span id="音频流-ca-或-acodec">音频流：<code>-c:a</code> 或 <code>-acodec</code></span></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -c:a aac output.mp4</span><br></pre></td></tr></table></figure>
+<p>将音频流重新编码为 AAC 格式。</p>
+<h4><span id="字幕流-cs-或-scodec">字幕流：<code>-c:s</code> 或 <code>-scodec</code></span></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mkv -c:s mov_text output.mp4</span><br></pre></td></tr></table></figure>
+<p>将字幕流编码为 <code>mov_text</code> 格式（适用于 MP4 容器）。</p>
+<hr>
+<ol start="3">
+<li>流复制（不重新编码）</li>
+</ol>
+<p>使用 <code>copy</code> 表示直接复制原始流，不进行任何编码&#x2F;解码操作，速度快，质量无损：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -c:v copy -c:a copy output.mp4</span><br></pre></td></tr></table></figure>
+
+<p>等价于更简洁写法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -c copy output.mp4</span><br></pre></td></tr></table></figure>
+
+<hr>
+<ol start="4">
+<li>解码器设置（用于转码前处理）</li>
+</ol>
+<p>你可以通过 <code>-c:v</code> 或 <code>-c:a</code> 指定解码器（主要用于调试或特殊格式）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -c:v h264_cuvid -i input.h265 -c:v libx264 output.mp4</span><br></pre></td></tr></table></figure>
+<p>这里使用 NVIDIA 的硬件加速解码器 <code>h264_cuvid</code> 来解码输入视频。</p>
+<hr>
+<ol start="5">
+<li>使用硬件加速编码器</li>
+</ol>
+<p>例如使用 NVIDIA 的 NVENC 编码器：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -c:v h264_nvenc -preset p7 -tune ull output.mp4</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3><span id="三-常用编码器列表按类型">三、常用编码器列表（按类型）</span></h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>常见编码器</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>视频</td>
+<td><code>libx264</code>, <code>libx265</code>, <code>h264_nvenc</code>, <code>hevc_videotoolbox</code>, <code>vp9</code></td>
+</tr>
+<tr>
+<td>音频</td>
+<td><code>aac</code>, <code>libmp3lame</code>, <code>libopus</code>, <code>pcm_s16le</code></td>
+</tr>
+<tr>
+<td>字幕</td>
+<td><code>mov_text</code>, <code>srt</code>, <code>ass</code>, <code>webvtt</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h3><span id="四-查看支持的编码器和解码器">四、查看支持的编码器和解码器</span></h3><h4><span id="查看所有编码器">查看所有编码器：</span></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -encoders</span><br></pre></td></tr></table></figure>
+
+<h4><span id="查看所有解码器">查看所有解码器：</span></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -decoders</span><br></pre></td></tr></table></figure>
+
+<h4><span id="查看某个编码器详细信息以-libx264-为例">查看某个编码器详细信息（以 libx264 为例）：</span></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -h full <span class="built_in">help</span> libx264</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3><span id="五-典型组合命令示例">五、典型组合命令示例</span></h3><p> 示例 1：只转码音频</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -c:v copy -c:a libmp3lame output.mp3</span><br></pre></td></tr></table></figure>
+
+<p> 示例 2：同时转码视频和音频</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 \</span><br><span class="line">-c:v libx265 \</span><br><span class="line">-c:a aac \</span><br><span class="line">-b:a 192k \</span><br><span class="line">output.mp4</span><br></pre></td></tr></table></figure>
+
+<p> 示例 3：使用硬件加速解码 + 软件编码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -c:v h264_cuvid -i input.mp4 \</span><br><span class="line">-c:v h264_nvenc \</span><br><span class="line">-c:a copy \</span><br><span class="line">output.mp4</span><br></pre></td></tr></table></figure>
+
+<p> 示例 4：提取并转码字幕流</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mkv -c:s srt subtitles.srt</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3><span id="六-注意事项">六、注意事项</span></h3><ul>
+<li>**不要滥用 <code>-c copy</code>**：确保容器格式支持你复制的流格式。例如 <code>.mp4</code> 不支持某些字幕格式。</li>
+<li><strong>流索引问题</strong>：有时需要配合 <code>-map</code> 使用来精确选择哪些流参与处理。</li>
+<li><strong>兼容性</strong>：不同平台对某些编码器的支持程度不同，尤其是硬件加速编码器。</li>
+</ul>
+<h2><span id="-vf简单滤镜图和复杂滤镜图">-vf（简单滤镜图）和（复杂滤镜图）</span></h2><p><code>ffmpeg -vf</code> 参数用于指定应用于视频流的滤镜（filter）。FFmpeg 的滤镜系统非常强大，支持多种视频处理操作，如裁剪、缩放、旋转、添加水印等。以下是关于 <code>-vf</code> 参数的基本用法和一些常见示例。</p>
+<h3><span id="基本语法">基本语法</span></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -vf <span class="string">&quot;滤镜名称=参数&quot;</span> output.mp4</span><br></pre></td></tr></table></figure>
+
+<p>在这个命令中，<code>-vf</code> 后面跟着的是一个或多个滤镜及其参数，它们之间可以用逗号分隔来链式应用多个滤镜。</p>
+<h3><span id="常见滤镜及使用示例">常见滤镜及使用示例</span></h3><h4><span id="scale"><code>scale</code></span></h4><p>调整视频分辨率。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -vf <span class="string">&quot;scale=640:480&quot;</span> output.mp4</span><br></pre></td></tr></table></figure>
+<p>将视频大小调整为 640x480。也可以仅指定宽度或高度，FFmpeg 会自动计算另一个维度以保持宽高比。</p>
+<h4><span id="crop"><code>crop</code></span></h4><p>裁剪视频。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -vf <span class="string">&quot;crop=640:360:0:0&quot;</span> output.mp4</span><br></pre></td></tr></table></figure>
+<p>从左上角开始裁剪出一个 640x360 的区域。</p>
+<h4><span id="rotate"><code>rotate</code></span></h4><p>旋转视频。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -vf <span class="string">&quot;rotate=PI/4&quot;</span> output.mp4</span><br></pre></td></tr></table></figure>
+<p>将视频顺时针旋转 45 度（PI&#x2F;4 弧度）。</p>
+<h4><span id="transpose"><code>transpose</code></span></h4><p>旋转视频 90 度并可选地翻转。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -vf <span class="string">&quot;transpose=1&quot;</span> output.mp4</span><br></pre></td></tr></table></figure>
+<p><code>transpose=1</code> 表示顺时针旋转 90 度。</p>
+<h4><span id="overlay"><code>overlay</code></span></h4><p>叠加图像（例如添加水印）。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i video.mp4 -i watermark.png -filter_complex <span class="string">&quot;[0:v][1:v] overlay=10:10&quot;</span> output.mp4</span><br></pre></td></tr></table></figure>
+<p>在主视频的左上角(10,10)位置叠加水印图片。</p>
+<h4><span id="drawtext"><code>drawtext</code></span></h4><p>在视频上绘制文本。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -vf <span class="string">&quot;drawtext=fontfile=/path/to/font.ttf:text=&#x27;Hello World&#x27;:x=10:y=10:fontsize=24:fontcolor=white&quot;</span> output.mp4</span><br></pre></td></tr></table></figure>
+<p>在视频上添加白色的文字“Hello World”。</p>
+<h4><span id="fade"><code>fade</code></span></h4><p>添加淡入淡出效果。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -vf <span class="string">&quot;fade=t=in:st=0:d=3,fade=t=out:st=30:d=3&quot;</span> output.mp4</span><br></pre></td></tr></table></figure>
+<p>在视频开头 3 秒内淡入，在第 30 秒开始 3 秒内淡出。</p>
+<h4><span id="concat"><code>concat</code></span></h4><p>连接多个视频片段（需要相同编码格式）。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -f concat -safe 0 -i filelist.txt -c copy output.mp4</span><br></pre></td></tr></table></figure>
+<p>虽然这不是直接通过 <code>-vf</code> 实现的，但对于简单的拼接任务，可以考虑使用 <code>filter_complex</code> 结合其他视频滤镜一起使用。</p>
+<h4><span id="trim-和-setpts"><code>trim</code> 和 <code>setpts</code></span></h4><p>修剪视频长度，并重置时间戳。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -vf <span class="string">&quot;trim=start=10:end=20,setpts=PTS-STARTPTS&quot;</span> output.mp4</span><br></pre></td></tr></table></figure>
+<p>只保留从第 10 秒到第 20 秒之间的视频内容。</p>
+<h3><span id="链式使用多个滤镜">链式使用多个滤镜</span></h3><p>你可以通过逗号<code>,</code>将多个滤镜串起来形成一个滤镜链。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -vf <span class="string">&quot;scale=640:480, drawtext=fontfile=/path/to/font.ttf:text=&#x27;Hello World&#x27;:x=10:y=10:fontsize=24:fontcolor=white&quot;</span> output.mp4</span><br></pre></td></tr></table></figure>
+<p>此命令首先缩放视频尺寸，然后在其上绘制文本。</p>
+<h3><span id="使用-filter_complex-进行复杂滤镜图">使用 <code>filter_complex</code> 进行复杂滤镜图</span></h3><p>对于更复杂的场景，比如同时处理多个输入流或进行跨流操作（如画中画），应使用 <code>-filter_complex</code> 而不是 <code>-vf</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i background.mp4 -i overlay.mp4 -filter_complex <span class="string">&quot;[0:v][1:v] overlay=25:25&quot;</span> output.mp4</span><br></pre></td></tr></table></figure>
+<p>在此例子中，第二个视频被叠加到第一个视频的 (25,25) 位置。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ffmpeg/" rel="tag"># ffmpeg</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/05/27/ffmpeg%E6%B5%81%E7%A8%8B%E4%BB%8B%E7%BB%8D/" rel="prev" title="ffmpeg流程介绍">
+      <i class="fa fa-chevron-left"></i> ffmpeg流程介绍
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">-Map</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">基本语法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">常见使用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.2.1.</span> <span class="nav-text">1提取特定流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.2.2.</span> <span class="nav-text">合并多个输入流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.2.3.</span> <span class="nav-text">选择特定流并重新编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.2.4.</span> <span class="nav-text">排除特定流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.2.5.</span> <span class="nav-text">复杂映射（多输入多输出）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">示例详解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.3.1.</span> <span class="nav-text">提取所有音频流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.3.2.</span> <span class="nav-text">选择特定视频流并添加水印</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.3.3.</span> <span class="nav-text">合并多个音轨</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.4.</span> <span class="nav-text">注意事项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.5.</span> <span class="nav-text">进阶技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.5.1.</span> <span class="nav-text">使用通配符选择流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.5.2.</span> <span class="nav-text">按流属性选择</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.5.3.</span> <span class="nav-text">调整流顺序</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.6.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">-c</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">基本语法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">常用用法详解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">2.2.1.</span> <span class="nav-text">视频流：-c:v 或 -vcodec</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">2.2.2.</span> <span class="nav-text">音频流：-c:a 或 -acodec</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">2.2.3.</span> <span class="nav-text">字幕流：-c:s 或 -scodec</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">三、常用编码器列表（按类型）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.4.</span> <span class="nav-text">四、查看支持的编码器和解码器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">2.4.1.</span> <span class="nav-text">查看所有编码器：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">2.4.2.</span> <span class="nav-text">查看所有解码器：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">2.4.3.</span> <span class="nav-text">查看某个编码器详细信息（以 libx264 为例）：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.5.</span> <span class="nav-text">五、典型组合命令示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.6.</span> <span class="nav-text">六、注意事项</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">-vf（简单滤镜图）和（复杂滤镜图）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">基本语法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">常见滤镜及使用示例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.1.</span> <span class="nav-text">scale</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.2.</span> <span class="nav-text">crop</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.3.</span> <span class="nav-text">rotate</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.4.</span> <span class="nav-text">transpose</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.5.</span> <span class="nav-text">overlay</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.6.</span> <span class="nav-text">drawtext</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.7.</span> <span class="nav-text">fade</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.8.</span> <span class="nav-text">concat</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.9.</span> <span class="nav-text">trim 和 setpts</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">链式使用多个滤镜</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.4.</span> <span class="nav-text">使用 filter_complex 进行复杂滤镜图</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="pacoblack"
+      src="/images/avatar1.jpeg">
+  <p class="site-author-name" itemprop="name">pacoblack</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">71</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/pacoblack" title="GitHub → https://github.com/pacoblack" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:pacoson.wang@gmail.com" title="E-Mail → mailto:pacoson.wang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pacoblack</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,0' opacity='0.5' zIndex='-1' count='99' src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css" class="aplayer-style-marker">
+  <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js" class="aplayer-script-marker"></script>
+  <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js" class="meting-script-marker"></script>
+  <div id="aplayer-AXqIDvNX"
+      class="aplayer aplayer-tag-marker meting-tag-marker aplayer-fixed"
+      data-id="71075946"
+      data-server="netease"
+      data-type="playlist"
+      data-mode="circulation"
+      data-autoplay="false"
+      data-mutex="true"
+      data-listmaxheight="340px"
+      data-preload="auto"
+      data-fixed="true"
+      data-lrctype="0"
+      data-theme="#555"></div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/Epsilon2.1.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7}});</script></body>
+</html>
