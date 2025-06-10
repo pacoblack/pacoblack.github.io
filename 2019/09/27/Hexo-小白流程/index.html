@@ -28,7 +28,7 @@
 <meta property="og:description" content="Hexo 的各种基础配置">
 <meta property="og:locale">
 <meta property="article:published_time" content="2019-09-27T07:18:11.000Z">
-<meta property="article:modified_time" content="2021-03-13T06:56:15.506Z">
+<meta property="article:modified_time" content="2025-06-10T07:58:55.491Z">
 <meta property="article:author" content="pacoblack">
 <meta property="article:tag" content="hexo">
 <meta name="twitter:card" content="summary">
@@ -193,7 +193,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-03-13 14:56:15" itemprop="dateModified" datetime="2021-03-13T14:56:15+08:00">2021-03-13</time>
+                <time title="Modified: 2025-06-10 15:58:55" itemprop="dateModified" datetime="2025-06-10T15:58:55+08:00">2025-06-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -219,7 +219,10 @@
         <p>Hexo 的各种基础配置</p>
 <span id="more"></span>
 
-<h1><span id="配置文件介绍">配置文件介绍</span></h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">～/blog/_config.yml          // 站点配置文件</span><br><span class="line"></span><br><span class="line">~/blog/themes/next/_config.yml  // 主题配置文件</span><br></pre></td></tr></table></figure>
+<h1><span id="配置文件介绍">配置文件介绍</span></h1><p>进入theme目录下载主题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/theme-next/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
+<p>修改文件<code>～/blog/_config.yml</code> 中，为<code>theme:next</code><br>在下面的文件配置主题具体样式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~/blog/themes/next/_config.yml  // 主题配置文件</span><br></pre></td></tr></table></figure>
 
 <h1><span id="markdown">MarkDown</span></h1><p>atom 编辑 <code>MarkDown</code> ，其中</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Ctrl + Shift + M  // 可以实时渲染</span><br></pre></td></tr></table></figure>
@@ -234,8 +237,6 @@
 
 <h2><span id="添加背景动画-canvas-nest">添加背景动画 canvas-nest</span></h2><p>基本流程参考 <a target="_blank" rel="noopener" href="https://github.com/theme-next/theme-next-canvas-nest">theme-next-canvas-nest</a></p>
 <p><em>step1</em> 进入 <strong>next</strong> 根目录下</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/theme-next/theme-next-canvas-nest source/lib/canvas-nest</span><br></pre></td></tr></table></figure>
-
 <p><em>step2</em> 修改 <strong>next</strong> 主题配置文件 _config.yml</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">canvas_nest: true</span><br><span class="line">...</span><br><span class="line">canvas_nest:</span><br><span class="line">  enable: true</span><br><span class="line">  onmobile: true # display on mobile or not</span><br><span class="line">  color: &#x27;0,0,255&#x27; # RGB values, use &#x27;,&#x27; to separate</span><br><span class="line">  opacity: 0.5 # the opacity of line: 0~1</span><br><span class="line">  zIndex: -1 # z-index property of the background</span><br><span class="line">  count: 99 # the number of lines</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
 
